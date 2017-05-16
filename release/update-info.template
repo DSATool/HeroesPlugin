@@ -1,0 +1,4 @@
+{
+	"releaseDate" : "@releaseDate@",
+	"releaseLink" : "https://raw.githubusercontent.com/DSATool/HeroesPlugin/master/release/Heroes_@releaseDate@.zip"
+}

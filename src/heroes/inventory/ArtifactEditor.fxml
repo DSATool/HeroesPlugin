@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import dsatool.util.ReactiveSpinner?>
+
+<VBox fx:id="root" style="-fx-padding: 2, 2, 2, 2;" spacing="2" xmlns:fx="http://javafx.com/fxml" >
+   <HBox spacing="2" alignment="CENTER_LEFT" >
+      <Label text="Name: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+      <TextField fx:id="name" prefWidth="200" />
+   </HBox>
+   <HBox spacing="2" alignment="CENTER_LEFT" >
+      <Label text="Typ: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+      <ComboBox fx:id="type" prefWidth="200" />
+   </HBox>
+   <HBox spacing="2" alignment="CENTER_LEFT" >
+      <Label text="Ladungen: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+      <ReactiveSpinner fx:id="loadNum" imin="0" imax="99" editable="true" prefWidth="50" />
+      <Label text="/" />
+      <ComboBox fx:id="loadFreq" prefWidth="100" />
+   </HBox>
+   <HBox spacing="2" alignment="CENTER_LEFT" >
+      <Label text="Stabilität: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+      <ComboBox fx:id="stability" prefWidth="100" />
+   </HBox>
+   <HBox spacing="2" alignment="CENTER_LEFT" >
+      <Label text="AsP: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+      <ReactiveSpinner fx:id="asp" imin="0" imax="999" editable="true" prefWidth="60" />
+      <Label text="/" />
+      <ReactiveSpinner fx:id="pasp" imin="0" imax="999" editable="true" prefWidth="60" />
+      <Label text="p" />
+   </HBox>
+   <Label text="Auslöser: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+   <HBox spacing="2" alignment="CENTER_LEFT" >
+      <Label text="" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+      <ComboBox fx:id="triggerType" prefWidth="150" />
+      <ReactiveSpinner fx:id="triggerActions" imin="0" imax="99" editable="true" prefWidth="50" />
+      <Label text="A" />
+   </HBox>
+   <HBox spacing="2" alignment="CENTER_LEFT" >
+      <Label text="" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+      <TextField fx:id="triggerDesc" prefWidth="200" />
+   </HBox>
+   <Label text="Wirkende Sprüche: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+   <TableView fx:id="spellTable" editable="true" fixedCellSize="25" >
+      <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+      <placeholder>
+         <Label minHeight="0" />
+      </placeholder>
+      <columns>
+         <TableColumn fx:id="spellNameColumn" text="Spruch" minWidth="100" />
+         <TableColumn fx:id="spellVariantColumn" text="Variante" minWidth="200" editable="true" />
+      </columns>
+   </TableView>
+   <HBox spacing="2" alignment="CENTER_LEFT" >
+      <Label text="Gewicht: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+      <ReactiveSpinner fx:id="weight" dmin="0.0" dmax="999.0" initialValue="0.0" amountToStepBy="0.05" editable="true" prefWidth="80" />
+   </HBox>
+   <HBox spacing="2" alignment="CENTER_LEFT" >
+      <Label text="Anmerkungen: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+      <TextField fx:id="notes" prefWidth="200" />
+   </HBox>
+   <HBox spacing="2" alignment="CENTER_LEFT" >
+      <Label maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+      <Button fx:id="okButton" text="Ok" prefWidth="75" />
+      <Button fx:id="cancelButton" text="Abbrechen" prefWidth="75" />
+   </HBox>
+</VBox>

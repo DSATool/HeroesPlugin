@@ -1,0 +1,6 @@
+{
+	"releaseDate" : "@releaseDate@",
+	"previousReleaseDate" : "@previousReleaseDate@",
+	"previousReleaseLink" : "https://raw.githubusercontent.com/DSATool/HeroesPlugin/master/release/Heroes_@previousReleaseDate@.zip",
+	"updateInfo" : "https://raw.githubusercontent.com/DSATool/HeroesPlugin/master/release/update-info.json"
+}
