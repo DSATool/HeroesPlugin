@@ -77,8 +77,9 @@ public class ProsOrConsController {
 		setVisibility();
 	};
 
-	public ProsOrConsController(ScrollPane parent, String name, String singular, boolean needsVariant, boolean needsValue, JSONObject prosOrCons,
-			String category, BooleanProperty showAll) {
+	public ProsOrConsController(final ScrollPane parent, final String name, final String singular, final boolean needsVariant, final boolean needsValue,
+			final JSONObject prosOrCons,
+			final String category, final BooleanProperty showAll) {
 		this.prosOrCons = prosOrCons;
 		this.category = category;
 		this.showAll = showAll;
@@ -122,7 +123,7 @@ public class ProsOrConsController {
 		nameColumn.setCellValueFactory(new PropertyValueFactory<ProOrCon, String>("displayName"));
 		nameColumn.setCellFactory(c -> new TextFieldTableCell<ProOrCon, String>() {
 			@Override
-			public void updateItem(String item, boolean empty) {
+			public void updateItem(final String item, final boolean empty) {
 				super.updateItem(item, empty);
 				final ProOrCon proOrCon = (ProOrCon) getTableRow().getItem();
 				if (proOrCon != null) {
@@ -302,7 +303,7 @@ public class ProsOrConsController {
 
 		DSAUtil.foreach(proOrCon -> true, (proOrConName, proOrCon) -> {
 			if (!actual.containsKey(proOrConName) || proOrCon.containsKey("Auswahl") || proOrCon.containsKey("Freitext")) {
-				if (showAll.get() || RequirementsUtil.isRequirementFulfilled(hero, proOrCon.getObj("Voraussetzungen"), "", "")) {
+				if (showAll.get() || RequirementsUtil.isRequirementFulfilled(hero, proOrCon.getObj("Voraussetzungen"), null, null)) {
 					list.getItems().add(new ProOrCon(proOrConName, hero, proOrCon, new JSONObject(null)).getDisplayName());
 				}
 			}
@@ -344,7 +345,7 @@ public class ProsOrConsController {
 		return pane;
 	}
 
-	private JSONObject newProOrCon(String name, JSONObject proOrCon) {
+	private JSONObject newProOrCon(final String name, final JSONObject proOrCon) {
 		JSONObject actualProOrCon;
 		if (proOrCon.containsKey("Auswahl") || proOrCon.containsKey("Freitext")) {
 			actualProOrCon = new JSONObject(null);
@@ -363,7 +364,7 @@ public class ProsOrConsController {
 		return actualProOrCon;
 	}
 
-	public void setHero(JSONObject hero) {
+	public void setHero(final JSONObject hero) {
 		if (this.hero != null) {
 			this.hero.getObj(category).removeListener(listener);
 		}
