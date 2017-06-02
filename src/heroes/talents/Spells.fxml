@@ -23,7 +23,7 @@
          <Label minHeight="0" />
       </placeholder>
       <columns>
-         <TableColumn fx:id="nameColumn" text="Zauber" minWidth="100" editable="false" resizable="false" />
+         <TableColumn fx:id="nameColumn" text="Zauber" minWidth="100" editable="true" resizable="false" />
          <TableColumn text="Rep." prefWidth="60" resizable="false" style="-fx-alignment: CENTER;" />
          <TableColumn text="Komp." prefWidth="60" resizable="false" style="-fx-alignment: CENTER;" />
          <TableColumn text="Probe" prefWidth="80" resizable="false" style="-fx-alignment: CENTER;" />

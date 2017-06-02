@@ -25,7 +25,7 @@
             <Label minHeight="0" />
          </placeholder>
          <columns>
-            <TableColumn fx:id="nameColumn" text="Talent" minWidth="100" editable="false" resizable="false" />
+            <TableColumn fx:id="nameColumn" text="Talent" minWidth="100" editable="true" resizable="false" />
             <TableColumn text="BE" prefWidth="50" resizable="false" style="-fx-alignment: CENTER;" />
             <TableColumn text="Probe" prefWidth="80" resizable="false" style="-fx-alignment: CENTER;" />
             <TableColumn text="Leit" prefWidth="60" resizable="false" editable="true" style="-fx-alignment: CENTER;" />
