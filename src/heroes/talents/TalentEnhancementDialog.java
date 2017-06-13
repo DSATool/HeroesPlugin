@@ -56,7 +56,7 @@ public class TalentEnhancementDialog {
 
 	int startValue;
 
-	public TalentEnhancementDialog(final Window window, Talent talent, JSONObject hero, int initialTarget) {
+	public TalentEnhancementDialog(final Window window, final Talent talent, final JSONObject hero, final int initialTarget) {
 		final FXMLLoader fxmlLoader = new FXMLLoader();
 
 		fxmlLoader.setController(this);
@@ -105,10 +105,10 @@ public class TalentEnhancementDialog {
 		stage.show();
 	}
 
-	private int getCalculatedCost(Talent talent, JSONObject hero) {
+	private int getCalculatedCost(final Talent talent, final JSONObject hero) {
 		final int SELevel = startValue + Math.min(target.getValue() - startValue, ses.getValue());
-		final int seCost = DSAUtil.getEnhancementCost(talent, hero, "Lehrmeister", 0, startValue, SELevel);
-		final int normalCost = DSAUtil.getEnhancementCost(talent, hero, method.getSelectionModel().getSelectedItem(), 0, SELevel, target.getValue());
+		final int seCost = DSAUtil.getEnhancementCost(talent, hero, "Lehrmeister", startValue, SELevel, false);
+		final int normalCost = DSAUtil.getEnhancementCost(talent, hero, method.getSelectionModel().getSelectedItem(), SELevel, target.getValue(), false);
 		return seCost + normalCost;
 	}
 }
