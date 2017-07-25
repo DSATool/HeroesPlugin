@@ -94,13 +94,13 @@ public class RitualObjectEditor {
 			ErrorLogger.logError(e);
 		}
 
+		ritualGroupName = ritualObject.getRitualGroupName();
+
 		final Stage stage = new Stage();
 		stage.setTitle("Bearbeiten");
-		stage.setScene(new Scene(root, 330, 500));
+		stage.setScene(new Scene(root, 330, 475 + ("Stabzauber".equals(ritualGroupName) ? 27 : 0)));
 		stage.initModality(Modality.WINDOW_MODAL);
 		stage.initOwner(window);
-
-		ritualGroupName = ritualObject.getRitualGroupName();
 
 		final JSONObject ritualGroups = ResourceManager.getResource("data/Ritualgruppen");
 		final JSONObject ritualGroup = ritualGroups.getObj(ritualGroupName);
@@ -139,7 +139,6 @@ public class RitualObjectEditor {
 
 		initializeRitualTable();
 		ritualTable.getItems().setAll(ritualObject.getRituals());
-		updateRitualTable();
 		updateList();
 
 		okButton.setOnAction(event -> {
@@ -176,7 +175,6 @@ public class RitualObjectEditor {
 	@FXML
 	private void add() {
 		ritualTable.getItems().add(new Ritual(ritualGroupName, ritualList.getSelectionModel().getSelectedItem(), new JSONObject(null)));
-		updateRitualTable();
 		updateList();
 	}
 
@@ -210,11 +208,17 @@ public class RitualObjectEditor {
 			final Ritual item = ritualTable.getSelectionModel().getSelectedItem();
 			if (item != null) {
 				ritualTable.getItems().remove(item);
-				updateRitualTable();
 				updateList();
 			}
 		});
+		contextMenu.setOnShowing(o -> {
+			contextMenuItem.setVisible(ritualTable.getSelectionModel().getSelectedItem() != null);
+		});
 		ritualTable.setContextMenu(contextMenu);
+
+		ritualTable.setPrefHeight(151);
+		ritualTable.setMinHeight(151);
+		ritualTable.setMaxHeight(151);
 	}
 
 	private void updateList() {
@@ -239,10 +243,5 @@ public class RitualObjectEditor {
 		} else {
 			ritualAddButton.setDisable(true);
 		}
-	}
-
-	private void updateRitualTable() {
-		ritualTable.setPrefHeight((ritualTable.getItems().size() + 1) * 25 + 1);
-		ritualTable.setMinHeight((ritualTable.getItems().size() + 1) * 25 + 1);
 	}
 }

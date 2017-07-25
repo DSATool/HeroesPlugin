@@ -62,7 +62,6 @@
       <Label text="Anmerkungen: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
       <TextField fx:id="notes" prefWidth="200" />
    </HBox>
-   <Label maxHeight="Infinity" VBox.vgrow="ALWAYS" />
    <HBox spacing="2" alignment="CENTER_LEFT" >
       <Label maxWidth="Infinity" HBox.hgrow="ALWAYS" />
       <Button fx:id="okButton" text="Ok" prefWidth="75" />
