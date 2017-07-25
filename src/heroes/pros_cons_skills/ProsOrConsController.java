@@ -37,7 +37,9 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
@@ -64,6 +66,8 @@ public class ProsOrConsController {
 	protected TableColumn<ProOrCon, Integer> valueColumn;
 	@FXML
 	private TableColumn<ProOrCon, String> variantColumn;
+	@FXML
+	private TableColumn<ProOrCon, Boolean> validColumn;
 
 	protected ContextMenu contextMenu;
 	protected MenuItem deleteItem;
@@ -161,6 +165,7 @@ public class ProsOrConsController {
 			}
 		});
 		descColumn.setOnEditCommit(t -> t.getTableView().getItems().get(t.getTablePosition().getRow()).setDescription(t.getNewValue()));
+
 		variantColumn.setCellValueFactory(new PropertyValueFactory<ProOrCon, String>("variant"));
 		variantColumn.setCellFactory(c -> new GraphicTableCell<ProOrCon, String>(false) {
 			@Override
@@ -190,6 +195,7 @@ public class ProsOrConsController {
 			}
 		});
 		variantColumn.setOnEditCommit(t -> t.getTableView().getItems().get(t.getTablePosition().getRow()).setVariant(t.getNewValue()));
+
 		valueColumn.setCellValueFactory(new PropertyValueFactory<ProOrCon, Integer>("value"));
 		valueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<ProOrCon>(0, 9999, 1, false) {
 			@Override
@@ -208,6 +214,20 @@ public class ProsOrConsController {
 				t.getTableView().getItems().get(t.getTablePosition().getRow()).setValue(t.getNewValue());
 			} else {
 				new QuirkReductionDialog(pane.getScene().getWindow(), t.getTableView().getItems().get(t.getTablePosition().getRow()), hero, t.getNewValue());
+			}
+		});
+
+		validColumn.setCellValueFactory(new PropertyValueFactory<ProOrCon, Boolean>("valid"));
+		validColumn.setCellFactory(tableColumn -> new TableCell<ProOrCon, Boolean>() {
+			@Override
+			public void updateItem(final Boolean valid, final boolean empty) {
+				super.updateItem(valid, empty);
+				@SuppressWarnings("all")
+				final TableRow<ProOrCon> row = getTableRow();
+				row.getStyleClass().remove("invalid");
+				if (!empty && !valid) {
+					row.getStyleClass().add("invalid");
+				}
 			}
 		});
 
@@ -231,6 +251,18 @@ public class ProsOrConsController {
 			contextMenu.setOnShowing(o -> {
 				final ProOrCon con = table.getSelectionModel().getSelectedItem();
 				reductionItem.setVisible(con.getProOrCon().getBoolOrDefault("Schlechte Eigenschaft", false));
+			});
+		}
+		if ("Kampf-Sonderfertigkeiten".equals(name)) {
+			final MenuItem weaponMasteryItem = new MenuItem("Bearbeiten");
+			contextMenu.getItems().add(weaponMasteryItem);
+			weaponMasteryItem.setOnAction(o -> {
+				final ProOrCon skill = table.getSelectionModel().getSelectedItem();
+				new WeaponMasteryDialog(pane.getScene().getWindow(), skill);
+			});
+			contextMenu.setOnShowing(o -> {
+				final ProOrCon skill = table.getSelectionModel().getSelectedItem();
+				weaponMasteryItem.setVisible("Waffenmeister".equals(skill.getName()));
 			});
 		}
 		deleteItem = new MenuItem("Löschen");
@@ -303,7 +335,7 @@ public class ProsOrConsController {
 
 		DSAUtil.foreach(proOrCon -> true, (proOrConName, proOrCon) -> {
 			if (!actual.containsKey(proOrConName) || proOrCon.containsKey("Auswahl") || proOrCon.containsKey("Freitext")) {
-				if (showAll.get() || RequirementsUtil.isRequirementFulfilled(hero, proOrCon.getObj("Voraussetzungen"), null, null)) {
+				if (showAll.get() || RequirementsUtil.isRequirementFulfilled(hero, proOrCon.getObj("Voraussetzungen"), null, null, false)) {
 					list.getItems().add(new ProOrCon(proOrConName, hero, proOrCon, new JSONObject(null)).getDisplayName());
 				}
 			}
@@ -366,12 +398,12 @@ public class ProsOrConsController {
 
 	public void setHero(final JSONObject hero) {
 		if (this.hero != null) {
-			this.hero.getObj(category).removeListener(listener);
+			this.hero.removeListener(listener);
 		}
 		this.hero = hero;
 		fillTable();
 		setVisibility();
-		this.hero.getObj(category).addListener(listener);
+		this.hero.addListener(listener);
 	}
 
 	private void setVisibility() {
