@@ -17,6 +17,7 @@ package heroes.inventory;
 
 import dsa41basis.inventory.Artifact;
 import dsatool.gui.GUIUtil;
+import dsatool.resources.ResourceManager;
 import dsatool.util.ErrorLogger;
 import dsatool.util.GraphicTableCell;
 import dsatool.util.ReactiveSpinner;
@@ -50,7 +51,7 @@ public class ArtifactEditor {
 		private final StringProperty variant = new SimpleStringProperty();
 		private final JSONObject actual;
 
-		private Spell(JSONObject spell) {
+		private Spell(final JSONObject spell) {
 			actual = spell;
 			name.set(actual.getStringOrDefault("Spruch", ""));
 			variant.set(actual.getStringOrDefault("Variante", ""));
@@ -149,13 +150,13 @@ public class ArtifactEditor {
 		stage.initModality(Modality.WINDOW_MODAL);
 		stage.initOwner(window);
 
+		final JSONObject triggers = ResourceManager.getResource("data/Artefakt_Ausloeser");
+
 		type.setItems(FXCollections.observableArrayList(Artifact.types));
 		loadFreq.setItems(FXCollections.observableArrayList("Tag", "Woche", "Monat", "Jahr"));
 		stability.setItems(FXCollections.observableArrayList("labil", "stabil", "sehr stabil", "unempfindlich"));
-		triggerType.setItems(
-				FXCollections.observableArrayList("Berührung", "Einnahme", "Berührung (intelligent)", "Gewalt gg. Artefakt", "Aura höchster Intensität",
-						"einfache Geste", "massive Aura-Veränderung", "Schlüsselsatz", "Aura höherer Intensität", "Zeitpunkt", "Spezifischer Zauber",
-						"Umwelteinfluss", "Aura niedriger Intensität", "Zauber mit best. Merkmal", "Willensanstrengung", "Ferngespür", "anderer"));
+		triggerType.setItems(FXCollections.observableArrayList(triggers.keySet()));
+		triggerType.getItems().add("anderer");
 
 		this.artifact = artifact;
 
@@ -251,6 +252,13 @@ public class ArtifactEditor {
 			case "Zaubertalisman":
 				stability.setDisable(false);
 				break;
+			}
+		});
+
+		triggerType.valueProperty().addListener((o, oldV, newV) -> {
+			if (!"andere".equals(newV)) {
+				final JSONObject trigger = triggers.getObj(newV);
+				triggerActions.getValueFactory().setValue(trigger.getBoolOrDefault("Reaktion", false) ? 0 : trigger.getIntOrDefault("Aktionen", 1));
 			}
 		});
 
