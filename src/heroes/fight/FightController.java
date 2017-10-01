@@ -269,14 +269,14 @@ public class FightController extends HeroTabController {
 					if (!empty) {
 						setPadding(Insets.EMPTY);
 						final ComboBox<String> comboBox = new ComboBox<>(getItems());
-						comboBox.itemsProperty().bindBidirectional(getTableView().getItems().get(getIndex()).talentsProperty());
+						comboBox.itemsProperty().bind(getTableView().getItems().get(getIndex()).talentsProperty());
 						comboBox.setMaxWidth(Double.MAX_VALUE);
+						comboBox.getSelectionModel().select(item);
 						comboBox.getSelectionModel().selectedItemProperty().addListener((ov, oldValue, newValue) -> {
 							if (newValue != null) {
 								getTableView().getItems().get(getIndex()).setType(newValue);
 							}
 						});
-						comboBox.getSelectionModel().select(getItem());
 						setGraphic(comboBox);
 						setText(null);
 					}
@@ -307,12 +307,12 @@ public class FightController extends HeroTabController {
 						final ComboBox<String> comboBox = new ComboBox<>(getItems());
 						comboBox.itemsProperty().bindBidirectional(getTableView().getItems().get(getIndex()).talentsProperty());
 						comboBox.setMaxWidth(Double.MAX_VALUE);
+						comboBox.getSelectionModel().select(item);
 						comboBox.getSelectionModel().selectedItemProperty().addListener((ov, oldValue, newValue) -> {
 							if (newValue != null) {
 								getTableView().getItems().get(getIndex()).setType(newValue);
 							}
 						});
-						comboBox.getSelectionModel().select(getItem());
 						setGraphic(comboBox);
 						setText(null);
 					}
@@ -347,7 +347,7 @@ public class FightController extends HeroTabController {
 				}
 			}
 		});
-		rangedCombatAmmunitionColumn.setOnEditCommit((CellEditEvent<RangedWeapon, String> t) -> {
+		rangedCombatAmmunitionColumn.setOnEditCommit((final CellEditEvent<RangedWeapon, String> t) -> {
 			if ("Pfeile".equals(t.getNewValue()) || "Bolzen".equals(t.getNewValue())) {
 				new AmmunitionDialog(pane.getScene().getWindow(), t.getTableView().getItems().get(t.getTablePosition().getRow()));
 			} else {
@@ -417,7 +417,7 @@ public class FightController extends HeroTabController {
 	}
 
 	@Override
-	public void setHero(JSONObject hero) {
+	public void setHero(final JSONObject hero) {
 		if (this.hero != null) {
 			this.hero.removeListener(listener);
 		}
