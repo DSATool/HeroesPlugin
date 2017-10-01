@@ -102,6 +102,7 @@ public class ProsOrConsController {
 		nameColumn.setText(singular);
 
 		table.prefWidthProperty().bind(parent.widthProperty().subtract(17));
+		table.getSortOrder().add(nameColumn);
 
 		nameColumn.getStyleClass().add("left-aligned");
 		descColumn.getStyleClass().add("left-aligned");
