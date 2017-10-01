@@ -40,7 +40,7 @@ public class Attack {
 
 	private final JSONObject actual;
 
-	public Attack(String name, JSONObject actual) {
+	public Attack(final String name, final JSONObject actual) {
 		this.actual = actual;
 
 		this.name.set(name);
@@ -142,13 +142,13 @@ public class Attack {
 		return paStart;
 	}
 
-	public void setAt(int at) {
+	public void setAt(final int at) {
 		actual.put("Attackewert", at);
 		this.at.set(at);
 		actual.notifyListeners(null);
 	}
 
-	public void setAtMod(int atMod) {
+	public void setAtMod(final int atMod) {
 		if (atMod == 0) {
 			actual.removeKey("Attackewert:Modifikator");
 		} else {
@@ -158,7 +158,7 @@ public class Attack {
 		actual.notifyListeners(null);
 	}
 
-	public void setAtStart(int atStart) {
+	public void setAtStart(final int atStart) {
 		if (atStart == 0) {
 			actual.removeKey("Attackewert:Start");
 		} else {
@@ -178,7 +178,7 @@ public class Attack {
 		distanceClasses.notifyListeners(null);
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		if ("".equals(name)) return;
 		((JSONObject) actual.getParent()).remove(actual);
 		((JSONObject) actual.getParent()).put(name, actual);
@@ -186,7 +186,7 @@ public class Attack {
 		actual.notifyListeners(null);
 	}
 
-	public void setNotes(String notes) {
+	public void setNotes(final String notes) {
 		if ("".equals(notes)) {
 			actual.removeKey("Anmerkungen");
 		} else {
@@ -196,13 +196,13 @@ public class Attack {
 		actual.notifyListeners(null);
 	}
 
-	public void setPa(int pa) {
+	public void setPa(final int pa) {
 		actual.put("Paradewert", pa);
 		this.pa.set(pa);
 		actual.notifyListeners(null);
 	}
 
-	public void setPaMod(int paMod) {
+	public void setPaMod(final int paMod) {
 		if (paMod == 0) {
 			actual.removeKey("Paradewert:Modifikator");
 		} else {
@@ -212,7 +212,7 @@ public class Attack {
 		actual.notifyListeners(null);
 	}
 
-	public void setPaStart(int paStart) {
+	public void setPaStart(final int paStart) {
 		if (paStart == 0) {
 			actual.removeKey("Paradewert:Start");
 		} else {
