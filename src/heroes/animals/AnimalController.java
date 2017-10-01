@@ -462,7 +462,17 @@ public class AnimalController {
 		final JSONObject attacks = actualAnimal.getObj("Angriffe");
 		final JSONObject newAttack = new JSONObject(attacks);
 		newAttack.put("Trefferpunkte", new JSONObject(newAttack));
-		attacks.put(newAttackField.getText(), newAttack);
+		String name = newAttackField.getText();
+		name = "".equals(name) ? "Attacke" : name;
+		if (attacks.containsKey(name)) {
+			for (int i = 2; i < 100; ++i) {
+				if (!attacks.containsKey(name + i)) {
+					name = name + i;
+					break;
+				}
+			}
+		}
+		attacks.put(name, newAttack);
 		attacks.notifyListeners(null);
 	}
 
