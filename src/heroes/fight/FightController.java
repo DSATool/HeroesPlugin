@@ -256,8 +256,6 @@ public class FightController extends HeroTabController {
 
 		closeCombatTable.prefWidthProperty().bind(pane.widthProperty().subtract(17));
 
-		closeCombatNameColumn.getStyleClass().add("left-aligned");
-
 		GUIUtil.autosizeTable(closeCombatTable, 0, 0);
 		GUIUtil.cellValueFactories(closeCombatTable, "name", "type", "ebe", "tp", "at", "pa", "ini", "dk", "bf");
 
@@ -288,10 +286,9 @@ public class FightController extends HeroTabController {
 		closeCombatPAColumn.setCellFactory(UiUtil.integerCellFactory);
 		closeCombatIniColumn.setCellFactory(UiUtil.signedIntegerCellFactory);
 		closeCombatBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12, 1, false));
-		closeCombatBFColumn.setOnEditCommit(t -> t.getTableView().getItems().get(t.getTablePosition().getRow()).setBf(t.getNewValue()));
+		closeCombatBFColumn.setOnEditCommit(t -> t.getRowValue().setBf(t.getNewValue()));
 
 		rangedCombatTable.prefWidthProperty().bind(pane.widthProperty().subtract(17));
-		rangedCombatNameColumn.getStyleClass().add("left-aligned");
 
 		GUIUtil.autosizeTable(rangedCombatTable, 0, 0);
 		GUIUtil.cellValueFactories(rangedCombatTable, "name", "type", "ebe", "tp", "at", "load", "distance", "distancetp", "ammunition");
@@ -349,26 +346,22 @@ public class FightController extends HeroTabController {
 		});
 		rangedCombatAmmunitionColumn.setOnEditCommit((final CellEditEvent<RangedWeapon, String> t) -> {
 			if ("Pfeile".equals(t.getNewValue()) || "Bolzen".equals(t.getNewValue())) {
-				new AmmunitionDialog(pane.getScene().getWindow(), t.getTableView().getItems().get(t.getTablePosition().getRow()));
+				new AmmunitionDialog(pane.getScene().getWindow(), t.getRowValue());
 			} else {
-				t.getTableView().getItems().get(t.getTablePosition().getRow()).setAmmunition(Integer.valueOf(t.getNewValue()));
+				t.getRowValue().setAmmunition(Integer.valueOf(t.getNewValue()));
 			}
 		});
 
 		shieldsTable.prefWidthProperty().bind(pane.widthProperty().subtract(17));
-
-		shieldsNameColumn.getStyleClass().add("left-aligned");
 
 		GUIUtil.autosizeTable(shieldsTable, 0, 0);
 		GUIUtil.cellValueFactories(shieldsTable, "name", "at", "pa", "ini", "bf");
 
 		shieldsIniColumn.setCellFactory(UiUtil.signedIntegerCellFactory);
 		shieldsBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12, 1, false));
-		shieldsBFColumn.setOnEditCommit(t -> t.getTableView().getItems().get(t.getTablePosition().getRow()).setBf(t.getNewValue()));
+		shieldsBFColumn.setOnEditCommit(t -> t.getRowValue().setBf(t.getNewValue()));
 
 		defensiveWeaponsTable.prefWidthProperty().bind(pane.widthProperty().subtract(17));
-
-		defensiveWeaponsNameColumn.getStyleClass().add("left-aligned");
 
 		GUIUtil.autosizeTable(defensiveWeaponsTable, 0, 0);
 		GUIUtil.cellValueFactories(defensiveWeaponsTable, "name", "at", "pa", "ini", "bf");
@@ -376,13 +369,11 @@ public class FightController extends HeroTabController {
 		defensiveWeaponsPAColumn.setCellFactory(UiUtil.signedIntegerCellFactory);
 		defensiveWeaponsIniColumn.setCellFactory(UiUtil.signedIntegerCellFactory);
 		defensiveWeaponsBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12, 1, false));
-		defensiveWeaponsBFColumn.setOnEditCommit(t -> t.getTableView().getItems().get(t.getTablePosition().getRow()).setBf(t.getNewValue()));
+		defensiveWeaponsBFColumn.setOnEditCommit(t -> t.getRowValue().setBf(t.getNewValue()));
 
 		final String armorSetting = Settings.getSettingStringOrDefault("Zonenrüstung", "Kampf", "Rüstungsart");
 
 		armorTable.prefWidthProperty().bind(pane.widthProperty().subtract(17));
-
-		armorNameColumn.getStyleClass().add("left-aligned");
 
 		DoubleBinding armorWidth = armorTable.widthProperty().subtract(0);
 		if ("Zonenrüstung".equals(armorSetting)) {

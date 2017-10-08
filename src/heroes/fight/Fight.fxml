@@ -21,7 +21,7 @@
                <Label minHeight="0" />
             </placeholder>
             <columns>
-               <TableColumn fx:id="closeCombatNameColumn" text="Waffe" minWidth="100" />
+               <TableColumn fx:id="closeCombatNameColumn" text="Waffe" minWidth="100" styleClass="left-aligned" style="-fx-alignment: CENTER-LEFT;" />
                <TableColumn fx:id="closeCombatTypeColumn" text="Typ" minWidth="75" editable="true" />
                <TableColumn fx:id="closeCombatEBEColumn" text="eBE" prefWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
                <TableColumn fx:id="closeCombatTPColumn" text="TP" prefWidth="70" resizable="false" style="-fx-alignment: CENTER;" />
@@ -44,7 +44,7 @@
                <Label minHeight="0" />
             </placeholder>
             <columns>
-               <TableColumn fx:id="rangedCombatNameColumn" text="Waffe" minWidth="100" />
+               <TableColumn fx:id="rangedCombatNameColumn" text="Waffe" minWidth="100" styleClass="left-aligned" style="-fx-alignment: CENTER-LEFT;" />
                <TableColumn fx:id="rangedCombatTypeColumn" text="Typ" minWidth="75" editable="true" />
                <TableColumn fx:id="rangedCombatEBEColumn" text="eBE" prefWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
                <TableColumn fx:id="rangedCombatTPColumn" text="TP" prefWidth="70" resizable="false" style="-fx-alignment: CENTER;" />
@@ -67,7 +67,7 @@
                <Label minHeight="0" />
             </placeholder>
             <columns>
-               <TableColumn fx:id="shieldsNameColumn" text="Schild" minWidth="100" resizable="false" />
+               <TableColumn fx:id="shieldsNameColumn" text="Schild" minWidth="100" resizable="false" styleClass="left-aligned" style="-fx-alignment: CENTER-LEFT;" />
                <TableColumn fx:id="shieldsATColumn" text="AT" prefWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
                <TableColumn fx:id="shieldsPAColumn" text="PA" prefWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
                <TableColumn fx:id="shieldsIniColumn" text="Ini" prefWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
@@ -86,7 +86,7 @@
                <Label minHeight="0" />
             </placeholder>
             <columns>
-               <TableColumn fx:id="defensiveWeaponsNameColumn" text="Waffe" minWidth="100" resizable="false" />
+               <TableColumn fx:id="defensiveWeaponsNameColumn" text="Waffe" minWidth="100" resizable="false" styleClass="left-aligned" style="-fx-alignment: CENTER-LEFT;" />
                <TableColumn fx:id="defensiveWeaponsATColumn" text="AT" prefWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
                <TableColumn fx:id="defensiveWeaponsPAColumn" text="PA" prefWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
                <TableColumn fx:id="defensiveWeaponsIniColumn" text="Ini" prefWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
@@ -105,7 +105,7 @@
                <Label minHeight="0" />
             </placeholder>
             <columns>
-               <TableColumn fx:id="armorNameColumn" text="Rüstungsteil" minWidth="150" resizable="false" />
+               <TableColumn fx:id="armorNameColumn" text="Rüstungsteil" minWidth="150" resizable="false" styleClass="left-aligned" style="-fx-alignment: CENTER-LEFT;" />
                <TableColumn fx:id="armorHeadColumn" text="Kopf" prefWidth="60" resizable="false" style="-fx-alignment: CENTER;" />
                <TableColumn fx:id="armorBreastColumn" text="Brust" prefWidth="60" resizable="false" style="-fx-alignment: CENTER;" />
                <TableColumn fx:id="armorBackColumn" text="Rücken" prefWidth="60" resizable="false" style="-fx-alignment: CENTER;" />

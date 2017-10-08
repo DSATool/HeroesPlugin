@@ -156,7 +156,7 @@ public class TalentGroupController {
 			}
 		});
 		nameColumn.setOnEditCommit((final CellEditEvent<Talent, String> t) -> {
-			t.getTableView().getItems().get(t.getTablePosition().getRow()).setVariant(t.getNewValue());
+			t.getRowValue().setVariant(t.getNewValue());
 		});
 
 		this.name = name;
@@ -214,7 +214,7 @@ public class TalentGroupController {
 						return new Tuple<>(min, val - min);
 					}));
 			paColumn.setOnEditCommit((final CellEditEvent<Talent, Integer> t) -> {
-				((FightTalent) t.getTableView().getItems().get(t.getTablePosition().getRow())).setPa(t.getNewValue());
+				((FightTalent) t.getRowValue()).setPa(t.getNewValue());
 			});
 			paColumn.setVisible(true);
 		case "Fernkampftalente":
@@ -231,7 +231,7 @@ public class TalentGroupController {
 						return new Tuple<>(min, val - min);
 					}));
 			atColumn.setOnEditCommit((final CellEditEvent<Talent, Integer> t) -> {
-				((FightTalent) t.getTableView().getItems().get(t.getTablePosition().getRow())).setAt(t.getNewValue());
+				((FightTalent) t.getRowValue()).setAt(t.getNewValue());
 			});
 			++i;
 			++i;
@@ -260,7 +260,7 @@ public class TalentGroupController {
 			mlsltlColumn.setCellValueFactory(new PropertyValueFactory<Talent, String>("mlsltl"));
 			mlsltlColumn.setCellFactory(ComboBoxTableCell.forTableColumn("", "MS", "ZS", "LS"));
 			mlsltlColumn.setOnEditCommit((final CellEditEvent<Talent, String> t) -> {
-				((LanguageTalent) t.getTableView().getItems().get(t.getTablePosition().getRow())).setMlsltl(t.getNewValue());
+				((LanguageTalent) t.getRowValue()).setMlsltl(t.getNewValue());
 			});
 			++i;
 			final TableColumn complexityColumn = table.getColumns().get(i);
@@ -286,7 +286,7 @@ public class TalentGroupController {
 			spellPrimaryColumn.setCellValueFactory(new PropertyValueFactory<Talent, Boolean>("primarySpell"));
 			spellPrimaryColumn.setCellFactory(CheckBoxTableCell.forTableColumn(spellPrimaryColumn));
 			spellPrimaryColumn.setOnEditCommit((final CellEditEvent<Talent, Boolean> t) -> {
-				((Spell) t.getTableView().getItems().get(t.getTablePosition().getRow())).setPrimarySpell(t.getNewValue());
+				((Spell) t.getRowValue()).setPrimarySpell(t.getNewValue());
 			});
 			++i;
 			contextMenu.getItems().add(rollItem);
@@ -324,7 +324,7 @@ public class TalentGroupController {
 		primaryColumn.setCellValueFactory(new PropertyValueFactory<Talent, Boolean>("primaryTalent"));
 		primaryColumn.setCellFactory(CheckBoxTableCell.forTableColumn(primaryColumn));
 		primaryColumn.setOnEditCommit((final CellEditEvent<Talent, Boolean> t) -> {
-			t.getTableView().getItems().get(t.getTablePosition().getRow()).setPrimaryTalent(t.getNewValue());
+			t.getRowValue().setPrimaryTalent(t.getNewValue());
 		});
 		++i;
 
@@ -332,7 +332,7 @@ public class TalentGroupController {
 		sesColumn.setCellValueFactory(new PropertyValueFactory<Talent, Integer>("ses"));
 		sesColumn.setCellFactory(o -> new IntegerSpinnerTableCell(0, 9, 1, false));
 		sesColumn.setOnEditCommit((final CellEditEvent<Talent, Integer> t) -> {
-			t.getTableView().getItems().get(t.getTablePosition().getRow()).setSes(t.getNewValue());
+			t.getRowValue().setSes(t.getNewValue());
 		});
 		++i;
 
@@ -358,9 +358,9 @@ public class TalentGroupController {
 		});
 		valueColumn.setOnEditCommit((final CellEditEvent<Talent, Integer> t) -> {
 			if (HeroTabController.isEditable.get()) {
-				t.getTableView().getItems().get(t.getTablePosition().getRow()).setValue(t.getNewValue());
+				t.getRowValue().setValue(t.getNewValue());
 			} else {
-				new TalentEnhancementDialog(pane.getScene().getWindow(), t.getTableView().getItems().get(t.getTablePosition().getRow()), hero, t.getNewValue());
+				new TalentEnhancementDialog(pane.getScene().getWindow(), t.getRowValue(), hero, t.getNewValue());
 			}
 		});
 

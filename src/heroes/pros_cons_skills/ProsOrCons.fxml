@@ -25,9 +25,9 @@
             <Label minHeight="0" />
          </placeholder>
          <columns>
-            <TableColumn fx:id="nameColumn" minWidth="240" editable="false" />
-            <TableColumn fx:id="descColumn" text="Beschreibung" minWidth="200" editable="true" />
-            <TableColumn fx:id="variantColumn" text="Variante" minWidth="200" editable="true" />
+            <TableColumn fx:id="nameColumn" minWidth="240" editable="false" styleClass="left-aligned" style="-fx-alignment: CENTER-LEFT;" />
+            <TableColumn fx:id="descColumn" text="Beschreibung" minWidth="200" editable="true" styleClass="left-aligned" style="-fx-alignment: CENTER-LEFT;" />
+            <TableColumn fx:id="variantColumn" text="Variante" minWidth="200" editable="true" styleClass="left-aligned" style="-fx-alignment: CENTER-LEFT;" />
             <TableColumn fx:id="valueColumn" text="Wert" prefWidth="75" resizable="false" editable="true" style="-fx-alignment: CENTER;" />
             <TableColumn fx:id="validColumn" minWidth="0" maxWidth="0" prefWidth="0" />
          </columns>	

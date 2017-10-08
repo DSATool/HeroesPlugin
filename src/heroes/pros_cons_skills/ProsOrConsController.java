@@ -104,10 +104,6 @@ public class ProsOrConsController {
 		table.prefWidthProperty().bind(parent.widthProperty().subtract(17));
 		table.getSortOrder().add(nameColumn);
 
-		nameColumn.getStyleClass().add("left-aligned");
-		descColumn.getStyleClass().add("left-aligned");
-		variantColumn.getStyleClass().add("left-aligned");
-
 		DoubleBinding width = table.widthProperty().subtract(2);
 		width = width.subtract(nameColumn.widthProperty());
 
@@ -165,7 +161,7 @@ public class ProsOrConsController {
 				}
 			}
 		});
-		descColumn.setOnEditCommit(t -> t.getTableView().getItems().get(t.getTablePosition().getRow()).setDescription(t.getNewValue()));
+		descColumn.setOnEditCommit(t -> t.getRowValue().setDescription(t.getNewValue()));
 
 		variantColumn.setCellValueFactory(new PropertyValueFactory<ProOrCon, String>("variant"));
 		variantColumn.setCellFactory(c -> new GraphicTableCell<ProOrCon, String>(false) {
@@ -195,7 +191,7 @@ public class ProsOrConsController {
 				}
 			}
 		});
-		variantColumn.setOnEditCommit(t -> t.getTableView().getItems().get(t.getTablePosition().getRow()).setVariant(t.getNewValue()));
+		variantColumn.setOnEditCommit(t -> t.getRowValue().setVariant(t.getNewValue()));
 
 		valueColumn.setCellValueFactory(new PropertyValueFactory<ProOrCon, Integer>("value"));
 		valueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<ProOrCon>(0, 9999, 1, false) {
@@ -212,9 +208,9 @@ public class ProsOrConsController {
 		});
 		valueColumn.setOnEditCommit(t -> {
 			if (HeroTabController.isEditable.get()) {
-				t.getTableView().getItems().get(t.getTablePosition().getRow()).setValue(t.getNewValue());
+				t.getRowValue().setValue(t.getNewValue());
 			} else {
-				new QuirkReductionDialog(pane.getScene().getWindow(), t.getTableView().getItems().get(t.getTablePosition().getRow()), hero, t.getNewValue());
+				new QuirkReductionDialog(pane.getScene().getWindow(), t.getRowValue(), hero, t.getNewValue());
 			}
 		});
 

@@ -29,7 +29,7 @@ import jsonant.value.JSONObject;
 
 public class CheaperSkillsController extends ProsOrConsController {
 
-	public CheaperSkillsController(ScrollPane parent) {
+	public CheaperSkillsController(final ScrollPane parent) {
 		super(parent, "Verbilligte Sonderfertigkeiten", "Sonderfertigkeit", true, true, null, "Verbilligte Sonderfertigkeiten",
 				new SimpleBooleanProperty(true));
 
@@ -37,7 +37,7 @@ public class CheaperSkillsController extends ProsOrConsController {
 		valueColumn.setPrefWidth(100);
 		valueColumn.setCellValueFactory(new PropertyValueFactory<ProOrCon, Integer>("numCheaper"));
 		valueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(1, 9, 1, false));
-		valueColumn.setOnEditCommit(t -> t.getTableView().getItems().get(t.getTablePosition().getRow()).setNumCheaper(t.getNewValue()));
+		valueColumn.setOnEditCommit(t -> t.getRowValue().setNumCheaper(t.getNewValue()));
 
 		deleteItem.setOnAction(o -> {
 			final JSONObject actual = hero.getObj(category);

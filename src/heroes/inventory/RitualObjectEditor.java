@@ -199,7 +199,7 @@ public class RitualObjectEditor {
 				}
 			}
 		});
-		choiceColumn.setOnEditCommit(t -> t.getTableView().getItems().get(t.getTablePosition().getRow()).setChoice(t.getNewValue()));
+		choiceColumn.setOnEditCommit(t -> t.getRowValue().setChoice(t.getNewValue()));
 
 		final ContextMenu contextMenu = new ContextMenu();
 		final MenuItem contextMenuItem = new MenuItem("Löschen");
