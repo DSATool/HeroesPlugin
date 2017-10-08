@@ -15,6 +15,8 @@
  */
 package heroes.general;
 
+import java.time.LocalDate;
+
 import dsa41basis.hero.Attribute;
 import dsa41basis.util.DSAUtil;
 import dsatool.resources.ResourceManager;
@@ -30,6 +32,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import jsonant.value.JSONArray;
 import jsonant.value.JSONObject;
 
 public class AttributeEnhancementDialog {
@@ -54,7 +57,7 @@ public class AttributeEnhancementDialog {
 
 	private final boolean isMiserable;
 
-	public AttributeEnhancementDialog(final Window window, Attribute attribute, JSONObject hero, int initialTarget) {
+	public AttributeEnhancementDialog(final Window window, final Attribute attribute, final JSONObject hero, final int initialTarget) {
 		final FXMLLoader fxmlLoader = new FXMLLoader();
 
 		fxmlLoader.setController(this);
@@ -78,10 +81,26 @@ public class AttributeEnhancementDialog {
 		ses.valueProperty().addListener((o, oldV, newV) -> cost.getValueFactory().setValue(getCalculatedCost(attribute, hero)));
 
 		okButton.setOnAction(event -> {
+			final int usedSes = Math.min(target.getValue() - attribute.getValue(), ses.getValue());
+			final JSONArray history = hero.getArr("Steigerungshistorie");
+			final JSONObject historyEntry = new JSONObject(history);
+			historyEntry.put("Typ", "Eigenschaft");
+			historyEntry.put("Eigenschaft", attribute.getName());
+			historyEntry.put("Von", attribute.getValue());
+			historyEntry.put("Auf", target.getValue());
+			if (usedSes > 0) {
+				historyEntry.put("SEs", usedSes);
+			}
+			historyEntry.put("AP", cost.getValue());
+			final LocalDate currentDate = LocalDate.now();
+			historyEntry.put("Datum", currentDate.toString());
+			history.add(historyEntry);
+
 			final JSONObject bio = hero.getObj("Biografie");
 			bio.put("Abenteuerpunkte-Guthaben", bio.getIntOrDefault("Abenteuerpunkte-Guthaben", 0) - cost.getValue());
 			attribute.setValue(target.getValue());
-			attribute.setSes(Math.max(attribute.getSes() - Math.min(ses.getValue(), target.getValue() - attribute.getValue()), 0));
+			attribute.setSes(Math.max(attribute.getSes() - usedSes, 0));
+
 			stage.close();
 		});
 
@@ -100,7 +119,7 @@ public class AttributeEnhancementDialog {
 		stage.show();
 	}
 
-	private int getCalculatedCost(Attribute attribute, JSONObject hero) {
+	private int getCalculatedCost(final Attribute attribute, final JSONObject hero) {
 		final int SELevel = attribute.getValue() + Math.min(target.getValue() - attribute.getValue(), ses.getValue());
 		return (DSAUtil.getEnhancementCost(7, attribute.getValue(), SELevel) + DSAUtil.getEnhancementCost(8, SELevel, target.getValue()))
 				* (isMiserable ? 2 : 1);

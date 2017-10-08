@@ -15,6 +15,8 @@
  */
 package heroes.pros_cons_skills;
 
+import java.time.LocalDate;
+
 import dsa41basis.hero.ProOrCon;
 import dsa41basis.hero.ProOrCon.ChoiceOrTextEnum;
 import dsa41basis.util.HeroUtil;
@@ -55,7 +57,7 @@ public class SkillAcquisitionDialog {
 	@FXML
 	private ReactiveSpinner<Integer> cost;
 
-	public SkillAcquisitionDialog(final Window window, ProOrCon actualSkill, JSONObject hero) {
+	public SkillAcquisitionDialog(final Window window, final ProOrCon actualSkill, final JSONObject hero) {
 		final FXMLLoader fxmlLoader = new FXMLLoader();
 
 		fxmlLoader.setController(this);
@@ -104,9 +106,10 @@ public class SkillAcquisitionDialog {
 			bio.put("Abenteuerpunkte-Guthaben", bio.getIntOrDefault("Abenteuerpunkte-Guthaben", 0) - cost.getValue());
 			final JSONObject skills = hero.getObj("Sonderfertigkeiten");
 			final JSONObject cheaperSkills = hero.getObj("Verbilligte Sonderfertigkeiten");
+			JSONObject newSkill;
 			if (hasChoice || hasText) {
 				final JSONArray choices = skills.getArr(name);
-				final JSONObject newSkill = actual.clone(choices);
+				newSkill = actual.clone(choices);
 				newSkill.put("Kosten", cost.getValue());
 				choices.add(newSkill);
 				choices.notifyListeners(null);
@@ -124,7 +127,7 @@ public class SkillAcquisitionDialog {
 					}
 				}
 			} else {
-				final JSONObject newSkill = actual.clone(skills);
+				newSkill = actual.clone(skills);
 				newSkill.put("Kosten", cost.getValue());
 				skills.put(name, newSkill);
 				skills.notifyListeners(null);
@@ -134,6 +137,22 @@ public class SkillAcquisitionDialog {
 				}
 			}
 			HeroUtil.applyEffect(hero, name, skill, actual);
+
+			final JSONArray history = hero.getArr("Steigerungshistorie");
+			final JSONObject historyEntry = new JSONObject(history);
+			historyEntry.put("Typ", "Sonderfertigkeit");
+			historyEntry.put("Sonderfertigkeit", actualSkill.getName());
+			if (skill.containsKey("Auswahl")) {
+				historyEntry.put("Auswahl", newSkill.getString("Auswahl"));
+			}
+			if (skill.containsKey("Freitext")) {
+				historyEntry.put("Freitext", newSkill.getString("Freitext"));
+			}
+			historyEntry.put("AP", cost.getValue());
+			final LocalDate currentDate = LocalDate.now();
+			historyEntry.put("Datum", currentDate.toString());
+			history.add(historyEntry);
+
 			stage.close();
 		});
 

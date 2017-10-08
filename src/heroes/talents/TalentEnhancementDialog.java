@@ -15,6 +15,9 @@
  */
 package heroes.talents;
 
+import java.time.LocalDate;
+
+import dsa41basis.hero.Spell;
 import dsa41basis.hero.Talent;
 import dsa41basis.util.DSAUtil;
 import dsatool.resources.Settings;
@@ -32,6 +35,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import javafx.util.StringConverter;
+import jsonant.value.JSONArray;
 import jsonant.value.JSONObject;
 
 public class TalentEnhancementDialog {
@@ -55,6 +60,7 @@ public class TalentEnhancementDialog {
 	private ReactiveSpinner<Integer> cost;
 
 	int startValue;
+	final boolean basis;
 
 	public TalentEnhancementDialog(final Window window, final Talent talent, final JSONObject hero, final int initialTarget) {
 		final FXMLLoader fxmlLoader = new FXMLLoader();
@@ -73,15 +79,61 @@ public class TalentEnhancementDialog {
 		stage.initModality(Modality.WINDOW_MODAL);
 		stage.initOwner(window);
 
+		basis = talent.getTalent().getBoolOrDefault("Basis", false);
+
 		target.valueProperty().addListener((o, oldV, newV) -> cost.getValueFactory().setValue(getCalculatedCost(talent, hero)));
 		ses.valueProperty().addListener((o, oldV, newV) -> cost.getValueFactory().setValue(getCalculatedCost(talent, hero)));
 		method.getSelectionModel().selectedItemProperty().addListener((o, oldV, newV) -> cost.getValueFactory().setValue(getCalculatedCost(talent, hero)));
 
 		okButton.setOnAction(event -> {
+			final int usedSes = Math.min(ses.getValue(), target.getValue() - startValue);
+			final JSONArray history = hero.getArr("Steigerungshistorie");
+			final JSONObject historyEntry = new JSONObject(history);
+			if (talent instanceof Spell) {
+				historyEntry.put("Typ", "Zauber");
+				historyEntry.put("Zauber", talent.getName());
+				historyEntry.put("Repräsentation", ((Spell) talent).getRepresentation());
+			} else {
+				historyEntry.put("Typ", "Talent");
+				historyEntry.put("Talent", talent.getName());
+			}
+			if (talent.getTalent().containsKey("Auswahl")) {
+				historyEntry.put("Auswahl", talent.getActual().getString("Auswahl"));
+			}
+			if (talent.getTalent().containsKey("Freitext")) {
+				historyEntry.put("Freitext", talent.getActual().getString("Freitext"));
+			}
+			if (talent.getValue() != Integer.MIN_VALUE) {
+				historyEntry.put("Von", talent.getValue() < 0 && !basis ? talent.getValue() + 1 : talent.getValue());
+			}
+			if (target.getValue() != -1 || basis) {
+				historyEntry.put("Auf", target.getValue() < 0 && !basis ? target.getValue() + 1 : target.getValue());
+			}
+			historyEntry.put("Von", talent.getValue() == Integer.MIN_VALUE ? "n.a." : Integer.toString(talent.getValue()));
+			historyEntry.put("Auf", target.getValueFactory().getConverter().toString(target.getValue()));
+			if (usedSes > 0) {
+				historyEntry.put("SEs", usedSes);
+			}
+			historyEntry.put("Methode", method.getValue());
+			historyEntry.put("AP", cost.getValue());
+			final LocalDate currentDate = LocalDate.now();
+			historyEntry.put("Datum", currentDate.toString());
+			history.add(historyEntry);
+
 			final JSONObject bio = hero.getObj("Biografie");
 			bio.put("Abenteuerpunkte-Guthaben", bio.getIntOrDefault("Abenteuerpunkte-Guthaben", 0) - cost.getValue());
-			talent.setValue(target.getValue());
-			talent.setSes(Math.max(talent.getSes() - Math.min(ses.getValue(), target.getValue() - talent.getValue()), 0));
+			final int targetValue = target.getValue();
+			if (targetValue < 0 && !basis) {
+				if (targetValue == -1) {
+					talent.setValue(Integer.MIN_VALUE);
+				} else {
+					talent.setValue(targetValue + 1);
+				}
+			} else {
+				talent.setValue(targetValue);
+			}
+			talent.setSes(Math.max(talent.getSes() - usedSes, 0));
+
 			stage.close();
 		});
 
@@ -92,12 +144,45 @@ public class TalentEnhancementDialog {
 		startValue = talent.getValue();
 		if (startValue == Integer.MIN_VALUE) {
 			startValue = -1;
+		} else if (startValue < 0 && !basis) {
+			--startValue;
 		}
 
 		nameLabel.setText(talent.getName());
-		startLabel.setText(talent.getValue() == Integer.MIN_VALUE ? "n.a." : Integer.toString(startValue));
-		((IntegerSpinnerValueFactory) target.getValueFactory()).setMin(talent.getValue() == Integer.MIN_VALUE ? 0 : startValue);
-		target.getValueFactory().setValue(initialTarget);
+		startLabel.setText(startValue < 0 && !basis ? startValue == -1 ? "n.a." : Integer.toString(startValue + 1) : Integer.toString(startValue));
+
+		target.getValueFactory().setConverter(new StringConverter<Integer>() {
+			@Override
+			public Integer fromString(final String string) {
+				if ("n.a.".equals(string))
+					return -1;
+				else {
+					int result = Integer.parseInt(string);
+					if (result < 0 && !basis) {
+						--result;
+					}
+					return result;
+				}
+			}
+
+			@Override
+			public String toString(final Integer target) {
+				if (target < 0 && !basis) {
+					if (target == -1)
+						return "n.a.";
+					else
+						return Integer.toString(target + 1);
+				} else
+					return Integer.toString(target);
+			}
+		});
+
+		((IntegerSpinnerValueFactory) target.getValueFactory()).setMin(startValue + 1);
+		if (initialTarget < 0 && !basis) {
+			target.getValueFactory().setValue(initialTarget - 1);
+		} else {
+			target.getValueFactory().setValue(initialTarget);
+		}
 		ses.getValueFactory().setValue(talent.getSes());
 		method.setItems(FXCollections.observableArrayList("Lehrmeister", "Gegenseitiges Lehren", "Selbststudium"));
 		method.getSelectionModel().select(Settings.getSettingStringOrDefault("Gegenseitiges Lehren", "Steigerung", "Lernmethode"));

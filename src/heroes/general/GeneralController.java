@@ -15,6 +15,8 @@
  */
 package heroes.general;
 
+import java.time.LocalDate;
+
 import dsa41basis.hero.Attribute;
 import dsa41basis.hero.DerivedValue;
 import dsa41basis.util.DSAUtil;
@@ -137,18 +139,20 @@ public class GeneralController extends HeroTabController {
 	@FXML
 	private ReactiveSpinner<Integer> freeAp;
 
+	private boolean update = false;
+
 	private final JSONListener heroBioListener = o -> {
 		setBiography();
 		setAppearance();
 	};
 
 	private final ChangeListener<Object> bioListener = (observable, oldValue, newValue) -> {
-		if (newValue == null || oldValue == null || oldValue.equals(newValue)) return;
-		final JSONObject bio = hero.getObj("Biografie");
+		if (update || newValue == null || oldValue == null || oldValue.equals(newValue)) return;
+		final JSONObject bio = getHero().getObj("Biografie");
 		bio.put("Vorname", name.getText());
 		bio.put("Nachname", surname.getText());
-		hero.put("Spieler", player.getText());
-		hero.getObj("Basiswerte").getObj("Sozialstatus").put("Wert", socialstate.getValue());
+		getHero().put("Spieler", player.getText());
+		getHero().getObj("Basiswerte").getObj("Sozialstatus").put("Wert", socialstate.getValue());
 		bio.put("Abenteuerpunkte", ap.getValue());
 		bio.put("Abenteuerpunkte-Guthaben", freeAp.getValue());
 		changeModifiedString("Rasse", race.getText());
@@ -168,9 +172,9 @@ public class GeneralController extends HeroTabController {
 			bio.put(bio.containsKey("Schuppenfarbe 2") ? "Schuppenfarbe 2" : "Hautfarbe", skincolor.getValue());
 		}
 		bio.notifyListeners(heroBioListener);
-		hero.getObj("Basiswerte").notifyListeners(heroBioListener);
+		getHero().getObj("Basiswerte").notifyListeners(heroBioListener);
 		if (name.focusedProperty().equals(observable)) {
-			ResourceManager.moveResource(hero, "characters/" + bio.getString("Vorname"));
+			ResourceManager.moveResource(getHero(), "characters/" + bio.getString("Vorname"));
 		}
 	};
 
@@ -220,6 +224,10 @@ public class GeneralController extends HeroTabController {
 		return pane;
 	}
 
+	private JSONObject getHero() {
+		return hero;
+	}
+
 	@Override
 	protected String getText() {
 		return "Allgemein";
@@ -260,14 +268,14 @@ public class GeneralController extends HeroTabController {
 		attributesValueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 30, 1, false));
 		attributesValueColumn.setOnEditCommit(t -> {
 			if (HeroTabController.isEditable.get()) {
-				t.getTableView().getItems().get(t.getTablePosition().getRow()).setValue(t.getNewValue());
+				t.getRowValue().setValue(t.getNewValue());
 			} else {
-				new AttributeEnhancementDialog(pane.getScene().getWindow(), t.getTableView().getItems().get(t.getTablePosition().getRow()), hero,
+				new AttributeEnhancementDialog(pane.getScene().getWindow(), t.getRowValue(), hero,
 						t.getNewValue());
 			}
 		});
 		attributesModifierColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99, 1, false));
-		attributesModifierColumn.setOnEditCommit(t -> t.getTableView().getItems().get(t.getTablePosition().getRow()).setManualModifier(t.getNewValue()));
+		attributesModifierColumn.setOnEditCommit(t -> t.getRowValue().setManualModifier(t.getNewValue()));
 
 		final ContextMenu attributesContextMenu = new ContextMenu();
 		final MenuItem attributesEnhanceItem = new MenuItem("Steigern");
@@ -289,7 +297,7 @@ public class GeneralController extends HeroTabController {
 		GUIUtil.autosizeTable(derivedValuesTable, 0, 2);
 		GUIUtil.cellValueFactories(derivedValuesTable, "name", "manualModifier", "current");
 		derivedModifierColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99, 1, false));
-		derivedModifierColumn.setOnEditCommit(t -> t.getTableView().getItems().get(t.getTablePosition().getRow()).setManualModifier(t.getNewValue()));
+		derivedModifierColumn.setOnEditCommit(t -> t.getRowValue().setManualModifier(t.getNewValue()));
 		derivedCurrentColumn.setCellValueFactory(new PropertyValueFactory<DerivedValue, Integer>("current"));
 
 		final ContextMenu derivedContextMenu = new ContextMenu();
@@ -306,18 +314,18 @@ public class GeneralController extends HeroTabController {
 		GUIUtil.autosizeTable(energiesTable, 4, 2);
 		GUIUtil.cellValueFactories(energiesTable, "name", "permanent", "bought", "manualModifier", "currentPercentage");
 		energiesPermanentColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99, 1, false));
-		energiesPermanentColumn.setOnEditCommit(t -> t.getTableView().getItems().get(t.getTablePosition().getRow()).setPermanent(t.getNewValue()));
+		energiesPermanentColumn.setOnEditCommit(t -> t.getRowValue().setPermanent(t.getNewValue()));
 		energiesBoughtColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 99, 1, false));
 		energiesBoughtColumn.setOnEditCommit(t -> {
 			if (HeroTabController.isEditable.get()) {
-				t.getTableView().getItems().get(t.getTablePosition().getRow()).setBought(t.getNewValue());
+				t.getRowValue().setBought(t.getNewValue());
 			} else {
-				final Energy energy = t.getTableView().getItems().get(t.getTablePosition().getRow());
+				final Energy energy = t.getRowValue();
 				new EnergyEnhancementDialog(pane.getScene().getWindow(), energy, hero, energy.getMax() - energy.getBought() + t.getNewValue());
 			}
 		});
 		energiesModifierColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99, 1, false));
-		energiesModifierColumn.setOnEditCommit(t -> t.getTableView().getItems().get(t.getTablePosition().getRow()).setManualModifier(t.getNewValue()));
+		energiesModifierColumn.setOnEditCommit(t -> t.getRowValue().setManualModifier(t.getNewValue()));
 		energiesCurrentColumn.setCellFactory(o -> new ColoredProgressBarTableCell<>());
 
 		final ContextMenu energiesContextMenu = new ContextMenu();
@@ -343,9 +351,7 @@ public class GeneralController extends HeroTabController {
 		});
 		energiesTable.setContextMenu(energiesContextMenu);
 
-		ap.valueProperty().addListener((o, oldV, newV) -> {
-			freeAp.getValueFactory().setValue(freeAp.getValue() + newV - oldV);
-		});
+		registerListeners();
 	}
 
 	private void registerListeners() {
@@ -354,6 +360,25 @@ public class GeneralController extends HeroTabController {
 		player.focusedProperty().addListener(bioListener);
 
 		socialstate.valueProperty().addListener(bioListener);
+		ap.valueProperty().addListener((o, oldV, newV) -> {
+			freeAp.getValueFactory().setValue(freeAp.getValue() + newV - oldV);
+			if (!update && oldV != newV) {
+				final JSONArray history = getHero().getArr("Steigerungshistorie");
+				final JSONObject lastEntry = history.size() == 0 ? null : history.getObj(history.size() - 1);
+				final LocalDate currentDate = LocalDate.now();
+				if (lastEntry != null && "Abenteuerpunkte".equals(lastEntry.getString("Typ"))
+						&& currentDate.equals(LocalDate.parse(lastEntry.getString("Datum")))) {
+					lastEntry.put("Auf", newV);
+				} else {
+					final JSONObject historyEntry = new JSONObject(history);
+					historyEntry.put("Typ", "Abenteuerpunkte");
+					historyEntry.put("Von", oldV);
+					historyEntry.put("Auf", newV);
+					historyEntry.put("Datum", currentDate.toString());
+					history.add(historyEntry);
+				}
+			}
+		});
 		freeAp.valueProperty().addListener(bioListener);
 
 		race.focusedProperty().addListener(bioListener);
@@ -456,7 +481,10 @@ public class GeneralController extends HeroTabController {
 		player.setText(hero.getStringOrDefault("Spieler", ""));
 
 		socialstate.getValueFactory().setValue(hero.getObj("Basiswerte").getObj("Sozialstatus").getIntOrDefault("Wert", 0));
+		final boolean isUpdate = update;
+		update = true;
 		ap.getValueFactory().setValue(bio.getIntOrDefault("Abenteuerpunkte", 0));
+		update = isUpdate;
 		freeAp.getValueFactory().setValue(bio.getIntOrDefault("Abenteuerpunkte-Guthaben", 0));
 
 		final StringBuilder raceString = new StringBuilder(bio.getStringOrDefault("Rasse", ""));
@@ -512,11 +540,14 @@ public class GeneralController extends HeroTabController {
 	}
 
 	@Override
-	public void setHero(JSONObject hero) {
+	public void setHero(final JSONObject hero) {
 		if (this.hero != null) {
 			this.hero.removeListener(heroBioListener);
 		}
 		super.setHero(hero);
+		if (hero != null) {
+			hero.addListener(heroBioListener);
+		}
 	}
 
 	@FXML
@@ -526,33 +557,10 @@ public class GeneralController extends HeroTabController {
 
 	@Override
 	protected void update() {
-		if (bioListener != null) {
-			name.focusedProperty().removeListener(bioListener);
-			surname.focusedProperty().removeListener(bioListener);
-			player.focusedProperty().removeListener(bioListener);
-
-			socialstate.valueProperty().removeListener(bioListener);
-			ap.valueProperty().removeListener(bioListener);
-			freeAp.valueProperty().removeListener(bioListener);
-
-			race.focusedProperty().removeListener(bioListener);
-			culture.focusedProperty().removeListener(bioListener);
-			profession.focusedProperty().removeListener(bioListener);
-
-			birthday.valueProperty().removeListener(bioListener);
-			birthmonth.getSelectionModel().selectedIndexProperty().removeListener(bioListener);
-			birthyear.valueProperty().removeListener(bioListener);
-			gender.getSelectionModel().selectedIndexProperty().removeListener(bioListener);
-			size.valueProperty().removeListener(bioListener);
-			weight.valueProperty().removeListener(bioListener);
-			eyecolor.valueProperty().removeListener(bioListener);
-			haircolor.valueProperty().removeListener(bioListener);
-			skincolor.valueProperty().removeListener(bioListener);
-		}
+		update = true;
 		setBiography();
 		setAppearance();
 		setAttributesAndDerivedValues();
-		registerListeners();
-		hero.addListener(heroBioListener);
+		update = false;
 	}
 }

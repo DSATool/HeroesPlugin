@@ -15,6 +15,8 @@
  */
 package heroes.pros_cons_skills;
 
+import java.time.LocalDate;
+
 import dsa41basis.hero.ProOrCon;
 import dsatool.util.ErrorLogger;
 import dsatool.util.ReactiveSpinner;
@@ -28,6 +30,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import jsonant.value.JSONArray;
 import jsonant.value.JSONObject;
 
 public class QuirkReductionDialog {
@@ -48,7 +51,7 @@ public class QuirkReductionDialog {
 	@FXML
 	private ReactiveSpinner<Integer> cost;
 
-	public QuirkReductionDialog(final Window window, ProOrCon quirk, JSONObject hero, int initialTarget) {
+	public QuirkReductionDialog(final Window window, final ProOrCon quirk, final JSONObject hero, final int initialTarget) {
 		final FXMLLoader fxmlLoader = new FXMLLoader();
 
 		fxmlLoader.setController(this);
@@ -69,6 +72,21 @@ public class QuirkReductionDialog {
 		ses.valueProperty().addListener((o, oldV, newV) -> cost.getValueFactory().setValue(getCalculatedCost(quirk, hero)));
 
 		okButton.setOnAction(event -> {
+			final JSONArray history = hero.getArr("Steigerungshistorie");
+			final JSONObject historyEntry = new JSONObject(history);
+			historyEntry.put("Typ", "Schlechte Eigenschaft");
+			historyEntry.put("Schlechte Eigenschaft", quirk.getName());
+			historyEntry.put("Von", quirk.getValue());
+			historyEntry.put("Auf", target.getValue());
+			final int usedSes = Math.min(quirk.getValue() - target.getValue(), ses.getValue());
+			if (usedSes > 0) {
+				historyEntry.put("SEs", usedSes);
+			}
+			historyEntry.put("AP", cost.getValue());
+			final LocalDate currentDate = LocalDate.now();
+			historyEntry.put("Datum", currentDate.toString());
+			history.add(historyEntry);
+
 			final JSONObject bio = hero.getObj("Biografie");
 			bio.put("Abenteuerpunkte-Guthaben", bio.getIntOrDefault("Abenteuerpunkte-Guthaben", 0) - cost.getValue());
 			if (target.getValue() == 0) {
@@ -83,6 +101,7 @@ public class QuirkReductionDialog {
 			} else {
 				quirk.setValue(target.getValue());
 			}
+
 			stage.close();
 		});
 
@@ -99,7 +118,7 @@ public class QuirkReductionDialog {
 		stage.show();
 	}
 
-	private int getCalculatedCost(ProOrCon quirk, JSONObject hero) {
+	private int getCalculatedCost(final ProOrCon quirk, final JSONObject hero) {
 		final int SELevel = quirk.getValue() - Math.min(ses.getValue(), quirk.getValue() - target.getValue());
 		return (int) (((quirk.getValue() - SELevel) * 50 + (SELevel - target.getValue()) * 75) * quirk.getProOrCon().getDoubleOrDefault("Kosten", 1.0));
 	}
