@@ -20,6 +20,8 @@ import java.time.LocalDate;
 import dsa41basis.hero.ProOrCon;
 import dsa41basis.hero.ProOrCon.ChoiceOrTextEnum;
 import dsa41basis.util.HeroUtil;
+import dsatool.resources.ResourceManager;
+import dsatool.resources.Settings;
 import dsatool.util.ErrorLogger;
 import dsatool.util.ReactiveSpinner;
 import javafx.collections.FXCollections;
@@ -30,6 +32,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -55,7 +58,11 @@ public class SkillAcquisitionDialog {
 	@FXML
 	private ComboBox<String> variant;
 	@FXML
-	private ReactiveSpinner<Integer> cost;
+	private ReactiveSpinner<Integer> ap;
+	@FXML
+	private HBox costBox;
+	@FXML
+	private ReactiveSpinner<Double> cost;
 
 	public SkillAcquisitionDialog(final Window window, final ProOrCon actualSkill, final JSONObject hero) {
 		final FXMLLoader fxmlLoader = new FXMLLoader();
@@ -68,15 +75,22 @@ public class SkillAcquisitionDialog {
 			ErrorLogger.logError(e);
 		}
 
+		final boolean includeCost = Settings.getSettingBoolOrDefault(true, "Steigerung", "Lehrmeisterkosten");
+
 		final JSONObject skill = actualSkill.getProOrCon();
 		final JSONObject actual = actualSkill.getActual();
 		final String name = actualSkill.getName();
 		final boolean hasChoice = skill.containsKey("Auswahl");
 		final boolean hasText = skill.containsKey("Freitext");
 
+		if (!includeCost) {
+			costBox.setVisible(false);
+			costBox.setManaged(false);
+		}
+
 		final Stage stage = new Stage();
 		stage.setTitle("Sonderfertigkeit erwerben");
-		stage.setScene(new Scene(root, 300, 130 - (hasChoice ? 0 : 27) - (hasText ? 0 : 27)));
+		stage.setScene(new Scene(root, 300, 157 - (hasChoice ? 0 : 27) - (hasText ? 0 : 27) - (includeCost ? 0 : 27)));
 		stage.initModality(Modality.WINDOW_MODAL);
 		stage.initOwner(window);
 
@@ -93,24 +107,26 @@ public class SkillAcquisitionDialog {
 			actualSkill.setDescription(newV);
 			variant.setItems(FXCollections.observableArrayList(actualSkill.getSecondChoiceItems(true)));
 			variant.getSelectionModel().select(0);
-			cost.getValueFactory().setValue(actualSkill.getCost());
+			ap.getValueFactory().setValue(actualSkill.getCost());
 		});
 
 		variant.getSelectionModel().selectedItemProperty().addListener((o, oldV, newV) -> {
 			actualSkill.setVariant(newV);
-			cost.getValueFactory().setValue(actualSkill.getCost());
+			ap.getValueFactory().setValue(actualSkill.getCost());
 		});
+
+		ap.valueProperty().addListener((o, oldV, newV) -> cost.getValueFactory().setValue(getCalculatedCost(actualSkill)));
 
 		okButton.setOnAction(event -> {
 			final JSONObject bio = hero.getObj("Biografie");
-			bio.put("Abenteuerpunkte-Guthaben", bio.getIntOrDefault("Abenteuerpunkte-Guthaben", 0) - cost.getValue());
+			bio.put("Abenteuerpunkte-Guthaben", bio.getIntOrDefault("Abenteuerpunkte-Guthaben", 0) - ap.getValue());
 			final JSONObject skills = hero.getObj("Sonderfertigkeiten");
 			final JSONObject cheaperSkills = hero.getObj("Verbilligte Sonderfertigkeiten");
 			JSONObject newSkill;
 			if (hasChoice || hasText) {
 				final JSONArray choices = skills.getArr(name);
 				newSkill = actual.clone(choices);
-				newSkill.put("Kosten", cost.getValue());
+				newSkill.put("Kosten", ap.getValue());
 				choices.add(newSkill);
 				choices.notifyListeners(null);
 				if (cheaperSkills.containsKey(name)) {
@@ -128,7 +144,7 @@ public class SkillAcquisitionDialog {
 				}
 			} else {
 				newSkill = actual.clone(skills);
-				newSkill.put("Kosten", cost.getValue());
+				newSkill.put("Kosten", ap.getValue());
 				skills.put(name, newSkill);
 				skills.notifyListeners(null);
 				if (cheaperSkills.containsKey(name)) {
@@ -148,10 +164,17 @@ public class SkillAcquisitionDialog {
 			if (skill.containsKey("Freitext")) {
 				historyEntry.put("Freitext", newSkill.getString("Freitext"));
 			}
-			historyEntry.put("AP", cost.getValue());
+			historyEntry.put("AP", ap.getValue());
+
+			if (includeCost && cost.getValue() != 0) {
+				historyEntry.put("Kosten", cost.getValue());
+				HeroUtil.addMoney(hero, (int) (cost.getValue() * -100));
+			}
+
 			final LocalDate currentDate = LocalDate.now();
 			historyEntry.put("Datum", currentDate.toString());
 			history.add(historyEntry);
+			history.notifyListeners(null);
 
 			stage.close();
 		});
@@ -173,8 +196,18 @@ public class SkillAcquisitionDialog {
 		if (variant.getSelectionModel().getSelectedIndex() < 0) {
 			variant.getSelectionModel().select(0);
 		}
-		cost.getValueFactory().setValue(actualSkill.getCost());
+		ap.getValueFactory().setValue(actualSkill.getCost());
 
 		stage.show();
+	}
+
+	private double getCalculatedCost(final ProOrCon skill) {
+		if (!Settings.getSettingBoolOrDefault(true, "Steigerung", "Lehrmeisterkosten")) return 0;
+
+		final JSONObject group = (JSONObject) skill.getProOrCon().getParent();
+		if (group == ResourceManager.getResource("data/Sonderfertigkeiten").getObj("Magische Sonderfertigkeiten") ||
+				group == ResourceManager.getResource("data/Rituale") || group == ResourceManager.getResource("data/Schamanenrituale"))
+			return ap.getValue() * 5;
+		return ap.getValue() * 0.7;
 	}
 }

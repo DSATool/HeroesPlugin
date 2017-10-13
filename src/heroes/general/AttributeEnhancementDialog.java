@@ -53,7 +53,7 @@ public class AttributeEnhancementDialog {
 	@FXML
 	private ReactiveSpinner<Integer> ses;
 	@FXML
-	private ReactiveSpinner<Integer> cost;
+	private ReactiveSpinner<Integer> ap;
 
 	private final boolean isMiserable;
 
@@ -77,8 +77,8 @@ public class AttributeEnhancementDialog {
 		final JSONObject attributes = ResourceManager.getResource("data/Eigenschaften");
 		isMiserable = hero.getObj("Nachteile").containsKey(attributes.getObj(attribute.getName()).getString("Miserable Eigenschaft"));
 
-		target.valueProperty().addListener((o, oldV, newV) -> cost.getValueFactory().setValue(getCalculatedCost(attribute, hero)));
-		ses.valueProperty().addListener((o, oldV, newV) -> cost.getValueFactory().setValue(getCalculatedCost(attribute, hero)));
+		target.valueProperty().addListener((o, oldV, newV) -> ap.getValueFactory().setValue(getCalculatedAP(attribute, hero)));
+		ses.valueProperty().addListener((o, oldV, newV) -> ap.getValueFactory().setValue(getCalculatedAP(attribute, hero)));
 
 		okButton.setOnAction(event -> {
 			final int usedSes = Math.min(target.getValue() - attribute.getValue(), ses.getValue());
@@ -91,13 +91,13 @@ public class AttributeEnhancementDialog {
 			if (usedSes > 0) {
 				historyEntry.put("SEs", usedSes);
 			}
-			historyEntry.put("AP", cost.getValue());
+			historyEntry.put("AP", ap.getValue());
 			final LocalDate currentDate = LocalDate.now();
 			historyEntry.put("Datum", currentDate.toString());
 			history.add(historyEntry);
 
 			final JSONObject bio = hero.getObj("Biografie");
-			bio.put("Abenteuerpunkte-Guthaben", bio.getIntOrDefault("Abenteuerpunkte-Guthaben", 0) - cost.getValue());
+			bio.put("Abenteuerpunkte-Guthaben", bio.getIntOrDefault("Abenteuerpunkte-Guthaben", 0) - ap.getValue());
 			attribute.setValue(target.getValue());
 			attribute.setSes(Math.max(attribute.getSes() - usedSes, 0));
 
@@ -119,7 +119,7 @@ public class AttributeEnhancementDialog {
 		stage.show();
 	}
 
-	private int getCalculatedCost(final Attribute attribute, final JSONObject hero) {
+	private int getCalculatedAP(final Attribute attribute, final JSONObject hero) {
 		final int SELevel = attribute.getValue() + Math.min(target.getValue() - attribute.getValue(), ses.getValue());
 		return (DSAUtil.getEnhancementCost(7, attribute.getValue(), SELevel) + DSAUtil.getEnhancementCost(8, SELevel, target.getValue()))
 				* (isMiserable ? 2 : 1);

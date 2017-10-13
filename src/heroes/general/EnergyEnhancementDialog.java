@@ -53,7 +53,7 @@ public class EnergyEnhancementDialog {
 	@FXML
 	private ReactiveSpinner<Integer> ses;
 	@FXML
-	private ReactiveSpinner<Integer> cost;
+	private ReactiveSpinner<Integer> ap;
 
 	public EnergyEnhancementDialog(final Window window, final Energy energy, final JSONObject hero, final int initialTarget) {
 		final FXMLLoader fxmlLoader = new FXMLLoader();
@@ -74,8 +74,8 @@ public class EnergyEnhancementDialog {
 
 		enhanceLabel.setText(" zukaufen:");
 
-		target.valueProperty().addListener((o, oldV, newV) -> cost.getValueFactory().setValue(getCalculatedCost(energy, hero)));
-		ses.valueProperty().addListener((o, oldV, newV) -> cost.getValueFactory().setValue(getCalculatedCost(energy, hero)));
+		target.valueProperty().addListener((o, oldV, newV) -> ap.getValueFactory().setValue(getCalculatedAP(energy, hero)));
+		ses.valueProperty().addListener((o, oldV, newV) -> ap.getValueFactory().setValue(getCalculatedAP(energy, hero)));
 
 		okButton.setOnAction(event -> {
 			final int usedSes = Math.min(ses.getValue(), target.getValue() - energy.getMax());
@@ -88,13 +88,13 @@ public class EnergyEnhancementDialog {
 			if (usedSes > 0) {
 				historyEntry.put("SEs", usedSes);
 			}
-			historyEntry.put("AP", cost.getValue());
+			historyEntry.put("AP", ap.getValue());
 			final LocalDate currentDate = LocalDate.now();
 			historyEntry.put("Datum", currentDate.toString());
 			history.add(historyEntry);
 
 			final JSONObject bio = hero.getObj("Biografie");
-			bio.put("Abenteuerpunkte-Guthaben", bio.getIntOrDefault("Abenteuerpunkte-Guthaben", 0) - cost.getValue());
+			bio.put("Abenteuerpunkte-Guthaben", bio.getIntOrDefault("Abenteuerpunkte-Guthaben", 0) - ap.getValue());
 			energy.setBought(target.getValue() - energy.getMax() + energy.getBought());
 			energy.setSes(Math.max(energy.getSes() - usedSes, 0));
 
@@ -116,7 +116,7 @@ public class EnergyEnhancementDialog {
 		stage.show();
 	}
 
-	private int getCalculatedCost(final Energy energy, final JSONObject hero) {
+	private int getCalculatedAP(final Energy energy, final JSONObject hero) {
 		final int SELevel = energy.getBought() + Math.min(target.getValue() - energy.getMax(), ses.getValue());
 		return DSAUtil.getEnhancementCost(energy.getEnhancementCost() - 1, energy.getBought(), SELevel)
 				+ DSAUtil.getEnhancementCost(energy.getEnhancementCost(), SELevel, target.getValue() - energy.getMax() + energy.getBought());

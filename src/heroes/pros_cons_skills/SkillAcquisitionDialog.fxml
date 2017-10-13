@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import dsatool.util.ReactiveComboBox?>
 <?import dsatool.util.ReactiveSpinner?>
 
 <VBox fx:id="root" style="-fx-padding: 2, 2, 2, 2;" spacing="2" xmlns:fx="http://javafx.com/fxml" >
@@ -14,16 +14,21 @@
    </HBox>
    <HBox fx:id="descriptionBox" alignment="CENTER" >
       <Label text="Beschreibung: " alignment="CENTER_LEFT" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-      <ComboBox fx:id="description" prefWidth="200" />
+      <ReactiveComboBox fx:id="description" prefWidth="200" />
    </HBox>
    <HBox fx:id="variantBox" alignment="CENTER" >
       <Label text="Variante: " alignment="CENTER_LEFT" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-      <ComboBox fx:id="variant" prefWidth="200" />
+      <ReactiveComboBox fx:id="variant" prefWidth="200" />
    </HBox>
    <HBox alignment="CENTER" >
-      <Label text="Kosten: " alignment="CENTER_LEFT" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-      <ReactiveSpinner fx:id="cost" imin="0" imax="9999" editable="true" prefWidth="70" />
+      <Label text="AP: " alignment="CENTER_LEFT" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+      <ReactiveSpinner fx:id="ap" imin="0" imax="9999" editable="true" prefWidth="70" />
       <Label text=" AP" alignment="CENTER_LEFT" />
+   </HBox>
+   <HBox fx:id="costBox" alignment="CENTER" >
+      <Label text="Kosten: " alignment="CENTER_LEFT" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+      <ReactiveSpinner fx:id="cost" dmin="0.0" dmax="9999.0" amountToStepBy="0.1" editable="true" prefWidth="70" />
+      <Label text=" Silber" alignment="CENTER_LEFT" />
    </HBox>
    <HBox spacing="2" alignment="CENTER_LEFT" >
       <Label maxWidth="Infinity" HBox.hgrow="ALWAYS" />

@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import dsa41basis.hero.Spell;
 import dsa41basis.hero.Talent;
 import dsa41basis.util.DSAUtil;
+import dsa41basis.util.HeroUtil;
 import dsatool.resources.Settings;
 import dsatool.util.ErrorLogger;
 import dsatool.util.ReactiveSpinner;
@@ -31,6 +32,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -57,7 +59,11 @@ public class TalentEnhancementDialog {
 	@FXML
 	private ComboBox<String> method;
 	@FXML
-	private ReactiveSpinner<Integer> cost;
+	private ReactiveSpinner<Integer> ap;
+	@FXML
+	private HBox costBox;
+	@FXML
+	private ReactiveSpinner<Double> cost;
 
 	int startValue;
 	final boolean basis;
@@ -73,17 +79,25 @@ public class TalentEnhancementDialog {
 			ErrorLogger.logError(e);
 		}
 
+		final boolean includeCost = Settings.getSettingBoolOrDefault(true, "Steigerung", "Lehrmeisterkosten");
+
 		final Stage stage = new Stage();
 		stage.setTitle("Talent steigern");
-		stage.setScene(new Scene(root, 250, 175));
+		stage.setScene(new Scene(root, 250, includeCost ? 202 : 175));
 		stage.initModality(Modality.WINDOW_MODAL);
 		stage.initOwner(window);
 
+		if (!includeCost) {
+			costBox.setVisible(false);
+			costBox.setManaged(false);
+		}
+
 		basis = talent.getTalent().getBoolOrDefault("Basis", false);
 
-		target.valueProperty().addListener((o, oldV, newV) -> cost.getValueFactory().setValue(getCalculatedCost(talent, hero)));
-		ses.valueProperty().addListener((o, oldV, newV) -> cost.getValueFactory().setValue(getCalculatedCost(talent, hero)));
-		method.getSelectionModel().selectedItemProperty().addListener((o, oldV, newV) -> cost.getValueFactory().setValue(getCalculatedCost(talent, hero)));
+		target.valueProperty().addListener((o, oldV, newV) -> ap.getValueFactory().setValue(getCalculatedAP(talent, hero)));
+		ses.valueProperty().addListener((o, oldV, newV) -> ap.getValueFactory().setValue(getCalculatedAP(talent, hero)));
+		method.getSelectionModel().selectedItemProperty().addListener((o, oldV, newV) -> ap.getValueFactory().setValue(getCalculatedAP(talent, hero)));
+		ap.valueProperty().addListener((o, oldV, newV) -> cost.getValueFactory().setValue(talent instanceof Spell ? newV * 5 : newV * 7 / 10.0));
 
 		okButton.setOnAction(event -> {
 			final int usedSes = Math.min(ses.getValue(), target.getValue() - startValue);
@@ -109,19 +123,25 @@ public class TalentEnhancementDialog {
 			if (target.getValue() != -1 || basis) {
 				historyEntry.put("Auf", target.getValue() < 0 && !basis ? target.getValue() + 1 : target.getValue());
 			}
-			historyEntry.put("Von", talent.getValue() == Integer.MIN_VALUE ? "n.a." : Integer.toString(talent.getValue()));
-			historyEntry.put("Auf", target.getValueFactory().getConverter().toString(target.getValue()));
 			if (usedSes > 0) {
 				historyEntry.put("SEs", usedSes);
 			}
 			historyEntry.put("Methode", method.getValue());
-			historyEntry.put("AP", cost.getValue());
+			historyEntry.put("AP", ap.getValue());
+
+			if (includeCost && cost.getValue() != 0) {
+				historyEntry.put("Kosten", cost.getValue());
+				HeroUtil.addMoney(hero, (int) (cost.getValue() * -100));
+			}
+
 			final LocalDate currentDate = LocalDate.now();
 			historyEntry.put("Datum", currentDate.toString());
 			history.add(historyEntry);
+			history.notifyListeners(null);
 
 			final JSONObject bio = hero.getObj("Biografie");
-			bio.put("Abenteuerpunkte-Guthaben", bio.getIntOrDefault("Abenteuerpunkte-Guthaben", 0) - cost.getValue());
+			bio.put("Abenteuerpunkte-Guthaben", bio.getIntOrDefault("Abenteuerpunkte-Guthaben", 0) - ap.getValue());
+			bio.notifyListeners(null);
 			final int targetValue = target.getValue();
 			if (targetValue < 0 && !basis) {
 				if (targetValue == -1) {
@@ -190,7 +210,7 @@ public class TalentEnhancementDialog {
 		stage.show();
 	}
 
-	private int getCalculatedCost(final Talent talent, final JSONObject hero) {
+	private int getCalculatedAP(final Talent talent, final JSONObject hero) {
 		final int SELevel = startValue + Math.min(target.getValue() - startValue, ses.getValue());
 		final int seCost = DSAUtil.getEnhancementCost(talent, hero, "Lehrmeister", startValue, SELevel, false);
 		final int normalCost = DSAUtil.getEnhancementCost(talent, hero, method.getSelectionModel().getSelectedItem(), SELevel, target.getValue(), false);

@@ -28,8 +28,8 @@
       <ReactiveSpinner fx:id="ses" imin="0" imax="99" editable="true" prefWidth="60" />
    </HBox>
    <HBox alignment="CENTER" >
-      <Label text="Kosten: " alignment="CENTER_LEFT" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-      <ReactiveSpinner fx:id="cost" imin="0" imax="9999" editable="true" prefWidth="70" />
+      <Label text="AP " alignment="CENTER_LEFT" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+      <ReactiveSpinner fx:id="ap" imin="0" imax="9999" editable="true" prefWidth="70" />
       <Label text=" AP" alignment="CENTER_LEFT" />
    </HBox>
    <HBox spacing="2" alignment="CENTER_LEFT" >
