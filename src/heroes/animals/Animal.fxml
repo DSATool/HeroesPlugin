@@ -3,7 +3,6 @@
 <?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -15,6 +14,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import dsatool.util.ReactiveComboBox?>
 <?import dsatool.util.ReactiveSpinner?>
 
 <TitledPane fx:id="pane" xmlns:fx="http://javafx.com/fxml" >
@@ -39,11 +39,11 @@
          <Label text="Farbe:" GridPane.rowIndex="1" />
          <TextField fx:id="color" minWidth="180" GridPane.rowIndex="1" GridPane.ColumnIndex="1" />
          <Label text="Geschlecht:" minWidth="65" GridPane.rowIndex="1" GridPane.ColumnIndex="2" />
-         <ComboBox fx:id="gender" GridPane.rowIndex="1" GridPane.ColumnIndex="3" >
+         <ReactiveComboBox fx:id="gender" GridPane.rowIndex="1" GridPane.ColumnIndex="3" >
             <styleClass>
                <String fx:value="disabled-opaque" />
             </styleClass>
-         </ComboBox>
+         </ReactiveComboBox>
          <Label text="Größe:" GridPane.rowIndex="1" GridPane.ColumnIndex="4" />
          <ReactiveSpinner fx:id="size" imin="0" imax="999" initialValue="150" GridPane.rowIndex="1" GridPane.ColumnIndex="5" >
             <styleClass>
@@ -85,11 +85,11 @@
                <String fx:value="disabled-opaque" />
             </styleClass>
          </ReactiveSpinner>
-         <ComboBox fx:id="mrChoice" maxWidth="Infinity" minWidth="220" GridPane.rowIndex="4" GridPane.columnSpan="2" >
+         <ReactiveComboBox fx:id="mrChoice" maxWidth="Infinity" minWidth="220" GridPane.rowIndex="4" GridPane.columnSpan="2" >
             <styleClass>
                <String fx:value="disabled-opaque" />
             </styleClass>
-         </ComboBox>
+         </ReactiveComboBox>
          <ReactiveSpinner fx:id="mr" imin="0" imax="99" editable="true" prefWidth="70" GridPane.rowIndex="4" GridPane.columnIndex="2" GridPane.columnSpan="2" >
             <styleClass>
                <String fx:value="disabled-opaque" />
@@ -144,11 +144,11 @@
                </styleClass>
             </ReactiveSpinner>
          </HBox>
-         <ComboBox fx:id="speedChoice" maxWidth="Infinity" minWidth="220" GridPane.rowIndex="5" GridPane.columnSpan="2" >
+         <ReactiveComboBox fx:id="speedChoice" maxWidth="Infinity" minWidth="220" GridPane.rowIndex="5" GridPane.columnSpan="2" >
             <styleClass>
                <String fx:value="disabled-opaque" />
             </styleClass>
-         </ComboBox>
+         </ReactiveComboBox>
          <ReactiveSpinner fx:id="speed" dmin="0.0" dmax="99.9" editable="true" prefWidth="70" GridPane.rowIndex="5" GridPane.columnIndex="2" GridPane.columnSpan="2" >
             <styleClass>
                <String fx:value="disabled-opaque" />
@@ -387,7 +387,7 @@
                   </columns>	
                </TableView>
                <HBox spacing="2" >
-                  <ComboBox fx:id="proConsList" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+                  <ReactiveComboBox fx:id="proConsList" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
                   <Button fx:id="proConsAddButton" onAction="#addProCon" prefHeight="25" prefWidth="25" text="&#xE145;" >
                      <padding><Insets top="0" right="0" bottom="0" left="0"/></padding>
                      <font>
@@ -414,7 +414,7 @@
                   </columns>	
                </TableView>
                <HBox spacing="2" >
-                  <ComboBox fx:id="ritualsList" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+                  <ReactiveComboBox fx:id="ritualsList" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
                   <Button fx:id="ritualsAddButton" onAction="#addRitual" prefHeight="25" prefWidth="25" text="&#xE145;" >
                      <padding><Insets top="0" right="0" bottom="0" left="0"/></padding>
                      <font>
@@ -442,7 +442,7 @@
                   </columns>	
                </TableView>
                <HBox spacing="2" >
-                  <ComboBox fx:id="skillsList" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+                  <ReactiveComboBox fx:id="skillsList" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
                   <Button fx:id="skillsAddButton" onAction="#addSkill" prefHeight="25" prefWidth="25" text="&#xE145;" >
                      <padding><Insets top="0" right="0" bottom="0" left="0"/></padding>
                      <font>
@@ -471,7 +471,7 @@
                </columns>
             </TableView>
             <HBox spacing="2" >
-               <ComboBox fx:id="equipmentList" editable="true" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+               <ReactiveComboBox fx:id="equipmentList" editable="true" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
                <Button fx:id="equipmentAddButton" onAction="#addItem" prefHeight="25" prefWidth="25" text="&#xE145;" >
                   <padding><Insets top="0" right="0" bottom="0" left="0"/></padding>
                   <font>

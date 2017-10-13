@@ -2,7 +2,6 @@
 
 <?import java.lang.String?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableColumn?>
@@ -85,7 +84,7 @@
                         <String fx:value="disabled-opaque" />
                      </styleClass>
                   </ReactiveSpinner>
-                  <ComboBox fx:id="birthmonth" styleClass="disabled-opaque" />
+                  <ReactiveComboBox fx:id="birthmonth" styleClass="disabled-opaque" />
                   <ReactiveSpinner fx:id="birthyear" imin="0" imax="2000" initialValue="1000" prefWidth="85" editable="true">
                      <styleClass>
                         <String fx:value="disabled-opaque" />
@@ -95,7 +94,7 @@
                <Label text="Alter:" GridPane.columnIndex="4" />
                <Label fx:id="age" GridPane.columnIndex="5" />
                <Label text="Geschlecht:" GridPane.rowIndex="1" />
-               <ComboBox fx:id="gender" styleClass="disabled-opaque" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+               <ReactiveComboBox fx:id="gender" styleClass="disabled-opaque" GridPane.rowIndex="1" GridPane.columnIndex="1" />
                <Label text="Größe:" GridPane.rowIndex="1" GridPane.columnIndex="2" />
                <ReactiveSpinner fx:id="size" imin="0" imax="500" initialValue="175" maxWidth="173" GridPane.rowIndex="1" GridPane.columnIndex="3" editable="true">
                      <styleClass>

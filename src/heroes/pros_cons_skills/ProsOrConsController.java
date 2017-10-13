@@ -22,6 +22,7 @@ import dsa41basis.util.RequirementsUtil;
 import dsatool.util.ErrorLogger;
 import dsatool.util.GraphicTableCell;
 import dsatool.util.IntegerSpinnerTableCell;
+import dsatool.util.ReactiveComboBox;
 import dsatool.util.Util;
 import heroes.ui.HeroTabController;
 import javafx.beans.binding.DoubleBinding;
@@ -142,7 +143,7 @@ public class ProsOrConsController {
 				switch (getTableView().getItems().get(getIndex()).firstChoiceOrText()) {
 				case TEXT:
 					if (items.size() > 0) {
-						final ComboBox<String> c = new ComboBox<>(items);
+						final ComboBox<String> c = new ReactiveComboBox<>(items);
 						c.setEditable(true);
 						createGraphic(c, () -> c.getSelectionModel().getSelectedItem(), s -> c.getSelectionModel().select(s));
 					} else {
@@ -151,7 +152,7 @@ public class ProsOrConsController {
 					}
 					break;
 				case CHOICE:
-					final ComboBox<String> c = new ComboBox<>(items);
+					final ComboBox<String> c = new ReactiveComboBox<>(items);
 					createGraphic(c, () -> c.getSelectionModel().getSelectedItem(), s -> c.getSelectionModel().select(s));
 					break;
 				case NONE:
@@ -172,7 +173,7 @@ public class ProsOrConsController {
 				switch (getTableView().getItems().get(getIndex()).secondChoiceOrText()) {
 				case TEXT:
 					if (items.size() > 0) {
-						final ComboBox<String> c = new ComboBox<>(items);
+						final ComboBox<String> c = new ReactiveComboBox<>(items);
 						c.setEditable(true);
 						createGraphic(c, () -> c.getSelectionModel().getSelectedItem(), s -> c.getSelectionModel().select(s));
 					} else {
@@ -181,7 +182,7 @@ public class ProsOrConsController {
 					}
 					break;
 				case CHOICE:
-					final ComboBox<String> c = new ComboBox<>(items);
+					final ComboBox<String> c = new ReactiveComboBox<>(items);
 					createGraphic(c, () -> c.getSelectionModel().getSelectedItem(), s -> c.getSelectionModel().select(s));
 					break;
 				case NONE:

@@ -3,7 +3,6 @@
 <?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -11,6 +10,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import dsatool.util.ReactiveComboBox?>
 
 <VBox fx:id="pane" style="-fx-padding: 0, 0, 0, 0;" xmlns:fx="http://javafx.com/fxml" >
    <TableView fx:id="table" fixedCellSize="28" editable="true" >
@@ -34,8 +34,8 @@
       </columns>
    </TableView>
    <HBox spacing="2" >
-      <ComboBox fx:id="talentsList" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-      <ComboBox fx:id="representationsList" prefWidth="70" />
+      <ReactiveComboBox fx:id="talentsList" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+      <ReactiveComboBox fx:id="representationsList" prefWidth="70" />
       <Button fx:id="addButton" onAction="#addTalent" prefHeight="25" prefWidth="25" text="&#xE145;" >
          <padding><Insets top="0" right="0" bottom="0" left="0"/></padding>
          <font>
