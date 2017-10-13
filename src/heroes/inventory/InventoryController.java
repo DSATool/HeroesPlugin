@@ -41,7 +41,6 @@ import dsatool.util.ReactiveSpinner;
 import heroes.ui.HeroTabController;
 import heroes.util.UiUtil;
 import javafx.beans.binding.DoubleBinding;
-import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -199,7 +198,6 @@ public class InventoryController extends HeroTabController {
 
 	private final JSONObject equipment;
 	private JSONArray items;
-	private ChangeListener<? super Integer> moneyListener;
 	private final JSONListener heroMoneyListener = o -> refreshMoney();
 	private final JSONListener heroItemListener = o -> refreshTables();
 
@@ -207,6 +205,8 @@ public class InventoryController extends HeroTabController {
 
 	private final String[] categoryNames = { "Nahkampfwaffe", "Fernkampfwaffe", "Schild", "Parierwaffe", "Rüstung", "Kleidung", "Ritualobjekt" };
 	private final String[] categoryLongNames = { "Nahkampfwaffen", "Fernkampfwaffen", "Schilde", "Parierwaffen", "Rüstung", "Kleidung", "Ritualobjekte" };
+
+	private JSONObject money;
 
 	public InventoryController(final TabPane tabPane) {
 		super(tabPane);
@@ -783,31 +783,31 @@ public class InventoryController extends HeroTabController {
 	protected void update() {
 		final JSONObject inventory = hero.getObj("Besitz");
 
-		final JSONObject money = inventory.getObj("Geld");
+		money = inventory.getObj("Geld");
 		money.addLocalListener(heroMoneyListener);
-
-		if (moneyListener != null) {
-			ducats.valueProperty().removeListener(moneyListener);
-			silver.valueProperty().removeListener(moneyListener);
-			heller.valueProperty().removeListener(moneyListener);
-			kreuzer.valueProperty().removeListener(moneyListener);
-		}
-
-		moneyListener = (observable, oldValue, newValue) -> {
-			if (oldValue == newValue || newValue == null || oldValue == null) return;
-			money.put("Dukaten", ducats.getValue());
-			money.put("Silbertaler", silver.getValue());
-			money.put("Heller", heller.getValue());
-			money.put("Kreuzer", kreuzer.getValue());
-			money.notifyListeners(heroMoneyListener);
-		};
 
 		refreshMoney();
 
-		ducats.valueProperty().addListener(moneyListener);
-		silver.valueProperty().addListener(moneyListener);
-		heller.valueProperty().addListener(moneyListener);
-		kreuzer.valueProperty().addListener(moneyListener);
+		ducats.valueProperty().addListener((o, oldV, newV) -> {
+			if (oldV == newV || newV == null || oldV == null || newV == money.getIntOrDefault("Dukaten", 0)) return;
+			money.put("Dukaten", newV);
+			money.notifyListeners(heroMoneyListener);
+		});
+		silver.valueProperty().addListener((o, oldV, newV) -> {
+			if (oldV == newV || newV == null || oldV == null || newV == money.getIntOrDefault("Silbertaler", 0)) return;
+			money.put("Silbertaler", newV);
+			money.notifyListeners(heroMoneyListener);
+		});
+		heller.valueProperty().addListener((o, oldV, newV) -> {
+			if (oldV == newV || newV == null || oldV == null || newV == money.getIntOrDefault("Heller", 0)) return;
+			money.put("Heller", newV);
+			money.notifyListeners(heroMoneyListener);
+		});
+		kreuzer.valueProperty().addListener((o, oldV, newV) -> {
+			if (oldV == newV || newV == null || oldV == null || newV == money.getIntOrDefault("Kreuzer", 0)) return;
+			money.put("Kreuzer", newV);
+			money.notifyListeners(heroMoneyListener);
+		});
 
 		items = inventory.getArr("Ausrüstung");
 
