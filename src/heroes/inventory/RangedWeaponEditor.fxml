@@ -70,9 +70,16 @@
    </HBox>
    <HBox spacing="2" alignment="CENTER_LEFT" >
       <Label text="Gewicht (Geschoss): " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-      <CheckBox fx:id="noBulletweight" />
       <ReactiveSpinner fx:id="weightBullet" imin="0" imax="999" editable="true" prefWidth="60" />
    </HBox>
+   <VBox fx:id="bulletBox">
+   </VBox>
+   <VBox fx:id="ammunitionBox">
+      <HBox spacing="2" alignment="CENTER_LEFT" >
+         <Label text="Anzahl: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+         <ReactiveSpinner fx:id="amount" imin="1" imax="999" editable="true" prefWidth="60" />
+      </HBox>
+   </VBox>
    <HBox spacing="2" alignment="CENTER_LEFT" >
       <Label text="Laden: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
       <ReactiveSpinner fx:id="load" imin="0" imax="999" editable="true" prefWidth="60" />

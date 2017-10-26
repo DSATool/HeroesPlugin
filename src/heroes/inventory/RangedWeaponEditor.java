@@ -26,11 +26,16 @@ import dsatool.util.Tuple5;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -39,7 +44,7 @@ import jsonant.value.JSONObject;
 
 public class RangedWeaponEditor {
 	@FXML
-	private VBox root;
+	private Parent root;
 	@FXML
 	private TextField name;
 	@FXML
@@ -51,13 +56,17 @@ public class RangedWeaponEditor {
 	@FXML
 	private CheckBox noBullet;
 	@FXML
-	private CheckBox noBulletweight;
-	@FXML
 	private ReactiveSpinner<Integer> weight;
 	@FXML
 	private ComboBox<String> bulletType;
 	@FXML
+	private VBox bulletBox;
+	@FXML
 	private ReactiveSpinner<Integer> weightBullet;
+	@FXML
+	private Node ammunitionBox;
+	@FXML
+	private ReactiveSpinner<Integer> amount;
 	@FXML
 	private CheckBox tpStamina;
 	@FXML
@@ -95,6 +104,9 @@ public class RangedWeaponEditor {
 	@FXML
 	private CheckComboBox<String> talents;
 
+	private final Stage stage;
+	private final JSONObject ammunitionTypes;
+
 	public RangedWeaponEditor(final Window window, final RangedWeapon weapon) {
 		final FXMLLoader fxmlLoader = new FXMLLoader();
 
@@ -106,9 +118,10 @@ public class RangedWeaponEditor {
 			ErrorLogger.logError(e);
 		}
 
-		final Stage stage = new Stage();
+		stage = new Stage();
 		stage.setTitle("Bearbeiten");
-		stage.setScene(new Scene(root, 440, 330));
+		stage.setScene(new Scene(root, 440, 390));
+		stage.setHeight(390);
 		stage.initModality(Modality.WINDOW_MODAL);
 		stage.initOwner(window);
 
@@ -141,7 +154,10 @@ public class RangedWeaponEditor {
 		distanceTPFar.getValueFactory().setValue(distanceTp._4);
 		distanceTPVeryFar.getValueFactory().setValue(distanceTp._5);
 		weight.getValueFactory().setValue((int) weapon.getWeight());
+
 		bulletType.setItems(FXCollections.observableArrayList("Pfeile", "Bolzen"));
+
+		ammunitionTypes = ResourceManager.getResource("data/Geschosstypen");
 		final String ammunitionType = weapon.getAmmunitionType();
 		noBullet.setSelected(ammunitionType != null);
 		if (ammunitionType == null) {
@@ -149,18 +165,39 @@ public class RangedWeaponEditor {
 		} else {
 			bulletType.setValue(ammunitionType);
 		}
+		setAmmunitionVisible("Pfeile".equals(ammunitionType) || "Bolzen".equals(ammunitionType));
+
 		final double bulletWeight = weapon.getBulletweight();
-		noBulletweight.setSelected(bulletWeight != Double.NEGATIVE_INFINITY);
-		if (bulletWeight == Double.NEGATIVE_INFINITY) {
-			weightBullet.setDisable(true);
-		} else {
-			weightBullet.getValueFactory().setValue((int) bulletWeight);
+		weightBullet.getValueFactory().setValue(bulletWeight == Double.NEGATIVE_INFINITY ? 0 : (int) bulletWeight);
+
+		final JSONObject ammunition = weapon.getAmmunitionTypes().clone(null);
+		for (final String type : ammunitionTypes.keySet()) {
+			final Label label = new Label(type + ":");
+			label.setMaxWidth(Double.POSITIVE_INFINITY);
+			HBox.setHgrow(label, Priority.ALWAYS);
+			final ReactiveSpinner<Integer> spinner = new ReactiveSpinner<>(0, 9999, ammunition.getObj(type).getIntOrDefault("Gesamt", 0));
+			spinner.valueProperty().addListener((o, oldV, newV) -> {
+				if (newV == 0) {
+					ammunition.removeKey(type);
+				} else {
+					ammunition.getObj(type).put("Gesamt", newV);
+				}
+			});
+			bulletBox.getChildren().add(new HBox(2, label, spinner));
 		}
+
+		amount.getValueFactory().setValue(weapon.getAmmunitionMax());
 		load.getValueFactory().setValue(weapon.getLoad());
 		notes.setText(weapon.getNotes());
 
-		bulletType.disableProperty().bind(noBullet.selectedProperty().not());
-		weightBullet.disableProperty().bind(noBulletweight.selectedProperty().not());
+		weightBullet.disableProperty().bind(noBullet.selectedProperty().not());
+
+		noBullet.selectedProperty().addListener((o, oldV, newV) -> {
+			bulletType.setDisable(!newV);
+			setAmmunitionVisible(newV && ("Pfeile".equals(bulletType.getValue()) || "Bolzen".equals(bulletType.getValue())));
+		});
+
+		bulletType.valueProperty().addListener((o, oldV, newV) -> setAmmunitionVisible("Pfeile".equals(newV) || "Bolzen".equals(newV)));
 
 		okButton.setOnAction(event -> {
 			weapon.setName(name.getText());
@@ -173,7 +210,14 @@ public class RangedWeaponEditor {
 					distanceTPVeryFar.getValue());
 			weapon.setWeight(weight.getValue());
 			weapon.setAmmunitionType(noBullet.isSelected() ? bulletType.getValue() : null);
-			weapon.setBulletweight(noBulletweight.isSelected() ? weightBullet.getValue() : Double.NEGATIVE_INFINITY);
+			weapon.setBulletweight(noBullet.isSelected() ? weightBullet.getValue() : Double.NEGATIVE_INFINITY);
+			if (bulletBox.isVisible()) {
+				weapon.setAmmunition(ammunition);
+				weapon.setMaxAmmunition(0);
+			} else {
+				weapon.setAmmunition(null);
+				weapon.setMaxAmmunition(amount.getValue());
+			}
 			weapon.setLoad(load.getValue());
 			weapon.setNotes(notes.getText());
 			stage.close();
@@ -182,5 +226,21 @@ public class RangedWeaponEditor {
 		cancelButton.setOnAction(event -> stage.close());
 
 		stage.show();
+	}
+
+	private void setAmmunitionVisible(final boolean bulletTypes) {
+		if (bulletTypes) {
+			stage.setHeight(stage.getHeight() + (ammunitionTypes.size() - 1) * 25);
+			bulletBox.setVisible(true);
+			bulletBox.setManaged(true);
+			ammunitionBox.setVisible(false);
+			ammunitionBox.setManaged(false);
+		} else {
+			stage.setHeight(390);
+			bulletBox.setVisible(false);
+			bulletBox.setManaged(false);
+			ammunitionBox.setVisible(true);
+			ammunitionBox.setManaged(true);
+		}
 	}
 }

@@ -321,7 +321,7 @@ public class FightController extends HeroTabController {
 			@Override
 			protected void createGraphic() {
 				if (!"Pfeile".equals(getItem()) && !"Bolzen".equals(getItem())) {
-					final ReactiveSpinner<Integer> spinner = new ReactiveSpinner<>(0, 999);
+					final ReactiveSpinner<Integer> spinner = new ReactiveSpinner<>(0, getTableView().getItems().get(getIndex()).getAmmunitionMax());
 					spinner.setEditable(true);
 					createGraphic(spinner, () -> spinner.getValue().toString(), t -> spinner.getValueFactory().setValue(Integer.valueOf(t)));
 				}
