@@ -219,8 +219,7 @@ public class InventoryController extends HeroTabController {
 		final JSONObject item = new JSONObject(items);
 		item.put("Name", itemName);
 		item.put("Kategorien", new JSONArray(Arrays.asList("Artefakt"), item));
-		items.add(item);
-		items.notifyListeners(null);
+		addItem(item);
 	}
 
 	public void addItem(final ComboBox<String> list) {
@@ -232,8 +231,16 @@ public class InventoryController extends HeroTabController {
 			categories.add("Kleidung");
 			item.put("Kategorien", categories);
 		}
-		items.add(item);
-		items.notifyListeners(null);
+		addItem(item);
+	}
+
+	private void addItem(final JSONObject item) {
+		if (HeroTabController.isEditable.get()) {
+			items.add(item);
+			items.notifyListeners(null);
+		} else {
+			new ItemPurchaseDialog(pane.getScene().getWindow(), hero, item);
+		}
 	}
 
 	@Override
