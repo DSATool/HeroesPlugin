@@ -154,7 +154,7 @@ public class SkillAcquisitionDialog {
 			}
 			HeroUtil.applyEffect(hero, name, skill, actual);
 
-			final JSONArray history = hero.getArr("Steigerungshistorie");
+			final JSONArray history = hero.getArr("Historie");
 			final JSONObject historyEntry = new JSONObject(history);
 			historyEntry.put("Typ", "Sonderfertigkeit");
 			historyEntry.put("Sonderfertigkeit", actualSkill.getName());

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.String?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
@@ -23,46 +24,48 @@
             <columnConstraints>
                <ColumnConstraints hgrow="NEVER" />
                <ColumnConstraints hgrow="ALWAYS" />
-               <ColumnConstraints hgrow="NEVER" />
                <ColumnConstraints hgrow="ALWAYS" />
-               <ColumnConstraints hgrow="NEVER" />
                <ColumnConstraints hgrow="NEVER" />
                <ColumnConstraints hgrow="ALWAYS" />
             </columnConstraints>
             <children>
                <Label text="Name:" />
                <TextField fx:id="name" GridPane.columnIndex="1" />
-               <TextField fx:id="surname" GridPane.columnIndex="2" GridPane.columnSpan="2" />
-               <Label text="Spieler:" GridPane.columnIndex="4" />
-               <TextField fx:id="player" GridPane.columnIndex="5" GridPane.columnSpan="2" />
+               <TextField fx:id="surname" GridPane.columnIndex="2" />
+               <Label text="Spieler:" GridPane.columnIndex="3" />
+               <TextField fx:id="player" GridPane.columnIndex="4" />
                <Label text="Rasse:" GridPane.rowIndex="1" />
-               <TextField fx:id="race" GridPane.columnIndex="1" GridPane.columnSpan="6" GridPane.rowIndex="1" />
+               <TextField fx:id="race" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.rowIndex="1" />
                <Label text="Kultur:" GridPane.rowIndex="2" />
-               <TextField fx:id="culture" GridPane.columnIndex="1" GridPane.columnSpan="6" GridPane.rowIndex="2" />
+               <TextField fx:id="culture" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.rowIndex="2" />
                <Label text="Profession:" GridPane.rowIndex="3" />
-               <TextField fx:id="profession" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="3" />
-               <Label fx:id="professionModifier" GridPane.columnIndex="4" GridPane.columnSpan="3" GridPane.rowIndex="3" />
-               <HBox spacing="2" GridPane.columnIndex="0" GridPane.columnSpan="6" GridPane.rowIndex="4" >
-                  <Label text="AP:" alignment="CENTER_RIGHT" maxHeight="Infinity" />
-                  <ReactiveSpinner fx:id="ap" imin="0" imax="999999" initialValue="0" maxWidth="90" editable="true" >
-                     <styleClass>
-                        <String fx:value="disabled-opaque" />
-                     </styleClass>
-                  </ReactiveSpinner>
-                  <Label text="AP-Guthaben:" alignment="CENTER_RIGHT" maxHeight="Infinity" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-                  <ReactiveSpinner fx:id="freeAp" imin="-999999" imax="999999" initialValue="0" maxWidth="90" editable="true" GridPane.halignment="CENTER" >
-                     <styleClass>
-                        <String fx:value="disabled-opaque" />
-                     </styleClass>
-                  </ReactiveSpinner>
-                  <Label text="SO:" alignment="CENTER_RIGHT" maxHeight="Infinity" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+               <TextField fx:id="profession" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3" />
+               <Label fx:id="professionModifier" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="3" />
+               <HBox spacing="2" GridPane.columnIndex="0" GridPane.columnSpan="5" GridPane.rowIndex="4" >
+                  <GridPane.margin><Insets top="7" right="0" bottom="0" left="0"/></GridPane.margin>
+                  <Label text="SO:" alignment="CENTER_RIGHT" maxHeight="Infinity" />
                   <ReactiveSpinner fx:id="socialstate" imin="0" imax="22" initialValue="1" maxWidth="60" editable="true" GridPane.halignment="CENTER" >
                      <styleClass>
                         <String fx:value="disabled-opaque" />
                      </styleClass>
                   </ReactiveSpinner>
-               </HBox>               
-               <ToggleButton text="Bearbeiten" onAction="#toggleEditable" prefWidth="75" GridPane.columnIndex="6" GridPane.rowIndex="4" GridPane.halignment="RIGHT" />
+                  <Label text="AP:" alignment="CENTER_RIGHT" maxHeight="Infinity" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+                  <ReactiveSpinner fx:id="ap" imin="0" imax="999999" initialValue="0" maxWidth="90" editable="true" >
+                     <styleClass>
+                        <String fx:value="disabled-opaque" />
+                     </styleClass>
+                  </ReactiveSpinner>
+                  <Label text="Investiert:  " alignment="CENTER_RIGHT" maxHeight="Infinity" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+                  <Label fx:id="investedAp" alignment="CENTER_LEFT" maxHeight="Infinity" />
+                  <Label text="Guthaben:" alignment="CENTER_RIGHT" maxHeight="Infinity" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+                  <ReactiveSpinner fx:id="freeAp" imin="-999999" imax="999999" initialValue="0" maxWidth="90" editable="true" GridPane.halignment="CENTER" >
+                     <styleClass>
+                        <String fx:value="disabled-opaque" />
+                     </styleClass>
+                  </ReactiveSpinner>
+                  <Label maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+                  <ToggleButton text="Bearbeiten" onAction="#toggleEditable" prefWidth="75" />
+               </HBox>        
             </children>
          </GridPane>
       </TitledPane>
@@ -79,13 +82,13 @@
             <children>
                <Label text="Geburtstag:" />
                <HBox spacing="2" GridPane.columnIndex="1" GridPane.columnSpan="3" >
-                  <ReactiveSpinner fx:id="birthday" imin="1" imax="30" initialValue="1" prefWidth="65" editable="true">
+                  <ReactiveSpinner fx:id="birthday" imin="1" imax="30" initialValue="1" prefWidth="55" editable="true">
                      <styleClass>
                         <String fx:value="disabled-opaque" />
                      </styleClass>
                   </ReactiveSpinner>
-                  <ReactiveComboBox fx:id="birthmonth" styleClass="disabled-opaque" />
-                  <ReactiveSpinner fx:id="birthyear" imin="0" imax="2000" initialValue="1000" prefWidth="85" editable="true">
+                  <ReactiveComboBox fx:id="birthmonth" styleClass="disabled-opaque" prefWidth="110" />
+                  <ReactiveSpinner fx:id="birthyear" imin="0" imax="2000" initialValue="1000" prefWidth="70" editable="true">
                      <styleClass>
                         <String fx:value="disabled-opaque" />
                      </styleClass>

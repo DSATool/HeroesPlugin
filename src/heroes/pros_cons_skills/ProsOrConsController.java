@@ -369,6 +369,7 @@ public class ProsOrConsController {
 
 		table.setPrefHeight(table.getItems().size() * 28 + 26);
 		table.setMinHeight(table.getItems().size() * 28 + 26);
+		table.sort();
 	}
 
 	public Node getControl() {

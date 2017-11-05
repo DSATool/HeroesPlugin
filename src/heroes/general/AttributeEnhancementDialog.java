@@ -82,7 +82,7 @@ public class AttributeEnhancementDialog {
 
 		okButton.setOnAction(event -> {
 			final int usedSes = Math.min(target.getValue() - attribute.getValue(), ses.getValue());
-			final JSONArray history = hero.getArr("Steigerungshistorie");
+			final JSONArray history = hero.getArr("Historie");
 			final JSONObject historyEntry = new JSONObject(history);
 			historyEntry.put("Typ", "Eigenschaft");
 			historyEntry.put("Eigenschaft", attribute.getName());

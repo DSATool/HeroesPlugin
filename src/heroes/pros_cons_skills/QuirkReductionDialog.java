@@ -72,7 +72,7 @@ public class QuirkReductionDialog {
 		ses.valueProperty().addListener((o, oldV, newV) -> ap.getValueFactory().setValue(getCalculatedAP(quirk, hero)));
 
 		okButton.setOnAction(event -> {
-			final JSONArray history = hero.getArr("Steigerungshistorie");
+			final JSONArray history = hero.getArr("Historie");
 			final JSONObject historyEntry = new JSONObject(history);
 			historyEntry.put("Typ", "Schlechte Eigenschaft");
 			historyEntry.put("Schlechte Eigenschaft", quirk.getName());

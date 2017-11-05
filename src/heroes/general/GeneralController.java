@@ -137,6 +137,8 @@ public class GeneralController extends HeroTabController {
 	@FXML
 	private ReactiveSpinner<Integer> ap;
 	@FXML
+	private Label investedAp;
+	@FXML
 	private ReactiveSpinner<Integer> freeAp;
 
 	private boolean update = false;
@@ -155,6 +157,7 @@ public class GeneralController extends HeroTabController {
 		getHero().getObj("Basiswerte").getObj("Sozialstatus").put("Wert", socialstate.getValue());
 		bio.put("Abenteuerpunkte", ap.getValue());
 		bio.put("Abenteuerpunkte-Guthaben", freeAp.getValue());
+		investedAp.setText(Integer.toString(ap.getValue() - freeAp.getValue()));
 		changeModifiedString("Rasse", race.getText());
 		changeModifiedString("Kultur", culture.getText());
 		changeModifiedString("Profession", profession.getText());
@@ -363,7 +366,7 @@ public class GeneralController extends HeroTabController {
 		ap.valueProperty().addListener((o, oldV, newV) -> {
 			freeAp.getValueFactory().setValue(freeAp.getValue() + newV - oldV);
 			if (!update && oldV != newV) {
-				final JSONArray history = getHero().getArr("Steigerungshistorie");
+				final JSONArray history = getHero().getArr("Historie");
 				final JSONObject lastEntry = history.size() == 0 ? null : history.getObj(history.size() - 1);
 				final LocalDate currentDate = LocalDate.now();
 				if (lastEntry != null && "Abenteuerpunkte".equals(lastEntry.getString("Typ"))
@@ -482,10 +485,13 @@ public class GeneralController extends HeroTabController {
 
 		socialstate.getValueFactory().setValue(hero.getObj("Basiswerte").getObj("Sozialstatus").getIntOrDefault("Wert", 0));
 		final boolean isUpdate = update;
+		final int apTotal = bio.getIntOrDefault("Abenteuerpunkte", 0);
+		final int apFree = bio.getIntOrDefault("Abenteuerpunkte-Guthaben", 0);
 		update = true;
-		ap.getValueFactory().setValue(bio.getIntOrDefault("Abenteuerpunkte", 0));
+		ap.getValueFactory().setValue(apTotal);
 		update = isUpdate;
-		freeAp.getValueFactory().setValue(bio.getIntOrDefault("Abenteuerpunkte-Guthaben", 0));
+		investedAp.setText(Integer.toString(apTotal - apFree));
+		freeAp.getValueFactory().setValue(apFree);
 
 		final StringBuilder raceString = new StringBuilder(bio.getStringOrDefault("Rasse", ""));
 		if (bio.containsKey("Rasse:Modifikation")) {

@@ -79,7 +79,7 @@ public class EnergyEnhancementDialog {
 
 		okButton.setOnAction(event -> {
 			final int usedSes = Math.min(ses.getValue(), target.getValue() - energy.getMax());
-			final JSONArray history = hero.getArr("Steigerungshistorie");
+			final JSONArray history = hero.getArr("Historie");
 			final JSONObject historyEntry = new JSONObject(history);
 			historyEntry.put("Typ", "Basiswert");
 			historyEntry.put("Basiswert", energy.getName());

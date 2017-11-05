@@ -101,7 +101,7 @@ public class TalentEnhancementDialog {
 
 		okButton.setOnAction(event -> {
 			final int usedSes = Math.min(ses.getValue(), target.getValue() - startValue);
-			final JSONArray history = hero.getArr("Steigerungshistorie");
+			final JSONArray history = hero.getArr("Historie");
 			final JSONObject historyEntry = new JSONObject(history);
 			if (talent instanceof Spell) {
 				historyEntry.put("Typ", "Zauber");
