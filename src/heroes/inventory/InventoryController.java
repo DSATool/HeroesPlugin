@@ -62,6 +62,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
@@ -225,11 +226,16 @@ public class InventoryController extends HeroTabController {
 	public void addItem(final ComboBox<String> list) {
 		final String itemName = list.getSelectionModel().getSelectedItem();
 		final JSONObject item = equipment.getObj(itemName).clone(items);
-		item.put("Name", itemName);
+		if (!item.containsKey("Name")) {
+			item.put("Name", itemName);
+		}
 		if (list == clothingList) {
 			final JSONArray categories = new JSONArray(item);
 			categories.add("Kleidung");
 			item.put("Kategorien", categories);
+		}
+		if (list == clothingList || list == equipmentList) {
+			list.setValue("");
 		}
 		addItem(item);
 	}
@@ -447,6 +453,7 @@ public class InventoryController extends HeroTabController {
 		return "Inventar";
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void init() {
 		final FXMLLoader fxmlLoader = new FXMLLoader();
@@ -480,6 +487,16 @@ public class InventoryController extends HeroTabController {
 		initializeArtifactTable();
 		initializeClothingTable();
 		initializeEquipmentTable();
+
+		for (final ComboBox<String> list : new ComboBox[] { closeCombatList, rangedList, shieldsList, defensiveWeaponsList, armorList, ritualObjectList,
+				clothingList, equipmentList }) {
+			list.setOnKeyPressed(e -> {
+				if (e.getCode() == KeyCode.ENTER) {
+					addItem(list);
+				}
+			});
+		}
+		newArtifactField.setOnAction(e -> addArtifact());
 
 		equipment.addListener(o -> updateLists());
 

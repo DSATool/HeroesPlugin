@@ -13,6 +13,10 @@
       <TextField fx:id="name" prefWidth="200" />
    </HBox>
    <HBox spacing="2" alignment="CENTER_LEFT" >
+      <Label text="Anmerkungen: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+      <TextField fx:id="notes" prefWidth="200" />
+   </HBox>
+   <HBox spacing="2" alignment="CENTER_LEFT" >
       <Label text="Kosten: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
       <ReactiveSpinner fx:id="cost" dmin="0.0" dmax="99999.0" initialValue="0.0" amountToStepBy="1.0" editable="true" prefWidth="100" />
       <Label text="Silber" />

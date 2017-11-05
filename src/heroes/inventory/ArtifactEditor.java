@@ -318,6 +318,9 @@ public class ArtifactEditor {
 
 		cancelButton.setOnAction(event -> stage.close());
 
+		okButton.setDefaultButton(true);
+		cancelButton.setCancelButton(true);
+
 		updateSpellTable();
 
 		stage.show();

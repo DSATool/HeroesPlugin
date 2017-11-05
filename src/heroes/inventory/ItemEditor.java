@@ -72,6 +72,9 @@ public class ItemEditor {
 
 		cancelButton.setOnAction(event -> stage.close());
 
+		okButton.setDefaultButton(true);
+		cancelButton.setCancelButton(true);
+
 		stage.show();
 	}
 }

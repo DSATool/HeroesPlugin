@@ -36,6 +36,8 @@ public class ItemPurchaseDialog {
 	@FXML
 	private TextField name;
 	@FXML
+	private TextField notes;
+	@FXML
 	private Button okButton;
 	@FXML
 	private ReactiveSpinner<Double> cost;
@@ -55,15 +57,22 @@ public class ItemPurchaseDialog {
 
 		final Stage stage = new Stage();
 		stage.setTitle("Kaufen");
-		stage.setScene(new Scene(root, 330, 85));
+		stage.setScene(new Scene(root, 330, 110));
 		stage.initModality(Modality.WINDOW_MODAL);
 		stage.initOwner(window);
 
-		name.setText(item.getString("Name"));
+		name.setText(item.getStringOrDefault("Name", ""));
+		notes.setText(item.getStringOrDefault("Anmerkungen", ""));
 		cost.getValueFactory().setValue(item.getDoubleOrDefault("Preis", 0.0));
 
 		okButton.setOnAction(event -> {
 			item.put("Name", name.getText());
+			final String note = notes.getText();
+			if ("".equals(note)) {
+				item.removeKey("Anmerkungen");
+			} else {
+				item.put("Anmerkungen", note);
+			}
 			final int kreutzer = (int) (cost.getValue() * 100);
 			item.put("Preis", kreutzer / 100.0);
 			HeroUtil.addMoney(hero, -kreutzer);
@@ -74,6 +83,9 @@ public class ItemPurchaseDialog {
 		});
 
 		cancelButton.setOnAction(event -> stage.close());
+
+		okButton.setDefaultButton(true);
+		cancelButton.setCancelButton(true);
 
 		stage.show();
 	}
