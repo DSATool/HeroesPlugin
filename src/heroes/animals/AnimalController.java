@@ -395,6 +395,7 @@ public class AnimalController {
 		final ObservableList<Node> controls = ((GridPane) pane.getContent()).getChildren();
 		if (type == AnimalType.HORSE) {
 			((VBox) statsTable.getParent()).getChildren().remove(statsTable);
+			controls.remove(mr);
 			controls.remove(speed);
 			controls.remove(speedBox);
 			controls.remove(speedMod);
@@ -536,7 +537,7 @@ public class AnimalController {
 		iniDiceNum.setDisable(!HeroTabController.isEditable.get());
 		iniDiceType.setDisable(!HeroTabController.isEditable.get());
 		iniMod.setDisable(!HeroTabController.isEditable.get());
-		mrChoice.setDisable(!HeroTabController.isEditable.get());
+		mrChoice.setDisable(!HeroTabController.isEditable.get() || type == AnimalType.HORSE);
 		mr.setDisable(!HeroTabController.isEditable.get());
 		mrMind.setDisable(!HeroTabController.isEditable.get());
 		mrBody.setDisable(!HeroTabController.isEditable.get());
@@ -546,7 +547,7 @@ public class AnimalController {
 		mrMod.setDisable(!HeroTabController.isEditable.get());
 		mrMindMod.setDisable(!HeroTabController.isEditable.get());
 		mrBodyMod.setDisable(!HeroTabController.isEditable.get());
-		speedChoice.setDisable(!HeroTabController.isEditable.get());
+		speedChoice.setDisable(!HeroTabController.isEditable.get() || type == AnimalType.HORSE);
 		speed.setDisable(!HeroTabController.isEditable.get());
 		speedGround.setDisable(!HeroTabController.isEditable.get());
 		speedAir.setDisable(!HeroTabController.isEditable.get());
@@ -1073,7 +1074,7 @@ public class AnimalController {
 				}
 			}
 		});
-		mrChoice.getSelectionModel().select(!actualMr.containsKey("Geist") || type == AnimalType.HORSE ? 0 : 1);
+		mrChoice.getSelectionModel().select(actualMr.containsKey("Geist") || type == AnimalType.HORSE ? 1 : 0);
 		mr.getValueFactory().setValue(actualMr.getIntOrDefault("Wert", 0));
 		mr.valueProperty().addListener((o, oldV, newV) -> actualMr.put("Wert", newV));
 		mrMind.getValueFactory().setValue(actualMr.getIntOrDefault("Geist", 0));
@@ -1286,6 +1287,7 @@ public class AnimalController {
 				final JSONArray equipment = hero.getObj("Besitz").getArr("Ausrüstung");
 				equipment.add(item.clone(equipment));
 				equipment.notifyListeners(null);
+				location.getParentPopup().hide();
 			});
 			for (final JSONObject animal : animalItems.keySet()) {
 				if (possessor != null && animal.equals(possessor)) {
@@ -1298,6 +1300,7 @@ public class AnimalController {
 						final JSONArray equipment = animal.getArr("Ausrüstung");
 						equipment.add(item.clone(equipment));
 						equipment.notifyListeners(null);
+						location.getParentPopup().hide();
 					});
 				}
 			}

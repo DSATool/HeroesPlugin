@@ -45,13 +45,13 @@
             </styleClass>
          </ReactiveComboBox>
          <Label text="Größe:" GridPane.rowIndex="1" GridPane.ColumnIndex="4" />
-         <ReactiveSpinner fx:id="size" imin="0" imax="999" initialValue="150" GridPane.rowIndex="1" GridPane.ColumnIndex="5" >
+         <ReactiveSpinner fx:id="size" imin="0" imax="999" editable="true" GridPane.rowIndex="1" GridPane.ColumnIndex="5" >
             <styleClass>
                <String fx:value="disabled-opaque" />
             </styleClass>
          </ReactiveSpinner>
          <Label text="Gewicht:" minWidth="50" GridPane.rowIndex="1" GridPane.ColumnIndex="6" />
-         <ReactiveSpinner fx:id="weight" imin="0" imax="99999" GridPane.rowIndex="1" GridPane.ColumnIndex="7" >
+         <ReactiveSpinner fx:id="weight" imin="0" imax="99999" editable="true" GridPane.rowIndex="1" GridPane.ColumnIndex="7" >
             <styleClass>
                <String fx:value="disabled-opaque" />
             </styleClass>
@@ -62,25 +62,25 @@
          <Label fx:id="boughtLabel" text="Kauf" GridPane.rowIndex="2" GridPane.columnIndex="6" GridPane.columnSpan="2" />
          <Label text="Initiative:" minWidth="220" GridPane.rowIndex="3" GridPane.columnSpan="2" />
          <HBox GridPane.rowIndex="3" GridPane.columnIndex="2" GridPane.columnSpan="2" >
-            <ReactiveSpinner fx:id="iniBase" imin="0" imax="99" editable="true" prefWidth="70" >
+            <ReactiveSpinner fx:id="iniBase" imin="0" imax="99" editable="true" prefWidth="55" >
                <styleClass>
                   <String fx:value="disabled-opaque" />
                </styleClass>
             </ReactiveSpinner>
             <Label text="+" minWidth="15" alignment="CENTER" maxHeight="Infinity" />
-            <ReactiveSpinner fx:id="iniDiceNum" imin="0" imax="9" initialValue="1" editable="true" prefWidth="70" >
+            <ReactiveSpinner fx:id="iniDiceNum" imin="0" imax="9" initialValue="1" editable="true" prefWidth="50" >
                <styleClass>
                   <String fx:value="disabled-opaque" />
                </styleClass>
             </ReactiveSpinner>
             <Label text="W" minWidth="15" alignment="CENTER" maxHeight="Infinity" />
-            <ReactiveSpinner fx:id="iniDiceType" imin="1" imax="20" initialValue="6" editable="true" prefWidth="70" >
+            <ReactiveSpinner fx:id="iniDiceType" imin="1" imax="20" initialValue="6" editable="true" prefWidth="55" >
                <styleClass>
                   <String fx:value="disabled-opaque" />
                </styleClass>
             </ReactiveSpinner>
          </HBox>
-         <ReactiveSpinner fx:id="iniMod" imin="-99" imax="99" initialValue="0" editable="true" prefWidth="70" GridPane.rowIndex="3" GridPane.columnIndex="4" GridPane.columnSpan="2" >
+         <ReactiveSpinner fx:id="iniMod" imin="-99" imax="99" initialValue="0" editable="true" prefWidth="60" GridPane.rowIndex="3" GridPane.columnIndex="4" GridPane.columnSpan="2" >
             <styleClass>
                <String fx:value="disabled-opaque" />
             </styleClass>
@@ -90,55 +90,55 @@
                <String fx:value="disabled-opaque" />
             </styleClass>
          </ReactiveComboBox>
-         <ReactiveSpinner fx:id="mr" imin="0" imax="99" editable="true" prefWidth="70" GridPane.rowIndex="4" GridPane.columnIndex="2" GridPane.columnSpan="2" >
+         <ReactiveSpinner fx:id="mr" imin="0" imax="99" editable="true" prefWidth="55" GridPane.rowIndex="4" GridPane.columnIndex="2" GridPane.columnSpan="2" >
             <styleClass>
                <String fx:value="disabled-opaque" />
             </styleClass>
          </ReactiveSpinner>
          <HBox fx:id="mrBox" GridPane.rowIndex="4" GridPane.columnIndex="2" GridPane.columnSpan="2" >
-            <ReactiveSpinner fx:id="mrMind" imin="0" imax="99" editable="true" prefWidth="70" >
+            <ReactiveSpinner fx:id="mrMind" imin="0" imax="99" editable="true" prefWidth="55" >
                <styleClass>
                   <String fx:value="disabled-opaque" />
                </styleClass>
             </ReactiveSpinner>
             <Label text="/" minWidth="15" alignment="CENTER" maxHeight="Infinity" />
-            <ReactiveSpinner fx:id="mrBody" imin="0" imax="99" editable="true" prefWidth="70" >
+            <ReactiveSpinner fx:id="mrBody" imin="0" imax="99" editable="true" prefWidth="55" >
                <styleClass>
                   <String fx:value="disabled-opaque" />
                </styleClass>
             </ReactiveSpinner>
          </HBox>
-         <ReactiveSpinner fx:id="mrMod" imin="-99" imax="99" initialValue="0" editable="true" prefWidth="70" GridPane.rowIndex="4" GridPane.columnIndex="4" GridPane.columnSpan="2" >
+         <ReactiveSpinner fx:id="mrMod" imin="-99" imax="99" initialValue="0" editable="true" prefWidth="60" GridPane.rowIndex="4" GridPane.columnIndex="4" GridPane.columnSpan="2" >
             <styleClass>
                <String fx:value="disabled-opaque" />
             </styleClass>
          </ReactiveSpinner>
          <HBox fx:id="mrModBox" GridPane.rowIndex="4" GridPane.columnIndex="4" GridPane.columnSpan="2" >
-            <ReactiveSpinner fx:id="mrMindMod" imin="-99" imax="99" initialValue="0" editable="true" prefWidth="70" >
+            <ReactiveSpinner fx:id="mrMindMod" imin="-99" imax="99" initialValue="0" editable="true" prefWidth="60" >
                <styleClass>
                   <String fx:value="disabled-opaque" />
                </styleClass>
             </ReactiveSpinner>
             <Label text="/" minWidth="15" alignment="CENTER" maxHeight="Infinity" />
-            <ReactiveSpinner fx:id="mrBodyMod" imin="-99" imax="99" initialValue="0" editable="true" prefWidth="70" >
+            <ReactiveSpinner fx:id="mrBodyMod" imin="-99" imax="99" initialValue="0" editable="true" prefWidth="60" >
                <styleClass>
                   <String fx:value="disabled-opaque" />
                </styleClass>
             </ReactiveSpinner>
          </HBox>
-         <ReactiveSpinner fx:id="mrBought" imin="0" imax="99" initialValue="0" editable="true" prefWidth="70" GridPane.rowIndex="4" GridPane.columnIndex="6" GridPane.columnSpan="2" >
+         <ReactiveSpinner fx:id="mrBought" imin="0" imax="99" initialValue="0" editable="true" prefWidth="55" GridPane.rowIndex="4" GridPane.columnIndex="6" GridPane.columnSpan="2" >
             <styleClass>
                <String fx:value="disabled-opaque" />
             </styleClass>
          </ReactiveSpinner>
          <HBox fx:id="mrBoughtBox" GridPane.rowIndex="4" GridPane.columnIndex="6" GridPane.columnSpan="2" >
-            <ReactiveSpinner fx:id="mrMindBought" imin="0" imax="99" initialValue="0" editable="true" prefWidth="70" >
+            <ReactiveSpinner fx:id="mrMindBought" imin="0" imax="99" initialValue="0" editable="true" prefWidth="55" >
                <styleClass>
                   <String fx:value="disabled-opaque" />
                </styleClass>
             </ReactiveSpinner>
             <Label text="/" minWidth="15" alignment="CENTER" maxHeight="Infinity" />
-            <ReactiveSpinner fx:id="mrBodyBought" imin="0" imax="99" initialValue="0" editable="true" prefWidth="70" >
+            <ReactiveSpinner fx:id="mrBodyBought" imin="0" imax="99" initialValue="0" editable="true" prefWidth="55" >
                <styleClass>
                   <String fx:value="disabled-opaque" />
                </styleClass>
@@ -204,38 +204,38 @@
             </ReactiveSpinner>
          </HBox>
          <HBox fx:id="horseSpeedBox" GridPane.rowIndex="5" GridPane.columnIndex="2" GridPane.columnSpan="2" >
-            <ReactiveSpinner fx:id="speedWalk" imin="0" imax="99" editable="true" prefWidth="70" >
+            <ReactiveSpinner fx:id="speedWalk" imin="0" imax="99" editable="true" prefWidth="55" >
                <styleClass>
                   <String fx:value="disabled-opaque" />
                </styleClass>
             </ReactiveSpinner>
             <Label text="/" minWidth="15" alignment="CENTER" maxHeight="Infinity" />
-            <ReactiveSpinner fx:id="speedTrot" imin="0" imax="99" editable="true" prefWidth="70" >
+            <ReactiveSpinner fx:id="speedTrot" imin="0" imax="99" editable="true" prefWidth="55" >
                <styleClass>
                   <String fx:value="disabled-opaque" />
                </styleClass>
             </ReactiveSpinner>
             <Label text="/" minWidth="15" alignment="CENTER" maxHeight="Infinity" />
-            <ReactiveSpinner fx:id="speedGallop" imin="0" imax="99" editable="true" prefWidth="70" >
+            <ReactiveSpinner fx:id="speedGallop" imin="0" imax="99" editable="true" prefWidth="55" >
                <styleClass>
                   <String fx:value="disabled-opaque" />
                </styleClass>
             </ReactiveSpinner>
          </HBox>
          <HBox fx:id="horseSpeedModBox" GridPane.rowIndex="5" GridPane.columnIndex="4" GridPane.columnSpan="2" >
-            <ReactiveSpinner fx:id="speedWalkMod" imin="-99" imax="99" initialValue="0" editable="true" prefWidth="70" >
+            <ReactiveSpinner fx:id="speedWalkMod" imin="-99" imax="99" initialValue="0" editable="true" prefWidth="60" >
                <styleClass>
                   <String fx:value="disabled-opaque" />
                </styleClass>
             </ReactiveSpinner>
             <Label text="/" minWidth="15" alignment="CENTER" maxHeight="Infinity" />
-            <ReactiveSpinner fx:id="speedTrotMod" imin="-99" imax="99" initialValue="0" editable="true" prefWidth="70" >
+            <ReactiveSpinner fx:id="speedTrotMod" imin="-99" imax="99" initialValue="0" editable="true" prefWidth="60" >
                <styleClass>
                   <String fx:value="disabled-opaque" />
                </styleClass>
             </ReactiveSpinner>
             <Label text="/" minWidth="15" alignment="CENTER" maxHeight="Infinity" />
-            <ReactiveSpinner fx:id="speedGallopMod" imin="-99" imax="99" initialValue="0" editable="true" prefWidth="70" >
+            <ReactiveSpinner fx:id="speedGallopMod" imin="-99" imax="99" initialValue="0" editable="true" prefWidth="60" >
                <styleClass>
                   <String fx:value="disabled-opaque" />
                </styleClass>
@@ -243,26 +243,26 @@
          </HBox>
          <Label fx:id="staminaLabel" text="Ausdauer (Trab/Galopp):" minWidth="220" GridPane.rowIndex="6" GridPane.columnSpan="2" />
          <HBox fx:id="staminaBox" GridPane.rowIndex="6" GridPane.columnIndex="2" GridPane.columnSpan="2" >
-            <ReactiveSpinner fx:id="staminaTrot" imin="0" imax="99" editable="true" prefWidth="70" >
+            <ReactiveSpinner fx:id="staminaTrot" imin="0" imax="99" editable="true" prefWidth="55" >
                <styleClass>
                   <String fx:value="disabled-opaque" />
                </styleClass>
             </ReactiveSpinner>
             <Label text="/" minWidth="15" alignment="CENTER" maxHeight="Infinity" />
-            <ReactiveSpinner fx:id="staminaGallop" imin="0" imax="99" editable="true" prefWidth="70" >
+            <ReactiveSpinner fx:id="staminaGallop" imin="0" imax="99" editable="true" prefWidth="55" >
                <styleClass>
                   <String fx:value="disabled-opaque" />
                </styleClass>
             </ReactiveSpinner>
          </HBox>
          <HBox fx:id="staminaModBox" GridPane.rowIndex="6" GridPane.columnIndex="4" GridPane.columnSpan="2" >
-            <ReactiveSpinner fx:id="staminaTrotMod" imin="-99" imax="99" initialValue="0" editable="true" prefWidth="70" >
+            <ReactiveSpinner fx:id="staminaTrotMod" imin="-99" imax="99" initialValue="0" editable="true" prefWidth="60" >
                <styleClass>
                   <String fx:value="disabled-opaque" />
                </styleClass>
             </ReactiveSpinner>
             <Label text="/" minWidth="15" alignment="CENTER" maxHeight="Infinity" />
-            <ReactiveSpinner fx:id="staminaGallopMod" imin="-99" imax="99" initialValue="0" editable="true" prefWidth="70" >
+            <ReactiveSpinner fx:id="staminaGallopMod" imin="-99" imax="99" initialValue="0" editable="true" prefWidth="60" >
                <styleClass>
                   <String fx:value="disabled-opaque" />
                </styleClass>
@@ -270,25 +270,25 @@
          </HBox>
          <Label fx:id="feedLabel" text="Futterbedarf (Erhalt/leicht/mittel/schwer):" minWidth="220" GridPane.rowIndex="7" GridPane.columnSpan="2" />
          <HBox fx:id="feedBox" GridPane.rowIndex="7" GridPane.columnIndex="2" GridPane.columnSpan="6" >
-            <ReactiveSpinner fx:id="feedBase" imin="0" imax="99" editable="true" prefWidth="70" >
+            <ReactiveSpinner fx:id="feedBase" imin="0" imax="99" editable="true" prefWidth="55" >
                <styleClass>
                   <String fx:value="disabled-opaque" />
                </styleClass>
             </ReactiveSpinner>
             <Label text="/" minWidth="15" alignment="CENTER" maxHeight="Infinity" />
-            <ReactiveSpinner fx:id="feedLight" imin="0" imax="99" editable="true" prefWidth="70" >
+            <ReactiveSpinner fx:id="feedLight" imin="0" imax="99" editable="true" prefWidth="55" >
                <styleClass>
                   <String fx:value="disabled-opaque" />
                </styleClass>
             </ReactiveSpinner>
             <Label text="/" minWidth="15" alignment="CENTER" maxHeight="Infinity" />
-            <ReactiveSpinner fx:id="feedMedium" imin="0" imax="99" editable="true" prefWidth="70" >
+            <ReactiveSpinner fx:id="feedMedium" imin="0" imax="99" editable="true" prefWidth="55" >
                <styleClass>
                   <String fx:value="disabled-opaque" />
                </styleClass>
             </ReactiveSpinner>
             <Label text="/" minWidth="15" alignment="CENTER" maxHeight="Infinity" />
-            <ReactiveSpinner fx:id="feedHeavy" imin="0" imax="99" editable="true" prefWidth="70" >
+            <ReactiveSpinner fx:id="feedHeavy" imin="0" imax="99" editable="true" prefWidth="55" >
                <styleClass>
                   <String fx:value="disabled-opaque" />
                </styleClass>
