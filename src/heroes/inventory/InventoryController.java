@@ -932,6 +932,7 @@ public class InventoryController extends HeroTabController {
 						final JSONArray equipment = animal.getArr("Ausrüstung");
 						equipment.add(item.clone(equipment));
 						equipment.notifyListeners(null);
+						location.getParentPopup().hide();
 					});
 				}
 			} else {
@@ -954,6 +955,7 @@ public class InventoryController extends HeroTabController {
 							final JSONArray equipment = animal.getArr("Ausrüstung");
 							equipment.add(item.clone(equipment));
 							equipment.notifyListeners(null);
+							location.getParentPopup().hide();
 						});
 					}
 				}
