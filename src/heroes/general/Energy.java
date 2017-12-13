@@ -28,8 +28,8 @@ public class Energy extends dsa41basis.hero.Energy implements Colorable {
 	private final Color color;
 	private final StringProperty text = new SimpleStringProperty();
 
-	public Energy(String name, JSONObject derivation, JSONObject attributes, JSONObject basicValues, Color color) {
-		super(name, derivation, attributes, basicValues);
+	public Energy(final String name, final JSONObject derivation, final JSONObject hero, final Color color) {
+		super(name, derivation, hero);
 
 		text.bind(new When(current.isEqualTo(max)).then(max.asString()).otherwise(current.asString().concat('/').concat(max)));
 

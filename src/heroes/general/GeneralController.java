@@ -174,6 +174,7 @@ public class GeneralController extends HeroTabController {
 		if (!skincolor.valueProperty().equals(observable) || !"".equals(newValue)) {
 			bio.put(bio.containsKey("Schuppenfarbe 2") ? "Schuppenfarbe 2" : "Hautfarbe", skincolor.getValue());
 		}
+		setAge(ResourceManager.getResource("data/Allgemein").getObj("Zeit"));
 		bio.notifyListeners(heroBioListener);
 		getHero().getObj("Basiswerte").notifyListeners(heroBioListener);
 		if (name.focusedProperty().equals(observable)) {
@@ -446,27 +447,26 @@ public class GeneralController extends HeroTabController {
 		final JSONObject derivedValues = ResourceManager.getResource("data/Basiswerte");
 		final JSONObject attributes = ResourceManager.getResource("data/Eigenschaften");
 		final JSONObject actualAttributes = hero.getObj("Eigenschaften");
-		final JSONObject basicValues = hero.getObj("Basiswerte");
 
 		for (final String attribute : attributes.keySet()) {
 			attributesTable.getItems().add(new Attribute(attribute, actualAttributes.getObj(attribute)));
 		}
 
-		for (final String derivedValue : new String[] { "Attacke-Basis", "Parade-Basis", "Fernkampf-Basis", "Initiative-Basis", "Wundschwelle",
-				"Geschwindigkeit" }) {
-			derivedValuesTable.getItems().add(new DerivedValue(derivedValue, derivedValues.getObj(derivedValue), actualAttributes, basicValues));
+		for (final String derivedValue : new String[] { "Attacke-Basis", "Parade-Basis", "Fernkampf-Basis", "Initiative-Basis", "Artefaktkontrolle",
+				"Wundschwelle", "Geschwindigkeit" }) {
+			derivedValuesTable.getItems().add(new DerivedValue(derivedValue, derivedValues.getObj(derivedValue), hero));
 		}
 
-		energiesTable.getItems().add(new Energy("Lebensenergie", derivedValues.getObj("Lebensenergie"), actualAttributes, basicValues, Color.RED));
-		energiesTable.getItems().add(new Energy("Ausdauer", derivedValues.getObj("Ausdauer"), actualAttributes, basicValues, Color.DODGERBLUE));
+		energiesTable.getItems().add(new Energy("Lebensenergie", derivedValues.getObj("Lebensenergie"), hero, Color.RED));
+		energiesTable.getItems().add(new Energy("Ausdauer", derivedValues.getObj("Ausdauer"), hero, Color.DODGERBLUE));
 		if (HeroUtil.isMagical(hero)) {
 			energiesTable.getItems()
-					.add(new Energy("Astralenergie", derivedValues.getObj("Astralenergie"), actualAttributes, basicValues, Color.VIOLET.saturate()));
+					.add(new Energy("Astralenergie", derivedValues.getObj("Astralenergie"), hero, Color.VIOLET.saturate()));
 		}
 		if (HeroUtil.isClerical(hero, false)) {
-			energiesTable.getItems().add(new Energy("Karmaenergie", new JSONObject(null), actualAttributes, basicValues, Color.YELLOW.darker()));
+			energiesTable.getItems().add(new Energy("Karmaenergie", new JSONObject(null), hero, Color.YELLOW.darker()));
 		}
-		energiesTable.getItems().add(new Energy("Magieresistenz", derivedValues.getObj("Magieresistenz"), actualAttributes, basicValues, Color.WHITE));
+		energiesTable.getItems().add(new Energy("Magieresistenz", derivedValues.getObj("Magieresistenz"), hero, Color.WHITE));
 
 		attributesTable.setMinHeight(attributesTable.getItems().size() * 28 + 26);
 		attributesTable.setMaxHeight(attributesTable.getItems().size() * 28 + 26);
@@ -548,11 +548,11 @@ public class GeneralController extends HeroTabController {
 	@Override
 	public void setHero(final JSONObject hero) {
 		if (this.hero != null) {
-			this.hero.removeListener(heroBioListener);
+			this.hero.getObj("Biografie").removeListener(heroBioListener);
 		}
 		super.setHero(hero);
 		if (hero != null) {
-			hero.addListener(heroBioListener);
+			hero.getObj("Biografie").addListener(heroBioListener);
 		}
 	}
 
