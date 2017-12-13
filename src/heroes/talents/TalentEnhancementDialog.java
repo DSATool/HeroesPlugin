@@ -96,8 +96,16 @@ public class TalentEnhancementDialog {
 
 		target.valueProperty().addListener((o, oldV, newV) -> ap.getValueFactory().setValue(getCalculatedAP(talent, hero)));
 		ses.valueProperty().addListener((o, oldV, newV) -> ap.getValueFactory().setValue(getCalculatedAP(talent, hero)));
-		method.getSelectionModel().selectedItemProperty().addListener((o, oldV, newV) -> ap.getValueFactory().setValue(getCalculatedAP(talent, hero)));
-		ap.valueProperty().addListener((o, oldV, newV) -> cost.getValueFactory().setValue(talent instanceof Spell ? newV * 5 : newV * 7 / 10.0));
+		method.getSelectionModel().selectedItemProperty().addListener((o, oldV, newV) -> {
+			ap.getValueFactory().setValue(getCalculatedAP(talent, hero));
+		});
+		ap.valueProperty().addListener((o, oldV, newV) -> {
+			if ("Lehrmeister".equals(method.getValue())) {
+				cost.getValueFactory().setValue(talent instanceof Spell ? newV * 5 : newV * 7 / 10.0);
+			} else {
+				cost.getValueFactory().setValue(0.0);
+			}
+		});
 
 		okButton.setOnAction(event -> {
 			final int usedSes = Math.min(ses.getValue(), target.getValue() - startValue);
