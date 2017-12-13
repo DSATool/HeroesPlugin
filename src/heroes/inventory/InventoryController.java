@@ -41,6 +41,7 @@ import dsatool.util.ReactiveSpinner;
 import heroes.ui.HeroTabController;
 import heroes.util.UiUtil;
 import javafx.beans.binding.DoubleBinding;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -63,6 +64,7 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
@@ -490,9 +492,12 @@ public class InventoryController extends HeroTabController {
 
 		for (final ComboBox<String> list : new ComboBox[] { closeCombatList, rangedList, shieldsList, defensiveWeaponsList, armorList, ritualObjectList,
 				clothingList, equipmentList }) {
+			final EventHandler<? super KeyEvent> keyPressed = list.getOnKeyPressed();
 			list.setOnKeyPressed(e -> {
 				if (e.getCode() == KeyCode.ENTER) {
 					addItem(list);
+				} else {
+					keyPressed.handle(e);
 				}
 			});
 		}
@@ -718,12 +723,14 @@ public class InventoryController extends HeroTabController {
 				}
 				if (categories.contains("Nahkampfwaffe")) {
 					final JSONObject actual = item.getObjOrDefault("Nahkampfwaffe", item);
-					closeCombatTable.getItems().add(new CloseCombatWeapon(null, actual, item, null, null));
+					closeCombatTable.getItems()
+							.add(new CloseCombatWeapon(null, actual, item, ResourceManager.getResource("data/Talente").getObj("Nahkampftalente"), null));
 					found = true;
 				}
 				if (categories.contains("Fernkampfwaffe")) {
 					final JSONObject actual = item.getObjOrDefault("Fernkampfwaffe", item);
-					rangedTable.getItems().add(new RangedWeapon(null, actual, item, null, null));
+					rangedTable.getItems()
+							.add(new RangedWeapon(null, actual, item, ResourceManager.getResource("data/Talente").getObj("Fernkampftalente"), null));
 					found = true;
 				}
 				if (categories.contains("Schild")) {
