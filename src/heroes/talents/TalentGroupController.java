@@ -399,9 +399,9 @@ public class TalentGroupController {
 		final JSONObject talent = HeroUtil.findTalent(talentName)._1;
 		final Talent newTalent;
 		if ("Zauber".equals(name)) {
-			newTalent = new Spell(talentName, talent, null, actual.getObj(talentName), actual, representationsList.getSelectionModel().getSelectedItem());
+			newTalent = Spell.getSpell(talentName, talent, null, actual.getObj(talentName), actual, representationsList.getSelectionModel().getSelectedItem());
 		} else {
-			newTalent = new Talent(talentName, talentGroup, talent, null, actual);
+			newTalent = Talent.getTalent(talentName, talentGroup, talent, null, actual);
 		}
 		newTalent.insertTalent(false);
 	}
@@ -466,26 +466,20 @@ public class TalentGroupController {
 				switch (name) {
 				case "Nahkampftalente":
 				case "Fernkampftalente":
-					table.getItems().add(new FightTalent(talentName, talentGroup, talent, actualTalent, actualGroup));
-					break;
 				case "Körperliche Talente":
-					table.getItems().add(new PhysicalTalent(talentName, talentGroup, talent, actualTalent, actualGroup));
-					break;
 				case "Gesellschaftliche Talente":
 				case "Natur-Talente":
 				case "Wissenstalente":
 				case "Handwerkstalente":
 				case "Gaben":
 				case "Liturgiekenntnis":
-					table.getItems().add(new Talent(talentName, talentGroup, talent, actualTalent, actualGroup));
+				case "Ritualkenntnis":
+					table.getItems().add(Talent.getTalent(talentName, talentGroup, talent, actualTalent, actualGroup));
 					break;
 				case "Sprachen und Schriften":
 					table.getItems()
-							.add(new LanguageTalent(talentName, talentGroup.getObj(talent.getBoolOrDefault("Schrift", false) ? "Schriften" : "Sprachen"),
+							.add(Talent.getTalent(talentName, talentGroup.getObj(talent.getBoolOrDefault("Schrift", false) ? "Schriften" : "Sprachen"),
 									talent, actualTalent, actualGroup));
-					break;
-				case "Ritualkenntnis":
-					table.getItems().add(new Talent(talentName, talentGroup, talent, actualTalent, actualGroup));
 					break;
 				case "Zauber":
 					boolean notFound = false;
@@ -495,11 +489,11 @@ public class TalentGroupController {
 								final JSONArray choiceTalent = actualTalent.getArrOrDefault(rep, null);
 								if (choiceTalent != null) {
 									for (int i = 0; i < choiceTalent.size(); ++i) {
-										table.getItems().add(new Spell(talentName, talent, choiceTalent.getObj(i), actualTalent, actualGroup, rep));
+										table.getItems().add(Spell.getSpell(talentName, talent, choiceTalent.getObj(i), actualTalent, actualGroup, rep));
 									}
 								}
 							} else {
-								table.getItems().add(new Spell(talentName, talent, actualTalent.getObj(rep), actualTalent, actualGroup, rep));
+								table.getItems().add(Spell.getSpell(talentName, talent, actualTalent.getObj(rep), actualTalent, actualGroup, rep));
 							}
 						} else {
 							notFound = true;
