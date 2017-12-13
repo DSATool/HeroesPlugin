@@ -55,6 +55,8 @@ public class CloseCombatWeaponEditor {
 	@FXML
 	private ReactiveSpinner<Integer> bf;
 	@FXML
+	private CheckBox noTpkk;
+	@FXML
 	private CheckBox noBf;
 	@FXML
 	private CheckBox tpStamina;
@@ -127,8 +129,15 @@ public class CloseCombatWeaponEditor {
 		tpStamina.setSelected(tp.contains("A"));
 		tpWound.setSelected(tp.contains("*"));
 		final Tuple<Integer, Integer> tpkkValues = weapon.getTpkkRaw();
-		tpkkThreshold.getValueFactory().setValue(tpkkValues._1);
-		tpkkStep.getValueFactory().setValue(tpkkValues._2);
+		if (tpkkValues._1 == Integer.MIN_VALUE || tpkkValues._2 == Integer.MIN_VALUE) {
+			noTpkk.setSelected(false);
+			tpkkThreshold.setDisable(true);
+			tpkkStep.setDisable(true);
+		} else {
+			noTpkk.setSelected(true);
+			tpkkThreshold.getValueFactory().setValue(tpkkValues._1);
+			tpkkStep.getValueFactory().setValue(tpkkValues._2);
+		}
 		weight.getValueFactory().setValue((int) weapon.getWeight());
 		length.getValueFactory().setValue(weapon.getLength());
 		noBf.setSelected(weapon.getBf() != Integer.MIN_VALUE);
@@ -151,6 +160,8 @@ public class CloseCombatWeaponEditor {
 		dkP.setSelected(dk.contains("P"));
 		notes.setText(weapon.getNotes());
 
+		tpkkThreshold.disableProperty().bind(noTpkk.selectedProperty().not());
+		tpkkStep.disableProperty().bind(noTpkk.selectedProperty().not());
 		bf.disableProperty().bind(noBf.selectedProperty().not());
 
 		okButton.setOnAction(event -> {
@@ -158,7 +169,7 @@ public class CloseCombatWeaponEditor {
 			weapon.setItemType(type.getText());
 			weapon.setTalents(talents.getCheckModel().getCheckedItems());
 			weapon.setTp(tpTypeDice.getValue(), tpNumDice.getValue(), tpAdditional.getValue(), tpWound.isSelected(), tpStamina.isSelected());
-			weapon.setTPKK(tpkkThreshold.getValue(), tpkkStep.getValue());
+			weapon.setTPKK(noTpkk.isSelected() ? tpkkThreshold.getValue() : Integer.MIN_VALUE, noTpkk.isSelected() ? tpkkStep.getValue() : Integer.MIN_VALUE);
 			weapon.setWeight(weight.getValue());
 			weapon.setLength(length.getValue());
 			weapon.setBf(noBf.isSelected() ? bf.getValue() : Integer.MIN_VALUE);

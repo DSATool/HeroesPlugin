@@ -25,11 +25,11 @@
    </HBox>
    <HBox spacing="2" alignment="CENTER_LEFT" >
       <Label text="TP: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-      <ReactiveSpinner fx:id="tpNumDice" imin="0" imax="99" editable="true" prefWidth="50" />
+      <ReactiveSpinner fx:id="tpNumDice" imin="0" imax="99" editable="true" prefWidth="55" />
       <Label text="W" />
-      <ReactiveSpinner fx:id="tpTypeDice" imin="1" imax="99" editable="true" prefWidth="50" />
+      <ReactiveSpinner fx:id="tpTypeDice" imin="1" imax="99" editable="true" prefWidth="55" />
       <Label text="+" />
-      <ReactiveSpinner fx:id="tpAdditional" imin="-99" imax="99" editable="true" prefWidth="50" />
+      <ReactiveSpinner fx:id="tpAdditional" imin="-99" imax="99" editable="true" prefWidth="60" />
       <Label text="(A)" />
       <CheckBox fx:id="tpStamina" />
       <Label text="*" />

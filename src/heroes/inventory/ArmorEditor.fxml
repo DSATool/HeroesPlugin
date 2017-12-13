@@ -15,35 +15,35 @@
    </HBox>
    <HBox fx:id="headBox" spacing="2" alignment="CENTER_LEFT" visible="false" >
       <Label text="Kopf RS: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-      <ReactiveSpinner fx:id="head" imin="0" imax="99" editable="true" prefWidth="60" />
+      <ReactiveSpinner fx:id="head" imin="0" imax="99" editable="true" prefWidth="55" />
    </HBox>
    <HBox fx:id="breastBox" spacing="2" alignment="CENTER_LEFT" visible="false" >
       <Label text="Brust RS: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-      <ReactiveSpinner fx:id="breast" imin="0" imax="99" editable="true" prefWidth="60" />
+      <ReactiveSpinner fx:id="breast" imin="0" imax="99" editable="true" prefWidth="55" />
    </HBox>
    <HBox fx:id="backBox" spacing="2" alignment="CENTER_LEFT" visible="false" >
       <Label text="Rücken RS: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-      <ReactiveSpinner fx:id="back" imin="0" imax="99" editable="true" prefWidth="60" />
+      <ReactiveSpinner fx:id="back" imin="0" imax="99" editable="true" prefWidth="55" />
    </HBox>
    <HBox fx:id="bellyBox" spacing="2" alignment="CENTER_LEFT" visible="false" >
       <Label text="Bauch RS: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-      <ReactiveSpinner fx:id="belly" imin="0" imax="99" editable="true" prefWidth="60" />
+      <ReactiveSpinner fx:id="belly" imin="0" imax="99" editable="true" prefWidth="55" />
    </HBox>
    <HBox fx:id="larmBox" spacing="2" alignment="CENTER_LEFT" visible="false" >
       <Label text="Linker Arm RS: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-      <ReactiveSpinner fx:id="larm" imin="0" imax="99" editable="true" prefWidth="60" />
+      <ReactiveSpinner fx:id="larm" imin="0" imax="99" editable="true" prefWidth="55" />
    </HBox>
    <HBox fx:id="rarmBox" spacing="2" alignment="CENTER_LEFT" visible="false" >
       <Label text="Rechter Arm RS: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-      <ReactiveSpinner fx:id="rarm" imin="0" imax="99" editable="true" prefWidth="60" />
+      <ReactiveSpinner fx:id="rarm" imin="0" imax="99" editable="true" prefWidth="55" />
    </HBox>
    <HBox fx:id="llegBox" spacing="2" alignment="CENTER_LEFT" visible="false" >
       <Label text="Linkes Bein RS: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-      <ReactiveSpinner fx:id="lleg" imin="0" imax="99" editable="true" prefWidth="60" />
+      <ReactiveSpinner fx:id="lleg" imin="0" imax="99" editable="true" prefWidth="55" />
    </HBox>
    <HBox fx:id="rlegBox" spacing="2" alignment="CENTER_LEFT" visible="false" >
       <Label text="Rechtes Bein RS: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-      <ReactiveSpinner fx:id="rleg" imin="0" imax="99" editable="true" prefWidth="60" />
+      <ReactiveSpinner fx:id="rleg" imin="0" imax="99" editable="true" prefWidth="55" />
    </HBox>
    <HBox fx:id="zonersBox" spacing="2" alignment="CENTER_LEFT" visible="false" >
       <Label text="RS: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
@@ -55,11 +55,11 @@
    </HBox>
    <HBox fx:id="totalrsBox" spacing="2" alignment="CENTER_LEFT" visible="false" >
       <Label text="RS: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-      <ReactiveSpinner fx:id="totalrs" imin="0" imax="99" editable="true" prefWidth="60" />
+      <ReactiveSpinner fx:id="totalrs" imin="0" imax="99" editable="true" prefWidth="55" />
    </HBox>   
    <HBox fx:id="totalbeBox" spacing="2" alignment="CENTER_LEFT" visible="false" >
       <Label text="BE: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-      <ReactiveSpinner fx:id="totalbe" imin="0" imax="99" editable="true" prefWidth="60" />
+      <ReactiveSpinner fx:id="totalbe" imin="0" imax="99" editable="true" prefWidth="55" />
    </HBox>   
    <HBox spacing="2" alignment="CENTER_LEFT" >
       <Label text="Zusatzrüstung: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />

@@ -24,11 +24,11 @@
    </HBox>
    <HBox spacing="2" alignment="CENTER_LEFT" >
       <Label text="TP: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-      <ReactiveSpinner fx:id="tpNumDice" imin="0" imax="99" editable="true" prefWidth="50" />
+      <ReactiveSpinner fx:id="tpNumDice" imin="0" imax="99" editable="true" prefWidth="55" />
       <Label text="W" />
-      <ReactiveSpinner fx:id="tpTypeDice" imin="1" imax="99" editable="true" prefWidth="50" />
+      <ReactiveSpinner fx:id="tpTypeDice" imin="1" imax="99" editable="true" prefWidth="55" />
       <Label text="+" />
-      <ReactiveSpinner fx:id="tpAdditional" imin="-99" imax="99" editable="true" prefWidth="50" />
+      <ReactiveSpinner fx:id="tpAdditional" imin="-99" imax="99" editable="true" prefWidth="55" />
       <Label text="(A)" />
       <CheckBox fx:id="tpStamina" />
       <Label text="*" />
@@ -36,9 +36,10 @@
    </HBox>
    <HBox spacing="2" alignment="CENTER_LEFT" >
       <Label text="TP/KK: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-      <ReactiveSpinner fx:id="tpkkThreshold" imin="1" imax="99" editable="true" prefWidth="50" />
+      <CheckBox fx:id="noTpkk" />
+      <ReactiveSpinner fx:id="tpkkThreshold" imin="1" imax="99" editable="true" prefWidth="55" />
       <Label text="/" />
-      <ReactiveSpinner fx:id="tpkkStep" imin="1" imax="99" editable="true" prefWidth="50" />
+      <ReactiveSpinner fx:id="tpkkStep" imin="1" imax="99" editable="true" prefWidth="55" />
    </HBox>
    <HBox spacing="2" alignment="CENTER_LEFT" >
       <Label text="Gewicht: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
@@ -51,17 +52,17 @@
    <HBox spacing="2" alignment="CENTER_LEFT" >
       <Label text="Bruchfaktor: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
       <CheckBox fx:id="noBf" />
-      <ReactiveSpinner fx:id="bf" imin="-12" imax="12" initialValue="0" editable="true" prefWidth="50" />
+      <ReactiveSpinner fx:id="bf" imin="-12" imax="12" initialValue="0" editable="true" prefWidth="55" />
    </HBox>
    <HBox spacing="2" alignment="CENTER_LEFT" >
       <Label text="INI: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-      <ReactiveSpinner fx:id="ini" imin="-99" imax="99" editable="true" prefWidth="50" />
+      <ReactiveSpinner fx:id="ini" imin="-99" imax="99" editable="true" prefWidth="60" />
    </HBox>
    <HBox spacing="2" alignment="CENTER_LEFT" >
       <Label text="WM: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-      <ReactiveSpinner fx:id="at" imin="-99" imax="99" editable="true" prefWidth="50" />
+      <ReactiveSpinner fx:id="at" imin="-99" imax="99" editable="true" prefWidth="60" />
       <Label text="/" />
-      <ReactiveSpinner fx:id="pa" imin="-99" imax="99" editable="true" prefWidth="50" />
+      <ReactiveSpinner fx:id="pa" imin="-99" imax="99" editable="true" prefWidth="60" />
    </HBox>
    <HBox spacing="2" alignment="CENTER_LEFT" >
       <Label text="Bem.: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />

@@ -14,7 +14,7 @@
    </HBox>
    <HBox spacing="2" alignment="CENTER_LEFT" >
       <Label text="Kälteschutz: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-      <ReactiveSpinner fx:id="ks" imin="0" imax="99" editable="true" prefWidth="60" />
+      <ReactiveSpinner fx:id="ks" imin="0" imax="99" editable="true" prefWidth="55" />
    </HBox>
    <HBox spacing="2" alignment="CENTER_LEFT" >
       <Label text="Gewicht: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />

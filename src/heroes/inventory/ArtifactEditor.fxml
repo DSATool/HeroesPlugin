@@ -21,7 +21,7 @@
    </HBox>
    <HBox spacing="2" alignment="CENTER_LEFT" >
       <Label text="Ladungen: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-      <ReactiveSpinner fx:id="loadNum" imin="0" imax="99" editable="true" prefWidth="50" />
+      <ReactiveSpinner fx:id="loadNum" imin="0" imax="99" editable="true" prefWidth="55" />
       <Label text="/" />
       <ComboBox fx:id="loadFreq" prefWidth="100" />
    </HBox>
@@ -40,7 +40,7 @@
    <HBox spacing="2" alignment="CENTER_LEFT" >
       <Label text="" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
       <ComboBox fx:id="triggerType" prefWidth="150" />
-      <ReactiveSpinner fx:id="triggerActions" imin="0" imax="99" editable="true" prefWidth="50" />
+      <ReactiveSpinner fx:id="triggerActions" imin="0" imax="99" editable="true" prefWidth="55" />
       <Label text="A" />
    </HBox>
    <HBox spacing="2" alignment="CENTER_LEFT" >
