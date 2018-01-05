@@ -96,14 +96,14 @@ public class RitualObjectEditor {
 
 		ritualGroupName = ritualObject.getRitualGroupName();
 
-		final Stage stage = new Stage();
-		stage.setTitle("Bearbeiten");
-		stage.setScene(new Scene(root, 330, 475 + ("Stabzauber".equals(ritualGroupName) ? 27 : 0)));
-		stage.initModality(Modality.WINDOW_MODAL);
-		stage.initOwner(window);
-
 		final JSONObject ritualGroups = ResourceManager.getResource("data/Ritualgruppen");
 		final JSONObject ritualGroup = ritualGroups.getObj(ritualGroupName);
+
+		final Stage stage = new Stage();
+		stage.setTitle("Bearbeiten");
+		stage.setScene(new Scene(root, 330, 485 + ("Stabzauber".equals(ritualGroupName) ? 27 : 0) + (ritualGroup.containsKey("Material") ? 25 : 0)));
+		stage.initModality(Modality.WINDOW_MODAL);
+		stage.initOwner(window);
 
 		name.setText(ritualObject.getName());
 		weight.getValueFactory().setValue(ritualObject.getWeight());
@@ -115,6 +115,10 @@ public class RitualObjectEditor {
 			typeBox.getChildren().add(check);
 			types.put(ritualObjectName, check);
 		}, ritualGroups);
+
+		final CheckBox check = new CheckBox("Bannschwert");
+		typeBox.getChildren().add(check);
+		types.put("Bannschwert", check);
 
 		final List<String> actualTypes = ritualObject.getTypes();
 		for (final String type : actualTypes) {
@@ -177,7 +181,9 @@ public class RitualObjectEditor {
 
 	@FXML
 	private void add() {
-		ritualTable.getItems().add(new Ritual(ritualGroupName, ritualList.getSelectionModel().getSelectedItem(), new JSONObject(null)));
+		final String name = ritualList.getSelectionModel().getSelectedItem();
+		final String ritualGroup = "Apport".equals(name) ? "Allgemeine Rituale" : ritualGroupName;
+		ritualTable.getItems().add(new Ritual(ritualGroup, name, new JSONObject(null)));
 		updateList();
 	}
 
@@ -232,12 +238,18 @@ public class RitualObjectEditor {
 			ritualList.getItems().add(name);
 		}, ritualGroup);
 
-		for (final Ritual ritual : ritualTable.getItems()) {
-			final String multipleTimes = ritualGroup.getObj(ritual.getName()).getString("Mehrfach");
-			if (multipleTimes != null && !"Anzahl".equals(multipleTimes)) {
+		if ("Bannschwert".equals(ritualGroupName)) {
+			ritualList.getItems().add("Bannschwert");
+		}
+
+		ritualList.getItems().add("Apport");
+
+		for (final Ritual actual : ritualTable.getItems()) {
+			final JSONObject ritual = ritualGroup.getObjOrDefault(actual.getName(), null);
+			if (ritual != null && ritual.containsKey("Mehrfach") && !"Anzahl".equals(ritual.getString("Mehrfach"))) {
 				continue;
 			}
-			ritualList.getItems().remove(ritual.getName());
+			ritualList.getItems().remove(actual.getName());
 		}
 
 		if (ritualList.getItems().size() > 0) {

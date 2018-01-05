@@ -367,7 +367,7 @@ public class InventoryController extends HeroTabController {
 						categories = new JSONArray(item);
 						item.put("Kategorien", categories);
 					}
-					if ("Ritualobjekte".equals(name)) {
+					if ("Ritualobjekt".equals(categoryName)) {
 						boolean found = false;
 						for (final String ritualObjectGroup : ritualObjectGroups) {
 							final String ritualObjectName = ritualGroups.getObj(ritualObjectGroup).getString("Ritualobjekt");
@@ -376,8 +376,12 @@ public class InventoryController extends HeroTabController {
 								found = true;
 							}
 						}
+						if (item.containsKey("Bannschwert")) {
+							categories.add("Bannschwert");
+							found = true;
+						}
 						if (!found) {
-							categories.add(ritualGroups.getObj(ritualObjectGroups.get(0)).getString("Ritualobjekt"));
+							categories.add("Bannschwert");
 						}
 					} else {
 						if (!categories.contains(categoryName)) {
@@ -399,6 +403,7 @@ public class InventoryController extends HeroTabController {
 						final String ritualObjectName = ritualGroups.getObj(ritualObjectGroup).getString("Ritualobjekt");
 						categories.remove(ritualObjectName);
 					}
+					categories.remove("Bannschwert");
 				} else {
 					categories.remove(category);
 				}
@@ -760,6 +765,11 @@ public class InventoryController extends HeroTabController {
 						ritualObjectTable.getItems().add(new RitualObject(actual, item, ritualGroupName));
 						found = true;
 					}
+				}
+				if (categories.contains("Bannschwert")) {
+					final JSONObject actual = item.getObjOrDefault("Bannschwert", item);
+					ritualObjectTable.getItems().add(new RitualObject(actual, item, "Bannschwert"));
+					found = true;
 				}
 			}
 			if (!found && !fromAnimal) {
