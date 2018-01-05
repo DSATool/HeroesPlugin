@@ -903,7 +903,7 @@ public class AnimalController {
 				super.updateItem(item, empty);
 				final ProConSkill proOrCon = (ProConSkill) getTableRow().getItem();
 				if (proOrCon != null) {
-					Util.addReference(this, proOrCon.proConSkill, 50);
+					Util.addReference(this, proOrCon.proConSkill, 15, proConNameColumn.widthProperty());
 				}
 			}
 		});
@@ -978,7 +978,7 @@ public class AnimalController {
 				super.updateItem(item, empty);
 				final ProConSkill proOrCon = (ProConSkill) getTableRow().getItem();
 				if (proOrCon != null) {
-					Util.addReference(this, proOrCon.proConSkill, 50);
+					Util.addReference(this, proOrCon.proConSkill, 15, skillNameColumn.widthProperty());
 				}
 			}
 		});

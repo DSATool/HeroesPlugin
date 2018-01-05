@@ -129,7 +129,7 @@ public class ProsOrConsController {
 				super.updateItem(item, empty);
 				final ProOrCon proOrCon = (ProOrCon) getTableRow().getItem();
 				if (proOrCon != null) {
-					Util.addReference(this, proOrCon.getProOrCon(), 50);
+					Util.addReference(this, proOrCon.getProOrCon(), 15, nameColumn.widthProperty());
 				}
 			}
 		});

@@ -151,7 +151,7 @@ public class TalentGroupController {
 				super.updateItem(item, empty);
 				final Talent talent = (Talent) getTableRow().getItem();
 				if (talent != null) {
-					Util.addReference(this, talent.getTalent(), 50);
+					Util.addReference(this, talent.getTalent(), 15, nameColumn.widthProperty());
 				}
 			}
 		});
