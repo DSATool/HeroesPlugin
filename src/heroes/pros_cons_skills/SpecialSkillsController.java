@@ -40,7 +40,7 @@ public class SpecialSkillsController extends HeroTabController {
 
 	private final List<ProsOrConsController> skillControllers = new ArrayList<>();
 
-	public SpecialSkillsController(TabPane tabPane) {
+	public SpecialSkillsController(final TabPane tabPane) {
 		super(tabPane);
 	}
 
@@ -75,24 +75,24 @@ public class SpecialSkillsController extends HeroTabController {
 
 		final JSONObject specialSkills = ResourceManager.getResource("data/Sonderfertigkeiten");
 		for (final String skillGroup : specialSkills.keySet()) {
-			final ProsOrConsController groupController = new ProsOrConsController(pane, skillGroup, "Sonderfertikgeit", true, false,
-					specialSkills.getObj(skillGroup), "Sonderfertigkeiten", showAll.selectedProperty());
+			final ProsOrConsController groupController = new ProsOrConsController(pane, skillGroup, "Sonderfertikgeit", true, specialSkills.getObj(skillGroup),
+					"Sonderfertigkeiten", showAll.selectedProperty());
 			skillControllers.add(groupController);
 			box.getChildren().add(groupController.getControl());
 		}
 		final JSONObject rituals = ResourceManager.getResource("data/Rituale");
 		for (final String skillGroup : rituals.keySet()) {
-			final ProsOrConsController groupController = new ProsOrConsController(pane, skillGroup, "Sonderfertikgeit", true, false, rituals.getObj(skillGroup),
+			final ProsOrConsController groupController = new ProsOrConsController(pane, skillGroup, "Sonderfertikgeit", true, rituals.getObj(skillGroup),
 					"Sonderfertigkeiten", showAll.selectedProperty());
 			skillControllers.add(groupController);
 			box.getChildren().add(groupController.getControl());
 		}
-		ProsOrConsController groupController = new ProsOrConsController(pane, "Liturgien", "Sonderfertigkeit", false, false,
+		ProsOrConsController groupController = new ProsOrConsController(pane, "Liturgien", "Sonderfertigkeit", false,
 				ResourceManager.getResource("data/Liturgien"), "Sonderfertigkeiten", showAll.selectedProperty());
 		skillControllers.add(groupController);
 		box.getChildren().add(groupController.getControl());
-		groupController = new ProsOrConsController(pane, "Schamanen-Rituale", "Sonderfertigkeit", false, false,
-				ResourceManager.getResource("data/Schamanenrituale"), "Sonderfertigkeiten", showAll.selectedProperty());
+		groupController = new ProsOrConsController(pane, "Schamanen-Rituale", "Sonderfertigkeit", false, ResourceManager.getResource("data/Schamanenrituale"),
+				"Sonderfertigkeiten", showAll.selectedProperty());
 		skillControllers.add(groupController);
 		box.getChildren().add(groupController.getControl());
 		groupController = new CheaperSkillsController(pane);

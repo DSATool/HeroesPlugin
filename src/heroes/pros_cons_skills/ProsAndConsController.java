@@ -37,7 +37,7 @@ public class ProsAndConsController extends HeroTabController {
 	private ProsOrConsController pros;
 	private ProsOrConsController cons;
 
-	public ProsAndConsController(TabPane tabPane) {
+	public ProsAndConsController(final TabPane tabPane) {
 		super(tabPane);
 	}
 
@@ -69,10 +69,10 @@ public class ProsAndConsController extends HeroTabController {
 			ErrorLogger.logError(e);
 		}
 
-		pros = new ProsOrConsController(pane, "Vorteile", "Vorteil", true, true, ResourceManager.getResource("data/Vorteile"), "Vorteile",
+		pros = new ProsOrConsController(pane, "Vorteile", "Vorteil", true, ResourceManager.getResource("data/Vorteile"), "Vorteile",
 				showAll.selectedProperty());
 		box.getChildren().add(pros.getControl());
-		cons = new ProsOrConsController(pane, "Nachteile", "Nachteil", false, true, ResourceManager.getResource("data/Nachteile"), "Nachteile",
+		cons = new ProsOrConsController(pane, "Nachteile", "Nachteil", false, ResourceManager.getResource("data/Nachteile"), "Nachteile",
 				showAll.selectedProperty());
 		box.getChildren().add(cons.getControl());
 

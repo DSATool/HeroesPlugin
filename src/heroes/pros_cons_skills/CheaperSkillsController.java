@@ -30,8 +30,7 @@ import jsonant.value.JSONObject;
 public class CheaperSkillsController extends ProsOrConsController {
 
 	public CheaperSkillsController(final ScrollPane parent) {
-		super(parent, "Verbilligte Sonderfertigkeiten", "Sonderfertigkeit", true, true, null, "Verbilligte Sonderfertigkeiten",
-				new SimpleBooleanProperty(true));
+		super(parent, "Verbilligte Sonderfertigkeiten", "Sonderfertigkeit", true, null, "Verbilligte Sonderfertigkeiten", new SimpleBooleanProperty(true));
 
 		valueColumn.setText("Verbilligungen");
 		valueColumn.setPrefWidth(100);

@@ -82,8 +82,7 @@ public class ProsOrConsController {
 		setVisibility();
 	};
 
-	public ProsOrConsController(final ScrollPane parent, final String name, final String singular, final boolean needsVariant, final boolean needsValue,
-			final JSONObject prosOrCons,
+	public ProsOrConsController(final ScrollPane parent, final String name, final String singular, final boolean needsVariant, final JSONObject prosOrCons,
 			final String category, final BooleanProperty showAll) {
 		this.prosOrCons = prosOrCons;
 		this.category = category;
@@ -114,11 +113,7 @@ public class ProsOrConsController {
 			variantColumn.setVisible(false);
 		}
 
-		if (needsValue) {
-			width = width.subtract(valueColumn.widthProperty());
-		} else {
-			valueColumn.setVisible(false);
-		}
+		width = width.subtract(valueColumn.widthProperty());
 
 		descColumn.prefWidthProperty().bind(width);
 
