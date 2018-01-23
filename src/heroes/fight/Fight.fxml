@@ -27,7 +27,7 @@
                <TableColumn fx:id="closeCombatTPColumn" text="TP" prefWidth="70" resizable="false" style="-fx-alignment: CENTER;" />
                <TableColumn fx:id="closeCombatATColumn" text="AT" prefWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
                <TableColumn fx:id="closeCombatPAColumn" text="PA" prefWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
-               <TableColumn fx:id="closeCombatIniColumn" text="Ini" prefWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
+               <TableColumn fx:id="closeCombatIniColumn" text="INI" prefWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
                <TableColumn fx:id="closeCombatDKColumn" text="DK" prefWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
                <TableColumn fx:id="closeCombatBFColumn" text="BF" prefWidth="60" resizable="false" editable="true" style="-fx-alignment: CENTER;" />
             </columns>
@@ -70,7 +70,7 @@
                <TableColumn fx:id="shieldsNameColumn" text="Schild" minWidth="100" resizable="false" styleClass="left-aligned" style="-fx-alignment: CENTER-LEFT;" />
                <TableColumn fx:id="shieldsATColumn" text="AT" prefWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
                <TableColumn fx:id="shieldsPAColumn" text="PA" prefWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
-               <TableColumn fx:id="shieldsIniColumn" text="Ini" prefWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
+               <TableColumn fx:id="shieldsIniColumn" text="INI" prefWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
                <TableColumn fx:id="shieldsBFColumn" text="BF" prefWidth="60" resizable="false" editable="true" style="-fx-alignment: CENTER;" />
             </columns>
          </TableView>
@@ -89,7 +89,7 @@
                <TableColumn fx:id="defensiveWeaponsNameColumn" text="Waffe" minWidth="100" resizable="false" styleClass="left-aligned" style="-fx-alignment: CENTER-LEFT;" />
                <TableColumn fx:id="defensiveWeaponsATColumn" text="AT" prefWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
                <TableColumn fx:id="defensiveWeaponsPAColumn" text="PA" prefWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
-               <TableColumn fx:id="defensiveWeaponsIniColumn" text="Ini" prefWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
+               <TableColumn fx:id="defensiveWeaponsIniColumn" text="INI" prefWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
                <TableColumn fx:id="defensiveWeaponsBFColumn" text="BF" prefWidth="60" resizable="false" editable="true" style="-fx-alignment: CENTER;" />
             </columns>
          </TableView>
