@@ -76,6 +76,13 @@ public class QuirkReductionDialog {
 			final JSONObject historyEntry = new JSONObject(history);
 			historyEntry.put("Typ", "Schlechte Eigenschaft");
 			historyEntry.put("Schlechte Eigenschaft", quirk.getName());
+			final JSONObject con = quirk.getProOrCon();
+			if (con.containsKey("Auswahl")) {
+				historyEntry.put("Auswahl", quirk.getActual().getString("Auswahl"));
+			}
+			if (con.containsKey("Freitext")) {
+				historyEntry.put("Freitext", quirk.getActual().getString("Freitext"));
+			}
 			historyEntry.put("Von", quirk.getValue());
 			historyEntry.put("Auf", target.getValue());
 			final int usedSes = Math.min(quirk.getValue() - target.getValue(), ses.getValue());
@@ -91,7 +98,6 @@ public class QuirkReductionDialog {
 			final JSONObject bio = hero.getObj("Biografie");
 			bio.put("Abenteuerpunkte-Guthaben", bio.getIntOrDefault("Abenteuerpunkte-Guthaben", 0) - ap.getValue());
 			if (target.getValue() == 0) {
-				final JSONObject con = quirk.getProOrCon();
 				final JSONObject cons = hero.getObj("Nachteile");
 				if (con.containsKey("Auswahl") || con.containsKey("Freitext")) {
 					cons.getArr(quirk.getName()).remove(quirk.getActual());
