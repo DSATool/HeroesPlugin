@@ -19,6 +19,7 @@ import javafx.scene.control.TableCell;
 import javafx.util.Callback;
 
 public class UiUtil {
+
 	@SuppressWarnings("rawtypes")
 	public static final Callback integerCellFactory = col -> {
 		return new TableCell() {
@@ -50,5 +51,7 @@ public class UiUtil {
 			}
 		};
 	};
+
+	private UiUtil() {}
 
 }
