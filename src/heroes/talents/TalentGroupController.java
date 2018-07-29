@@ -126,10 +126,10 @@ public class TalentGroupController {
 		GUIUtil.autosizeTable(table, 0, 2 + ("Fernkampftalente".equals(name) ? table.getColumns().get(2).getWidth() * -1 : 0));
 
 		nameColumn.setCellValueFactory(new PropertyValueFactory<Talent, String>("displayName"));
-		nameColumn.setCellFactory(c -> new GraphicTableCell<Talent, String>(false) {
+		nameColumn.setCellFactory(c -> new GraphicTableCell<>(false) {
 			@Override
 			protected void createGraphic() {
-				final Talent item = (Talent) getTableRow().getItem();
+				final Talent item = getTableRow().getItem();
 				final JSONObject talent = item.getTalent();
 				final ComboBox<String> t = new ComboBox();
 				t.setItems(FXCollections.observableArrayList(
@@ -141,7 +141,7 @@ public class TalentGroupController {
 			@Override
 			public void startEdit() {
 				if (isEmpty()) return;
-				final JSONObject talent = ((Talent) getTableRow().getItem()).getTalent();
+				final JSONObject talent = getTableRow().getItem().getTalent();
 				if (!talent.containsKey("Auswahl") && !talent.containsKey("Freitext")) return;
 				super.startEdit();
 			}
@@ -149,7 +149,7 @@ public class TalentGroupController {
 			@Override
 			public void updateItem(final String item, final boolean empty) {
 				super.updateItem(item, empty);
-				final Talent talent = (Talent) getTableRow().getItem();
+				final Talent talent = getTableRow().getItem();
 				if (talent != null) {
 					Util.addReference(this, talent.getTalent(), 15, nameColumn.widthProperty());
 				}
@@ -338,7 +338,7 @@ public class TalentGroupController {
 
 		final TableColumn<Talent, Integer> valueColumn = (TableColumn<Talent, Integer>) table.getColumns().get(i);
 		valueColumn.setCellValueFactory(new PropertyValueFactory<Talent, Integer>("value"));
-		valueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<Talent>(-99, 99, 1, false) {
+		valueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99, 1, false) {
 			@Override
 			public void updateItem(final Integer item, final boolean empty) {
 				if (empty || item.equals(Integer.MIN_VALUE)) {
@@ -401,7 +401,11 @@ public class TalentGroupController {
 		if ("Zauber".equals(name)) {
 			newTalent = Spell.getSpell(talentName, talent, null, actual.getObj(talentName), actual, representationsList.getSelectionModel().getSelectedItem());
 		} else {
-			newTalent = Talent.getTalent(talentName, talentGroup, talent, null, actual);
+			JSONObject group = talentGroup;
+			if ("Sprachen und Schriften".equals(name)) {
+				group = group.getObj(talents.getObj(talentName).getBoolOrDefault("Schrift", false) ? "Schriften" : "Sprachen");
+			}
+			newTalent = Talent.getTalent(talentName, group, talent, null, actual);
 		}
 		newTalent.insertTalent(false);
 	}
