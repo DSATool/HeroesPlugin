@@ -15,13 +15,12 @@
  */
 package heroes.notes;
 
-import com.sun.javafx.scene.web.skin.HTMLEditorSkin;
-
 import heroes.ui.HeroTabController;
 import javafx.scene.Node;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.web.HTMLEditor;
+import javafx.scene.web.HTMLEditorSkin;
 import jsonant.event.JSONListener;
 import jsonant.value.JSONObject;
 import jsonant.value.JSONValue;
@@ -32,7 +31,7 @@ public class NotesController extends HeroTabController implements JSONListener {
 
 	private String currentText;
 
-	public NotesController(TabPane tabPane) {
+	public NotesController(final TabPane tabPane) {
 		super(tabPane);
 	}
 
@@ -70,7 +69,7 @@ public class NotesController extends HeroTabController implements JSONListener {
 	}
 
 	@Override
-	public void notifyChanged(JSONValue changed) {
+	public void notifyChanged(final JSONValue changed) {
 		final String newText = hero.getStringOrDefault("Notizen", "");
 		if (!newText.equals(currentText)) {
 			currentText = newText;
@@ -79,7 +78,7 @@ public class NotesController extends HeroTabController implements JSONListener {
 	}
 
 	@Override
-	public void setHero(JSONObject hero) {
+	public void setHero(final JSONObject hero) {
 		hero.removeListener(this);
 		super.setHero(hero);
 	}
