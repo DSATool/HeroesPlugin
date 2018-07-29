@@ -29,7 +29,10 @@ import heroes.pros_cons_skills.ProsAndConsController;
 import heroes.pros_cons_skills.SpecialSkillsController;
 import heroes.talents.SpellsController;
 import heroes.talents.TalentsController;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TabPane;
+import javafx.scene.layout.StackPane;
 
 public class HeroesController extends HeroSelector {
 	public static List<Class<? extends HeroTabController>> tabControllers = Arrays.asList(GeneralController.class, ProsAndConsController.class,
@@ -37,18 +40,31 @@ public class HeroesController extends HeroSelector {
 			AnimalsController.class, NotesController.class);
 
 	private final boolean editable = true;
-	private final TabPane pane;
+	@FXML
+	private StackPane stackPane;
+	@FXML
+	private TabPane tabPane;
 
 	public HeroesController() {
 		super(true);
 
-		pane = new TabPane();
+		final FXMLLoader fxmlLoader = new FXMLLoader();
 
-		setContent(pane);
+		fxmlLoader.setController(this);
+
+		try {
+			fxmlLoader.load(getClass().getResource("HeroesController.fxml").openStream());
+		} catch (final Exception e) {
+			ErrorLogger.logError(e);
+		}
+
+		stackPane.getStylesheets().add(getClass().getResource("heroes.css").toExternalForm());
+
+		setContent(stackPane);
 
 		try {
 			for (final Class<? extends HeroTabController> controller : tabControllers) {
-				controllers.add(controller.getDeclaredConstructor(TabPane.class).newInstance(pane));
+				controllers.add(controller.getDeclaredConstructor(TabPane.class).newInstance(tabPane));
 			}
 		} catch (final Exception e) {
 			ErrorLogger.logError(e);
@@ -69,6 +85,11 @@ public class HeroesController extends HeroSelector {
 		firstPage.init();
 		firstPage.update();
 		firstPage.changeEditable();
-		pane.getTabs().get(0).setContent(firstPage.getControl());
+		tabPane.getTabs().get(0).setContent(firstPage.getControl());
+	}
+
+	@FXML
+	private void toggleEditable() {
+		HeroTabController.isEditable.set(!HeroTabController.isEditable.get());
 	}
 }

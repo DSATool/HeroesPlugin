@@ -556,11 +556,6 @@ public class GeneralController extends HeroTabController {
 		}
 	}
 
-	@FXML
-	private void toggleEditable() {
-		HeroTabController.isEditable.set(!HeroTabController.isEditable.get());
-	}
-
 	@Override
 	protected void update() {
 		update = true;

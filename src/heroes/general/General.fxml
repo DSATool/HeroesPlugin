@@ -9,7 +9,6 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
-<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -64,7 +63,6 @@
                      </styleClass>
                   </ReactiveSpinner>
                   <Label maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-                  <ToggleButton text="Bearbeiten" onAction="#toggleEditable" prefWidth="75" />
                </HBox>        
             </children>
          </GridPane>
