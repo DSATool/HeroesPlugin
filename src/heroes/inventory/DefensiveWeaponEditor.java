@@ -16,8 +16,8 @@
 package heroes.inventory;
 
 import dsa41basis.fight.DefensiveWeapon;
+import dsatool.ui.ReactiveSpinner;
 import dsatool.util.ErrorLogger;
-import dsatool.util.ReactiveSpinner;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;

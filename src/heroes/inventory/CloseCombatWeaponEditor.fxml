@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import org.controlsfx.control.CheckComboBox?>
-<?import dsatool.util.ReactiveSpinner?>
+<?import dsatool.ui.ReactiveSpinner?>
 
 <VBox fx:id="root" style="-fx-padding: 2, 2, 2, 2;" spacing="2" xmlns:fx="http://javafx.com/fxml" >
    <HBox spacing="2" alignment="CENTER_LEFT" >
@@ -52,7 +52,7 @@
    <HBox spacing="2" alignment="CENTER_LEFT" >
       <Label text="Bruchfaktor: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
       <CheckBox fx:id="noBf" />
-      <ReactiveSpinner fx:id="bf" imin="-12" imax="12" initialValue="0" editable="true" prefWidth="55" />
+      <ReactiveSpinner fx:id="bf" imin="-25" imax="12" initialValue="0" editable="true" prefWidth="60" />
    </HBox>
    <HBox spacing="2" alignment="CENTER_LEFT" >
       <Label text="INI: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />

@@ -2,7 +2,7 @@
 
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.HBox?>
-<?import dsatool.util.ReactiveSpinner?>
+<?import dsatool.ui.ReactiveSpinner?>
 
 <HBox spacing="2" alignment="CENTER" xmlns:fx="http://javafx.com/fxml" >
    <Label fx:id="name" alignment="BOTTOM_LEFT" maxWidth="Infinity" HBox.hgrow="ALWAYS" />

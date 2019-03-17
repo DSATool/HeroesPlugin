@@ -16,7 +16,6 @@
 package heroes.inventory;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,9 +34,9 @@ import dsa41basis.util.HeroUtil;
 import dsatool.gui.GUIUtil;
 import dsatool.resources.ResourceManager;
 import dsatool.resources.Settings;
+import dsatool.ui.GraphicTableCell;
+import dsatool.ui.ReactiveSpinner;
 import dsatool.util.ErrorLogger;
-import dsatool.util.GraphicTableCell;
-import dsatool.util.ReactiveSpinner;
 import heroes.ui.HeroTabController;
 import heroes.util.UiUtil;
 import javafx.beans.binding.DoubleBinding;
@@ -211,6 +210,8 @@ public class InventoryController extends HeroTabController {
 
 	private JSONObject money;
 
+	private final JSONObject ritualGroups = ResourceManager.getResource("data/Ritualgruppen");
+
 	public InventoryController(final TabPane tabPane) {
 		super(tabPane);
 		equipment = ResourceManager.getResource("data/Ausruestung");
@@ -221,7 +222,7 @@ public class InventoryController extends HeroTabController {
 		newArtifactField.setText("");
 		final JSONObject item = new JSONObject(items);
 		item.put("Name", itemName);
-		item.put("Kategorien", new JSONArray(Arrays.asList("Artefakt"), item));
+		item.put("Kategorien", new JSONArray(new ArrayList<>(List.of("Artefakt")), item));
 		addItem(item);
 	}
 
@@ -353,8 +354,6 @@ public class InventoryController extends HeroTabController {
 
 			final MenuItem editItem = new MenuItem("Bearbeiten");
 			editItem.setOnAction(event -> edit.accept(null));
-
-			final JSONObject ritualGroups = ResourceManager.getResource("data/Ritualgruppen");
 
 			final Menu addItem = new Menu("Hinzufügen zu ...");
 			for (int i = 0; i < categoryNames.length; ++i) {
@@ -574,7 +573,7 @@ public class InventoryController extends HeroTabController {
 		clothingTable.setRowFactory(contextMenu("Kleidung", "Kleidung"));
 
 		clothingNameColumn.setCellFactory(o -> {
-			final TableCell<Clothing, String> cell = new GraphicTableCell<Clothing, String>(false) {
+			final TableCell<Clothing, String> cell = new GraphicTableCell<>(false) {
 				@Override
 				protected void createGraphic() {
 					final TextField t = new TextField();
@@ -591,7 +590,7 @@ public class InventoryController extends HeroTabController {
 		});
 
 		clothingNotesColumn.setCellFactory(o -> {
-			final TableCell<Clothing, String> cell = new GraphicTableCell<Clothing, String>(false) {
+			final TableCell<Clothing, String> cell = new GraphicTableCell<>(false) {
 				@Override
 				protected void createGraphic() {
 					final TextField t = new TextField();
@@ -629,7 +628,7 @@ public class InventoryController extends HeroTabController {
 		equipmentTable.setRowFactory(contextMenu("Ausrüstung", ""));
 
 		equipmentNameColumn.setCellFactory(o -> {
-			final TableCell<InventoryItem, String> cell = new GraphicTableCell<InventoryItem, String>(false) {
+			final TableCell<InventoryItem, String> cell = new GraphicTableCell<>(false) {
 				@Override
 				protected void createGraphic() {
 					final TextField t = new TextField();
@@ -645,7 +644,7 @@ public class InventoryController extends HeroTabController {
 		});
 
 		equipmentNotesColumn.setCellFactory(o -> {
-			final TableCell<InventoryItem, String> cell = new GraphicTableCell<InventoryItem, String>(false) {
+			final TableCell<InventoryItem, String> cell = new GraphicTableCell<>(false) {
 				@Override
 				protected void createGraphic() {
 					final TextField t = new TextField();
@@ -900,8 +899,9 @@ public class InventoryController extends HeroTabController {
 				armorList.getItems().add(itemName);
 				found = true;
 			}
-			for (final String ritualObject : ritualObjectGroups) {
-				if (categories.contains(ritualObject)) {
+			for (final String ritualGroupName : ritualObjectGroups) {
+				final JSONObject ritualGroup = ritualGroups.getObj(ritualGroupName);
+				if (categories.contains(ritualGroup.getString("Ritualobjekt"))) {
 					ritualObjectList.getItems().add(itemName);
 					found = true;
 					break;

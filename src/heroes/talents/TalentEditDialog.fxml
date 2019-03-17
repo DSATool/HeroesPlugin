@@ -4,7 +4,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import dsatool.util.ReactiveComboBox?>
+<?import dsatool.ui.ReactiveComboBox?>
 
 <VBox fx:id="root" style="-fx-padding: 2, 2, 2, 2;" spacing="2" xmlns:fx="http://javafx.com/fxml" >
    <HBox alignment="CENTER" >

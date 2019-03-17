@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import dsatool.util.ReactiveComboBox?>
+<?import dsatool.ui.ReactiveComboBox?>
 
 <VBox fx:id="pane" style="-fx-padding: 0, 0, 0, 0;" xmlns:fx="http://javafx.com/fxml" >
    <TableView fx:id="table" fixedCellSize="28" editable="true" >

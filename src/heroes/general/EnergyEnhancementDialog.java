@@ -18,8 +18,8 @@ package heroes.general;
 import java.time.LocalDate;
 
 import dsa41basis.util.DSAUtil;
+import dsatool.ui.ReactiveSpinner;
 import dsatool.util.ErrorLogger;
-import dsatool.util.ReactiveSpinner;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;

@@ -8,8 +8,8 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import dsatool.util.ReactiveComboBox?>
-<?import dsatool.util.ReactiveSpinner?>
+<?import dsatool.ui.ReactiveComboBox?>
+<?import dsatool.ui.ReactiveSpinner?>
 
 <VBox fx:id="root" style="-fx-padding: 2, 2, 2, 2;" spacing="2" xmlns:fx="http://javafx.com/fxml" >
    <HBox alignment="CENTER" >

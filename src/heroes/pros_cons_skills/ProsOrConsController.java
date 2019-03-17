@@ -19,10 +19,10 @@ import dsa41basis.hero.ProOrCon;
 import dsa41basis.util.DSAUtil;
 import dsa41basis.util.HeroUtil;
 import dsa41basis.util.RequirementsUtil;
+import dsatool.ui.GraphicTableCell;
+import dsatool.ui.IntegerSpinnerTableCell;
+import dsatool.ui.ReactiveComboBox;
 import dsatool.util.ErrorLogger;
-import dsatool.util.GraphicTableCell;
-import dsatool.util.IntegerSpinnerTableCell;
-import dsatool.util.ReactiveComboBox;
 import dsatool.util.Util;
 import heroes.ui.HeroTabController;
 import javafx.beans.binding.DoubleBinding;
@@ -118,11 +118,11 @@ public class ProsOrConsController {
 		descColumn.prefWidthProperty().bind(width);
 
 		nameColumn.setCellValueFactory(new PropertyValueFactory<ProOrCon, String>("displayName"));
-		nameColumn.setCellFactory(c -> new TextFieldTableCell<ProOrCon, String>() {
+		nameColumn.setCellFactory(c -> new TextFieldTableCell<>() {
 			@Override
 			public void updateItem(final String item, final boolean empty) {
 				super.updateItem(item, empty);
-				final ProOrCon proOrCon = (ProOrCon) getTableRow().getItem();
+				final ProOrCon proOrCon = getTableRow().getItem();
 				if (proOrCon != null) {
 					Util.addReference(this, proOrCon.getProOrCon(), 15, nameColumn.widthProperty());
 				}
@@ -130,7 +130,7 @@ public class ProsOrConsController {
 		});
 
 		descColumn.setCellValueFactory(new PropertyValueFactory<ProOrCon, String>("description"));
-		descColumn.setCellFactory(c -> new GraphicTableCell<ProOrCon, String>(false) {
+		descColumn.setCellFactory(c -> new GraphicTableCell<>(false) {
 			@Override
 			protected void createGraphic() {
 				final ObservableList<String> items = FXCollections
@@ -160,7 +160,7 @@ public class ProsOrConsController {
 		descColumn.setOnEditCommit(t -> t.getRowValue().setDescription(t.getNewValue()));
 
 		variantColumn.setCellValueFactory(new PropertyValueFactory<ProOrCon, String>("variant"));
-		variantColumn.setCellFactory(c -> new GraphicTableCell<ProOrCon, String>(false) {
+		variantColumn.setCellFactory(c -> new GraphicTableCell<>(false) {
 			@Override
 			protected void createGraphic() {
 				final ObservableList<String> items = FXCollections
@@ -190,7 +190,7 @@ public class ProsOrConsController {
 		variantColumn.setOnEditCommit(t -> t.getRowValue().setVariant(t.getNewValue()));
 
 		valueColumn.setCellValueFactory(new PropertyValueFactory<ProOrCon, Integer>("value"));
-		valueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<ProOrCon>(0, 9999, 1, false) {
+		valueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 9999, 1, false) {
 			@Override
 			public void startEdit() {
 				if (!HeroTabController.isEditable.get()) {
@@ -211,7 +211,7 @@ public class ProsOrConsController {
 		});
 
 		validColumn.setCellValueFactory(new PropertyValueFactory<ProOrCon, Boolean>("valid"));
-		validColumn.setCellFactory(tableColumn -> new TableCell<ProOrCon, Boolean>() {
+		validColumn.setCellFactory(tableColumn -> new TableCell<>() {
 			@Override
 			public void updateItem(final Boolean valid, final boolean empty) {
 				super.updateItem(valid, empty);

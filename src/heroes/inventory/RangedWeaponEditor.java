@@ -19,8 +19,8 @@ import org.controlsfx.control.CheckComboBox;
 
 import dsa41basis.fight.RangedWeapon;
 import dsatool.resources.ResourceManager;
+import dsatool.ui.ReactiveSpinner;
 import dsatool.util.ErrorLogger;
-import dsatool.util.ReactiveSpinner;
 import dsatool.util.Tuple3;
 import dsatool.util.Tuple5;
 import javafx.collections.FXCollections;

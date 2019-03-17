@@ -17,7 +17,7 @@ package heroes.fight;
 
 import dsa41basis.fight.RangedWeapon;
 import dsatool.resources.ResourceManager;
-import dsatool.util.ReactiveSpinner;
+import dsatool.ui.ReactiveSpinner;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;

@@ -15,7 +15,7 @@
  */
 package heroes.general;
 
-import dsatool.util.Colorable;
+import dsatool.ui.Colorable;
 import javafx.beans.binding.When;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleStringProperty;

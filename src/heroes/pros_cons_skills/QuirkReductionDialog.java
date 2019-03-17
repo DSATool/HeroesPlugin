@@ -18,8 +18,8 @@ package heroes.pros_cons_skills;
 import java.time.LocalDate;
 
 import dsa41basis.hero.ProOrCon;
+import dsatool.ui.ReactiveSpinner;
 import dsatool.util.ErrorLogger;
-import dsatool.util.ReactiveSpinner;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;

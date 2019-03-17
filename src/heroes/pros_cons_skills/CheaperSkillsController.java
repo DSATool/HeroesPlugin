@@ -19,7 +19,7 @@ import dsa41basis.hero.ProOrCon;
 import dsa41basis.util.DSAUtil;
 import dsa41basis.util.HeroUtil;
 import dsatool.resources.ResourceManager;
-import dsatool.util.IntegerSpinnerTableCell;
+import dsatool.ui.IntegerSpinnerTableCell;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
