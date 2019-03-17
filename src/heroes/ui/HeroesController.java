@@ -15,7 +15,7 @@
  */
 package heroes.ui;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import dsa41basis.ui.hero.HeroSelector;
@@ -35,9 +35,9 @@ import javafx.scene.control.TabPane;
 import javafx.scene.layout.StackPane;
 
 public class HeroesController extends HeroSelector {
-	public static List<Class<? extends HeroTabController>> tabControllers = Arrays.asList(GeneralController.class, ProsAndConsController.class,
+	public static List<Class<? extends HeroTabController>> tabControllers = new ArrayList<>(List.of(GeneralController.class, ProsAndConsController.class,
 			SpecialSkillsController.class, TalentsController.class, SpellsController.class, FightController.class, InventoryController.class,
-			AnimalsController.class, NotesController.class);
+			AnimalsController.class, NotesController.class));
 
 	private final boolean editable = true;
 	@FXML
