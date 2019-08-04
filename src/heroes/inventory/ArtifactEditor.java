@@ -241,17 +241,17 @@ public class ArtifactEditor {
 			loadFreq.setDisable(true);
 			stability.setDisable(true);
 			switch (type.getValue()) {
-			case "Arcanovi (semipermanent)":
-				loadFreq.setDisable(false);
-			case "Applicatus":
-			case "Arcanovi (einmalig)":
-			case "Arcanovi (aufladbar)":
-				loadNum.setDisable(false);
-				break;
-			case "Matrixgeber":
-			case "Zaubertalisman":
-				stability.setDisable(false);
-				break;
+				case "Arcanovi (semipermanent)":
+					loadFreq.setDisable(false);
+				case "Applicatus":
+				case "Arcanovi (einmalig)":
+				case "Arcanovi (aufladbar)":
+					loadNum.setDisable(false);
+					break;
+				case "Matrixgeber":
+				case "Zaubertalisman":
+					stability.setDisable(false);
+					break;
 			}
 		});
 
@@ -265,16 +265,16 @@ public class ArtifactEditor {
 		name.setText(artifact.getName());
 		type.setValue(artifact.getType());
 		switch (type.getValue()) {
-		case "Arcanovi (semipermanent)":
-			loadFreq.setValue(artifact.getLoadFreq());
-		case "Applicatus":
-		case "Arcanovi (einmalig)":
-		case "Arcanovi (aufladbar)":
-			loadNum.getValueFactory().setValue(artifact.getLoadNum());
-			break;
-		default:
-			artifact.setLoads(Integer.MIN_VALUE, null);
-			break;
+			case "Arcanovi (semipermanent)":
+				loadFreq.setValue(artifact.getLoadFreq());
+			case "Applicatus":
+			case "Arcanovi (einmalig)":
+			case "Arcanovi (aufladbar)":
+				loadNum.getValueFactory().setValue(artifact.getLoadNum());
+				break;
+			default:
+				artifact.setLoads(Integer.MIN_VALUE, null);
+				break;
 		}
 		loadNum.getValueFactory().setValue(artifact.getLoadNum());
 		stability.getSelectionModel().select(artifact.getStability());
@@ -290,24 +290,24 @@ public class ArtifactEditor {
 			artifact.setName(name.getText());
 			artifact.setType(type.getValue());
 			switch (type.getValue()) {
-			case "Arcanovi (semipermanent)":
-				artifact.setLoads(loadNum.getValue(), loadFreq.getValue());
-				break;
-			case "Applicatus":
-			case "Arcanovi (einmalig)":
-			case "Arcanovi (aufladbar)":
-				artifact.setLoads(loadNum.getValue(), null);
-				break;
-			default:
-				artifact.setLoads(Integer.MIN_VALUE, null);
+				case "Arcanovi (semipermanent)":
+					artifact.setLoads(loadNum.getValue(), loadFreq.getValue());
+					break;
+				case "Applicatus":
+				case "Arcanovi (einmalig)":
+				case "Arcanovi (aufladbar)":
+					artifact.setLoads(loadNum.getValue(), null);
+					break;
+				default:
+					artifact.setLoads(Integer.MIN_VALUE, null);
 			}
 			switch (type.getValue()) {
-			case "Matrixgeber":
-			case "Zaubertalisman":
-				artifact.setStability(stability.getSelectionModel().getSelectedItem());
-				break;
-			default:
-				artifact.setStability(null);
+				case "Matrixgeber":
+				case "Zaubertalisman":
+					artifact.setStability(stability.getSelectionModel().getSelectedItem());
+					break;
+				default:
+					artifact.setStability(null);
 			}
 			artifact.setAsp(asp.getValue(), pasp.getValue());
 			artifact.setTrigger(triggerType.getValue(), triggerActions.getValue(), triggerDesc.getText());

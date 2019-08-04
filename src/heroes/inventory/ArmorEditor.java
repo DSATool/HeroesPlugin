@@ -141,26 +141,26 @@ public class ArmorEditor {
 		int height = 170;
 
 		switch (armorSetting) {
-		case "Gesamtrüstung":
-			totalrsBox.setVisible(true);
-			totalbeBox.setVisible(true);
-			break;
-		case "Zonengesamtrüstung":
-			zonersBox.setVisible(true);
-			zonebeBox.setVisible(true);
-			break;
-		default:
-			headBox.setVisible(true);
-			breastBox.setVisible(true);
-			backBox.setVisible(true);
-			bellyBox.setVisible(true);
-			larmBox.setVisible(true);
-			rarmBox.setVisible(true);
-			llegBox.setVisible(true);
-			rlegBox.setVisible(true);
-			zonebeBox.setVisible(true);
-			height = 375;
-			break;
+			case "Gesamtrüstung":
+				totalrsBox.setVisible(true);
+				totalbeBox.setVisible(true);
+				break;
+			case "Zonengesamtrüstung":
+				zonersBox.setVisible(true);
+				zonebeBox.setVisible(true);
+				break;
+			default:
+				headBox.setVisible(true);
+				breastBox.setVisible(true);
+				backBox.setVisible(true);
+				bellyBox.setVisible(true);
+				larmBox.setVisible(true);
+				rarmBox.setVisible(true);
+				llegBox.setVisible(true);
+				rlegBox.setVisible(true);
+				zonebeBox.setVisible(true);
+				height = 375;
+				break;
 		}
 
 		final Stage stage = new Stage();
@@ -175,19 +175,19 @@ public class ArmorEditor {
 			item.setNotes(notes.getText());
 
 			switch (armorSetting) {
-			case "Gesamtrüstung":
-				item.setTotalrs(totalrs.getValue());
-				item.setTotalbe(totalbe.getValue());
-				break;
-			case "Zonengesamtrüstung":
-				item.setZoners(zoners.getValue());
-				item.setZonebe(zonebe.getValue());
-				break;
-			default:
-				item.setRs(head.getValue(), breast.getValue(), back.getValue(), belly.getValue(), larm.getValue(), rarm.getValue(), lleg.getValue(),
-						rleg.getValue());
-				item.setZonebe(zonebe.getValue());
-				break;
+				case "Gesamtrüstung":
+					item.setTotalrs(totalrs.getValue());
+					item.setTotalbe(totalbe.getValue());
+					break;
+				case "Zonengesamtrüstung":
+					item.setZoners(zoners.getValue());
+					item.setZonebe(zonebe.getValue());
+					break;
+				default:
+					item.setRs(head.getValue(), breast.getValue(), back.getValue(), belly.getValue(), larm.getValue(), rarm.getValue(), lleg.getValue(),
+							rleg.getValue());
+					item.setZonebe(zonebe.getValue());
+					break;
 			}
 
 			item.setAdditionalArmor(additionalArmor.isSelected());

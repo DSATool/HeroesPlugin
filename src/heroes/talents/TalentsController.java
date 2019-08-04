@@ -44,7 +44,7 @@ public class TalentsController extends HeroTabController {
 
 	private final JSONListener listener = o -> updateVisibility();
 
-	public TalentsController(TabPane tabPane) {
+	public TalentsController(final TabPane tabPane) {
 		super(tabPane);
 	}
 
@@ -87,12 +87,8 @@ public class TalentsController extends HeroTabController {
 					talents.getObj(talentGroup));
 			talentControllers.add(groupController);
 			switch (talentGroup) {
-			case "Ritualkenntnis":
-				ritualKnowledge = groupController.getControl();
-				break;
-			case "Liturgiekenntnis":
-				liturgyKnowledge = groupController.getControl();
-				break;
+				case "Ritualkenntnis" -> ritualKnowledge = groupController.getControl();
+				case "Liturgiekenntnis" -> liturgyKnowledge = groupController.getControl();
 			}
 			talentsBox.getChildren().add(groupController.getControl());
 		}
@@ -101,7 +97,7 @@ public class TalentsController extends HeroTabController {
 	}
 
 	@Override
-	public void setHero(JSONObject hero) {
+	public void setHero(final JSONObject hero) {
 		if (this.hero != null) {
 			this.hero.getObj("Vorteile").removeListener(listener);
 			this.hero.getObj("Sonderfertigkeiten").removeListener(listener);

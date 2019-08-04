@@ -87,29 +87,14 @@ public class TalentGroupController {
 
 		fxmlLoader.setController(this);
 
-		URL gui;
-
-		switch (name) {
-		case "Nahkampftalente":
-		case "Fernkampftalente":
-			gui = getClass().getResource("FightTalents.fxml");
-			break;
-		case "Körperliche Talente":
-			gui = getClass().getResource("PhysicalTalents.fxml");
-			break;
-		case "Sprachen und Schriften":
-			gui = getClass().getResource("LanguageTalents.fxml");
-			break;
-		case "Ritualkenntnis":
-			gui = getClass().getResource("SimpleTalents.fxml");
-			break;
-		case "Zauber":
-			gui = getClass().getResource("Spells.fxml");
-			break;
-		default:
-			gui = getClass().getResource("RegularTalents.fxml");
-			break;
-		}
+		final URL gui = switch (name) {
+			case "Nahkampftalente", "Fernkampftalente" -> getClass().getResource("FightTalents.fxml");
+			case "Körperliche Talente" -> getClass().getResource("PhysicalTalents.fxml");
+			case "Sprachen und Schriften" -> getClass().getResource("LanguageTalents.fxml");
+			case "Ritualkenntnis" -> getClass().getResource("SimpleTalents.fxml");
+			case "Zauber" -> getClass().getResource("Spells.fxml");
+			default -> getClass().getResource("RegularTalents.fxml");
+		};
 
 		try {
 			fxmlLoader.load(gui.openStream());
@@ -186,114 +171,115 @@ public class TalentGroupController {
 		final MenuItem rollGroupItem = new MenuItem("Gruppenprobe");
 		rollGroupItem.setOnAction(o -> {
 			final Talent item = table.getSelectionModel().getSelectedItem();
+			final List<JSONObject> characters = ResourceManager.getAllResources("characters/");
 			new TalentRollDialog(pane.getScene().getWindow(), item.getName(), item instanceof Spell ? ((Spell) item).getRepresentation() : null,
-					ResourceManager.getAllResources("characters/").toArray(new JSONObject[0]));
+					characters.toArray(new JSONObject[characters.size()]));
 		});
 
 		contextMenu.getItems().add(editItem);
 		contextMenu.getItems().add(enhanceItem);
 
 		switch (name) {
-		case "Nahkampftalente":
-			final TableColumn<Talent, Integer> paColumn = (TableColumn<Talent, Integer>) table.getColumns().get(i + 1);
-			paColumn.setCellValueFactory(new PropertyValueFactory<Talent, Integer>("pa"));
-			paColumn.setCellFactory(
-					IntegerSpinnerTableCell.<Talent> forTableColumn(0, 0, 1, false, (final IntegerSpinnerTableCell<Talent> cell, final Boolean empty) -> {
-						if (empty) return new Tuple<>(0, 0);
-						final int val = cell.getTableView().getItems().get(cell.getIndex()).getValue();
-						if (val == Integer.MIN_VALUE) return new Tuple<>(0, 0);
-						final int min = Math.max(0, (int) Math.ceil((val - 5) / 2.0));
-						return new Tuple<>(min, val - min);
-					}));
-			paColumn.setCellFactory(
-					IntegerSpinnerTableCell.<Talent> forTableColumn(0, 0, 1, false, (final IntegerSpinnerTableCell<Talent> cell, final Boolean empty) -> {
-						if (empty) return new Tuple<>(0, 0);
-						final int val = cell.getTableView().getItems().get(cell.getIndex()).getValue();
-						if (val == Integer.MIN_VALUE) return new Tuple<>(0, 0);
-						final int min = Math.max(0, (int) Math.ceil((val - 5) / 2.0));
-						return new Tuple<>(min, val - min);
-					}));
-			paColumn.setOnEditCommit((final CellEditEvent<Talent, Integer> t) -> {
-				((FightTalent) t.getRowValue()).setPa(t.getNewValue());
-			});
-			paColumn.setVisible(true);
-		case "Fernkampftalente":
-			final TableColumn<Talent, Integer> atColumn = (TableColumn<Talent, Integer>) table.getColumns().get(i);
-			atColumn.setCellValueFactory(new PropertyValueFactory<Talent, Integer>("at"));
-			atColumn.setCellFactory(
-					IntegerSpinnerTableCell.<Talent> forTableColumn(0, 0, 1, false, (final IntegerSpinnerTableCell<Talent> cell, final Boolean empty) -> {
-						if (empty) return new Tuple<>(0, 0);
-						final FightTalent talent = (FightTalent) cell.getTableView().getItems().get(cell.getIndex());
-						final int val = talent.getValue();
-						if (val == Integer.MIN_VALUE) return new Tuple<>(0, 0);
-						if (talent.getAttackOnly()) return new Tuple<>(val, val);
-						final int min = Math.max(0, (int) Math.ceil((val - 5) / 2.0));
-						return new Tuple<>(min, val - min);
-					}));
-			atColumn.setOnEditCommit((final CellEditEvent<Talent, Integer> t) -> {
-				((FightTalent) t.getRowValue()).setAt(t.getNewValue());
-			});
-			++i;
-			++i;
-			final TableColumn fightBeColumn = table.getColumns().get(i);
-			fightBeColumn.setCellValueFactory(new PropertyValueFactory<FightTalent, String>("be"));
-			++i;
-			break;
-		case "Körperliche Talente":
-			final TableColumn beColumn = table.getColumns().get(i);
-			beColumn.setCellValueFactory(new PropertyValueFactory<PhysicalTalent, String>("be"));
-			++i;
-		case "Gesellschaftliche Talente":
-		case "Natur-Talente":
-		case "Wissenstalente":
-		case "Handwerkstalente":
-		case "Gaben":
-		case "Liturgiekenntnis":
-			final TableColumn attributesColumn = table.getColumns().get(i);
-			attributesColumn.setCellValueFactory(new PropertyValueFactory<Talent, String>("attributes"));
-			++i;
-			contextMenu.getItems().add(rollItem);
-			contextMenu.getItems().add(rollGroupItem);
-			break;
-		case "Sprachen und Schriften":
-			final TableColumn<Talent, String> mlsltlColumn = (TableColumn<Talent, String>) table.getColumns().get(i);
-			mlsltlColumn.setCellValueFactory(new PropertyValueFactory<Talent, String>("mlsltl"));
-			mlsltlColumn.setCellFactory(ComboBoxTableCell.forTableColumn("", "MS", "ZS", "LS"));
-			mlsltlColumn.setOnEditCommit((final CellEditEvent<Talent, String> t) -> {
-				((LanguageTalent) t.getRowValue()).setMlsltl(t.getNewValue());
-			});
-			++i;
-			final TableColumn complexityColumn = table.getColumns().get(i);
-			complexityColumn.setCellValueFactory(new PropertyValueFactory<LanguageTalent, Integer>("complexity"));
-			++i;
-			final TableColumn langAttributesColumn = table.getColumns().get(i);
-			langAttributesColumn.setCellValueFactory(new PropertyValueFactory<LanguageTalent, String>("attributes"));
-			++i;
-			contextMenu.getItems().add(rollItem);
-			contextMenu.getItems().add(rollGroupItem);
-			break;
-		case "Zauber":
-			final TableColumn representationColumn = table.getColumns().get(i);
-			representationColumn.setCellValueFactory(new PropertyValueFactory<Spell, String>("representation"));
-			++i;
-			final TableColumn spellComplexityColumn = table.getColumns().get(i);
-			spellComplexityColumn.setCellValueFactory(new PropertyValueFactory<Spell, String>("complexity"));
-			++i;
-			final TableColumn spellAttributesColumn = table.getColumns().get(i);
-			spellAttributesColumn.setCellValueFactory(new PropertyValueFactory<Spell, String>("attributes"));
-			++i;
-			final TableColumn<Talent, Boolean> spellPrimaryColumn = (TableColumn<Talent, Boolean>) table.getColumns().get(i);
-			spellPrimaryColumn.setCellValueFactory(new PropertyValueFactory<Talent, Boolean>("primarySpell"));
-			spellPrimaryColumn.setCellFactory(CheckBoxTableCell.forTableColumn(spellPrimaryColumn));
-			spellPrimaryColumn.setOnEditCommit((final CellEditEvent<Talent, Boolean> t) -> {
-				((Spell) t.getRowValue()).setPrimarySpell(t.getNewValue());
-			});
-			++i;
-			contextMenu.getItems().add(rollItem);
-			contextMenu.getItems().add(rollGroupItem);
-			break;
-		default:
-			break;
+			case "Nahkampftalente":
+				final TableColumn<Talent, Integer> paColumn = (TableColumn<Talent, Integer>) table.getColumns().get(i + 1);
+				paColumn.setCellValueFactory(new PropertyValueFactory<Talent, Integer>("pa"));
+				paColumn.setCellFactory(
+						IntegerSpinnerTableCell.<Talent> forTableColumn(0, 0, 1, false, (final IntegerSpinnerTableCell<Talent> cell, final Boolean empty) -> {
+							if (empty) return new Tuple<>(0, 0);
+							final int val = cell.getTableView().getItems().get(cell.getIndex()).getValue();
+							if (val == Integer.MIN_VALUE) return new Tuple<>(0, 0);
+							final int min = Math.max(0, (int) Math.ceil((val - 5) / 2.0));
+							return new Tuple<>(min, val - min);
+						}));
+				paColumn.setCellFactory(
+						IntegerSpinnerTableCell.<Talent> forTableColumn(0, 0, 1, false, (final IntegerSpinnerTableCell<Talent> cell, final Boolean empty) -> {
+							if (empty) return new Tuple<>(0, 0);
+							final int val = cell.getTableView().getItems().get(cell.getIndex()).getValue();
+							if (val == Integer.MIN_VALUE) return new Tuple<>(0, 0);
+							final int min = Math.max(0, (int) Math.ceil((val - 5) / 2.0));
+							return new Tuple<>(min, val - min);
+						}));
+				paColumn.setOnEditCommit((final CellEditEvent<Talent, Integer> t) -> {
+					((FightTalent) t.getRowValue()).setPa(t.getNewValue());
+				});
+				paColumn.setVisible(true);
+			case "Fernkampftalente":
+				final TableColumn<Talent, Integer> atColumn = (TableColumn<Talent, Integer>) table.getColumns().get(i);
+				atColumn.setCellValueFactory(new PropertyValueFactory<Talent, Integer>("at"));
+				atColumn.setCellFactory(
+						IntegerSpinnerTableCell.<Talent> forTableColumn(0, 0, 1, false, (final IntegerSpinnerTableCell<Talent> cell, final Boolean empty) -> {
+							if (empty) return new Tuple<>(0, 0);
+							final FightTalent talent = (FightTalent) cell.getTableView().getItems().get(cell.getIndex());
+							final int val = talent.getValue();
+							if (val == Integer.MIN_VALUE) return new Tuple<>(0, 0);
+							if (talent.getAttackOnly()) return new Tuple<>(val, val);
+							final int min = Math.max(0, (int) Math.ceil((val - 5) / 2.0));
+							return new Tuple<>(min, val - min);
+						}));
+				atColumn.setOnEditCommit((final CellEditEvent<Talent, Integer> t) -> {
+					((FightTalent) t.getRowValue()).setAt(t.getNewValue());
+				});
+				++i;
+				++i;
+				final TableColumn fightBeColumn = table.getColumns().get(i);
+				fightBeColumn.setCellValueFactory(new PropertyValueFactory<FightTalent, String>("be"));
+				++i;
+				break;
+			case "Körperliche Talente":
+				final TableColumn beColumn = table.getColumns().get(i);
+				beColumn.setCellValueFactory(new PropertyValueFactory<PhysicalTalent, String>("be"));
+				++i;
+			case "Gesellschaftliche Talente":
+			case "Natur-Talente":
+			case "Wissenstalente":
+			case "Handwerkstalente":
+			case "Gaben":
+			case "Liturgiekenntnis":
+				final TableColumn attributesColumn = table.getColumns().get(i);
+				attributesColumn.setCellValueFactory(new PropertyValueFactory<Talent, String>("attributes"));
+				++i;
+				contextMenu.getItems().add(rollItem);
+				contextMenu.getItems().add(rollGroupItem);
+				break;
+			case "Sprachen und Schriften":
+				final TableColumn<Talent, String> mlsltlColumn = (TableColumn<Talent, String>) table.getColumns().get(i);
+				mlsltlColumn.setCellValueFactory(new PropertyValueFactory<Talent, String>("mlsltl"));
+				mlsltlColumn.setCellFactory(ComboBoxTableCell.forTableColumn("", "MS", "ZS", "LS"));
+				mlsltlColumn.setOnEditCommit((final CellEditEvent<Talent, String> t) -> {
+					((LanguageTalent) t.getRowValue()).setMlsltl(t.getNewValue());
+				});
+				++i;
+				final TableColumn complexityColumn = table.getColumns().get(i);
+				complexityColumn.setCellValueFactory(new PropertyValueFactory<LanguageTalent, Integer>("complexity"));
+				++i;
+				final TableColumn langAttributesColumn = table.getColumns().get(i);
+				langAttributesColumn.setCellValueFactory(new PropertyValueFactory<LanguageTalent, String>("attributes"));
+				++i;
+				contextMenu.getItems().add(rollItem);
+				contextMenu.getItems().add(rollGroupItem);
+				break;
+			case "Zauber":
+				final TableColumn representationColumn = table.getColumns().get(i);
+				representationColumn.setCellValueFactory(new PropertyValueFactory<Spell, String>("representation"));
+				++i;
+				final TableColumn spellComplexityColumn = table.getColumns().get(i);
+				spellComplexityColumn.setCellValueFactory(new PropertyValueFactory<Spell, String>("complexity"));
+				++i;
+				final TableColumn spellAttributesColumn = table.getColumns().get(i);
+				spellAttributesColumn.setCellValueFactory(new PropertyValueFactory<Spell, String>("attributes"));
+				++i;
+				final TableColumn<Talent, Boolean> spellPrimaryColumn = (TableColumn<Talent, Boolean>) table.getColumns().get(i);
+				spellPrimaryColumn.setCellValueFactory(new PropertyValueFactory<Talent, Boolean>("primarySpell"));
+				spellPrimaryColumn.setCellFactory(CheckBoxTableCell.forTableColumn(spellPrimaryColumn));
+				spellPrimaryColumn.setOnEditCommit((final CellEditEvent<Talent, Boolean> t) -> {
+					((Spell) t.getRowValue()).setPrimarySpell(t.getNewValue());
+				});
+				++i;
+				contextMenu.getItems().add(rollItem);
+				contextMenu.getItems().add(rollGroupItem);
+				break;
+			default:
+				break;
 		}
 
 		final MenuItem deleteItem = new MenuItem("Löschen");
@@ -413,20 +399,20 @@ public class TalentGroupController {
 	@SuppressWarnings("unchecked")
 	public void changeEditable() {
 		switch (name) {
-		case "Nahkampftalente":
-			final TableColumn<Talent, Integer> atColumn = (TableColumn<Talent, Integer>) table.getColumns().get(1);
-			atColumn.setEditable(HeroTabController.isEditable.get());
-			final TableColumn<Talent, Integer> paColumn = (TableColumn<Talent, Integer>) table.getColumns().get(2);
-			paColumn.setEditable(HeroTabController.isEditable.get());
-			break;
-		case "Sprachen und Schriften":
-			final TableColumn<Talent, String> mlsltlColumn = (TableColumn<Talent, String>) table.getColumns().get(1);
-			mlsltlColumn.setEditable(HeroTabController.isEditable.get());
-			break;
-		case "Zauber":
-			final TableColumn<Talent, Boolean> spellPrimaryColumn = (TableColumn<Talent, Boolean>) table.getColumns().get(4);
-			spellPrimaryColumn.setEditable(HeroTabController.isEditable.get());
-			break;
+			case "Nahkampftalente":
+				final TableColumn<Talent, Integer> atColumn = (TableColumn<Talent, Integer>) table.getColumns().get(1);
+				atColumn.setEditable(HeroTabController.isEditable.get());
+				final TableColumn<Talent, Integer> paColumn = (TableColumn<Talent, Integer>) table.getColumns().get(2);
+				paColumn.setEditable(HeroTabController.isEditable.get());
+				break;
+			case "Sprachen und Schriften":
+				final TableColumn<Talent, String> mlsltlColumn = (TableColumn<Talent, String>) table.getColumns().get(1);
+				mlsltlColumn.setEditable(HeroTabController.isEditable.get());
+				break;
+			case "Zauber":
+				final TableColumn<Talent, Boolean> spellPrimaryColumn = (TableColumn<Talent, Boolean>) table.getColumns().get(4);
+				spellPrimaryColumn.setEditable(HeroTabController.isEditable.get());
+				break;
 		}
 		nameColumn.setEditable(HeroTabController.isEditable.get());
 		final TableColumn<Talent, Boolean> primaryColumn = (TableColumn<Talent, Boolean>) table.getColumns().get(table.getColumns().size() - 3);
@@ -468,45 +454,45 @@ public class TalentGroupController {
 
 			for (final JSONObject actualTalent : actualTalents) {
 				switch (name) {
-				case "Nahkampftalente":
-				case "Fernkampftalente":
-				case "Körperliche Talente":
-				case "Gesellschaftliche Talente":
-				case "Natur-Talente":
-				case "Wissenstalente":
-				case "Handwerkstalente":
-				case "Gaben":
-				case "Liturgiekenntnis":
-				case "Ritualkenntnis":
-					table.getItems().add(Talent.getTalent(talentName, talentGroup, talent, actualTalent, actualGroup));
-					break;
-				case "Sprachen und Schriften":
-					table.getItems()
-							.add(Talent.getTalent(talentName, talentGroup.getObj(talent.getBoolOrDefault("Schrift", false) ? "Schriften" : "Sprachen"),
-									talent, actualTalent, actualGroup));
-					break;
-				case "Zauber":
-					boolean notFound = false;
-					for (final String rep : talent.getObj("Repräsentationen").keySet()) {
-						if (actualTalent.containsKey(rep)) {
-							if (talent.containsKey("Auswahl") || talent.containsKey("Freitext")) {
-								final JSONArray choiceTalent = actualTalent.getArrOrDefault(rep, null);
-								if (choiceTalent != null) {
-									for (int i = 0; i < choiceTalent.size(); ++i) {
-										table.getItems().add(Spell.getSpell(talentName, talent, choiceTalent.getObj(i), actualTalent, actualGroup, rep));
+					case "Nahkampftalente":
+					case "Fernkampftalente":
+					case "Körperliche Talente":
+					case "Gesellschaftliche Talente":
+					case "Natur-Talente":
+					case "Wissenstalente":
+					case "Handwerkstalente":
+					case "Gaben":
+					case "Liturgiekenntnis":
+					case "Ritualkenntnis":
+						table.getItems().add(Talent.getTalent(talentName, talentGroup, talent, actualTalent, actualGroup));
+						break;
+					case "Sprachen und Schriften":
+						table.getItems()
+								.add(Talent.getTalent(talentName, talentGroup.getObj(talent.getBoolOrDefault("Schrift", false) ? "Schriften" : "Sprachen"),
+										talent, actualTalent, actualGroup));
+						break;
+					case "Zauber":
+						boolean notFound = false;
+						for (final String rep : talent.getObj("Repräsentationen").keySet()) {
+							if (actualTalent.containsKey(rep)) {
+								if (talent.containsKey("Auswahl") || talent.containsKey("Freitext")) {
+									final JSONArray choiceTalent = actualTalent.getArrOrDefault(rep, null);
+									if (choiceTalent != null) {
+										for (int i = 0; i < choiceTalent.size(); ++i) {
+											table.getItems().add(Spell.getSpell(talentName, talent, choiceTalent.getObj(i), actualTalent, actualGroup, rep));
+										}
 									}
+								} else {
+									table.getItems().add(Spell.getSpell(talentName, talent, actualTalent.getObj(rep), actualTalent, actualGroup, rep));
 								}
 							} else {
-								table.getItems().add(Spell.getSpell(talentName, talent, actualTalent.getObj(rep), actualTalent, actualGroup, rep));
+								notFound = true;
 							}
-						} else {
-							notFound = true;
 						}
-					}
-					if (notFound) {
-						talentsList.getItems().add(talentName);
-					}
-					break;
+						if (notFound) {
+							talentsList.getItems().add(talentName);
+						}
+						break;
 				}
 			}
 		}, talents);

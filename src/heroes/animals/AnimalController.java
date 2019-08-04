@@ -80,14 +80,10 @@ public class AnimalController {
 		public AnimalAttribute(final String name, final JSONObject actual) {
 			super(name, actual);
 
-			switch (name) {
-			case "Lebensenergie":
-			case "Astralenergie":
-				bought = new SimpleIntegerProperty(actual.getIntOrDefault("Kauf", 0));
-				break;
-			default:
-				bought = new SimpleIntegerProperty(Integer.MIN_VALUE);
-			}
+			bought = switch (name) {
+				case "Lebensenergie", "Astralenergie" -> new SimpleIntegerProperty(actual.getIntOrDefault("Kauf", 0));
+				default -> new SimpleIntegerProperty(Integer.MIN_VALUE);
+			};
 		}
 
 		public final IntegerProperty boughtProperty() {
@@ -604,7 +600,7 @@ public class AnimalController {
 		final JSONObject attacks = actualAnimal.getObj("Angriffe");
 
 		attackNameColumn.setCellFactory(o -> {
-			final TableCell<Attack, String> cell = new GraphicTableCell<Attack, String>(false) {
+			final TableCell<Attack, String> cell = new GraphicTableCell<>(false) {
 				@Override
 				protected void createGraphic() {
 					final TextField t = new TextField();
@@ -619,7 +615,7 @@ public class AnimalController {
 		});
 
 		attackNotesColumn.setCellFactory(o -> {
-			final TableCell<Attack, String> cell = new GraphicTableCell<Attack, String>(false) {
+			final TableCell<Attack, String> cell = new GraphicTableCell<>(false) {
 				@Override
 				protected void createGraphic() {
 					final TextField t = new TextField();
@@ -779,7 +775,7 @@ public class AnimalController {
 		final JSONArray items = actualAnimal.getArr("Ausrüstung");
 
 		equipmentNameColumn.setCellFactory(o -> {
-			final TableCell<InventoryItem, String> cell = new GraphicTableCell<InventoryItem, String>(false) {
+			final TableCell<InventoryItem, String> cell = new GraphicTableCell<>(false) {
 				@Override
 				protected void createGraphic() {
 					final TextField t = new TextField();
@@ -795,7 +791,7 @@ public class AnimalController {
 		});
 
 		equipmentNotesColumn.setCellFactory(o -> {
-			final TableCell<InventoryItem, String> cell = new GraphicTableCell<InventoryItem, String>(false) {
+			final TableCell<InventoryItem, String> cell = new GraphicTableCell<>(false) {
 				@Override
 				protected void createGraphic() {
 					final TextField t = new TextField();
@@ -897,18 +893,18 @@ public class AnimalController {
 		GUIUtil.autosizeTable(proConsTable, 0, 2);
 		GUIUtil.cellValueFactories(proConsTable, "name", "description", "value");
 
-		proConNameColumn.setCellFactory(c -> new TextFieldTableCell<ProConSkill, String>() {
+		proConNameColumn.setCellFactory(c -> new TextFieldTableCell<>() {
 			@Override
 			public void updateItem(final String item, final boolean empty) {
 				super.updateItem(item, empty);
-				final ProConSkill proOrCon = (ProConSkill) getTableRow().getItem();
+				final ProConSkill proOrCon = getTableRow().getItem();
 				if (proOrCon != null) {
 					Util.addReference(this, proOrCon.proConSkill, 15, proConNameColumn.widthProperty());
 				}
 			}
 		});
 
-		proConDescColumn.setCellFactory(c -> new GraphicTableCell<ProConSkill, String>(false) {
+		proConDescColumn.setCellFactory(c -> new GraphicTableCell<>(false) {
 			@Override
 			protected void createGraphic() {
 				final TextField t = new TextField();
@@ -972,18 +968,18 @@ public class AnimalController {
 		GUIUtil.autosizeTable(skillsTable, 0, 2);
 		GUIUtil.cellValueFactories(skillsTable, "name", "description");
 
-		skillNameColumn.setCellFactory(c -> new TextFieldTableCell<ProConSkill, String>() {
+		skillNameColumn.setCellFactory(c -> new TextFieldTableCell<>() {
 			@Override
 			public void updateItem(final String item, final boolean empty) {
 				super.updateItem(item, empty);
-				final ProConSkill proOrCon = (ProConSkill) getTableRow().getItem();
+				final ProConSkill proOrCon = getTableRow().getItem();
 				if (proOrCon != null) {
 					Util.addReference(this, proOrCon.proConSkill, 15, skillNameColumn.widthProperty());
 				}
 			}
 		});
 
-		skillDescColumn.setCellFactory(c -> new GraphicTableCell<ProConSkill, String>(false) {
+		skillDescColumn.setCellFactory(c -> new GraphicTableCell<>(false) {
 			@Override
 			protected void createGraphic() {
 				final TextField t = new TextField();
