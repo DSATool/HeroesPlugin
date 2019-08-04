@@ -22,9 +22,11 @@ import dsatool.util.ErrorLogger;
 import heroes.animals.AnimalController.AnimalType;
 import heroes.ui.HeroTabController;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.VBox;
@@ -45,11 +47,16 @@ public class AnimalsController extends HeroTabController {
 		update();
 	};
 
-	public AnimalsController(TabPane tabPane) {
+	public AnimalsController(final TabPane tabPane) {
 		super(tabPane);
 	}
 
-	public void addAnimal(String type) {
+	public void addAnimal(final ActionEvent event) {
+		final String type = switch (((Button) event.getSource()).getText().charAt(0)) {
+			case 'V' -> "Vertrautentier";
+			case 'R' -> "Reittier";
+			default -> "Tier";
+		};
 		final JSONObject animal = new JSONObject(animals);
 		final JSONObject biography = new JSONObject(animal);
 		biography.put("Name", type);
@@ -103,19 +110,11 @@ public class AnimalsController extends HeroTabController {
 		animals.addLocalListener(animalsListener);
 		for (int i = 0; i < animals.size(); ++i) {
 			final JSONObject animal = animals.getObj(i);
-			AnimalController newController;
-			switch (animal.getObj("Biografie").getStringOrDefault("Typ", "Tier")) {
-			case "Reittier":
-				newController = new AnimalController(hero, animal, AnimalType.HORSE);
-				break;
-			case "Vertrautentier":
-				newController = new AnimalController(hero, animal, AnimalType.MAGIC);
-				break;
-			case "Tier":
-			default:
-				newController = new AnimalController(hero, animal, AnimalType.ANIMAL);
-				break;
-			}
+			final AnimalController newController = switch (animal.getObj("Biografie").getStringOrDefault("Typ", "Tier")) {
+				case "Reittier" -> new AnimalController(hero, animal, AnimalType.HORSE);
+				case "Vertrautentier" -> new AnimalController(hero, animal, AnimalType.MAGIC);
+				default -> new AnimalController(hero, animal, AnimalType.ANIMAL);
+			};
 			items.add(i, newController.getControl());
 			newController.changeEditable();
 			controllers.add(newController);

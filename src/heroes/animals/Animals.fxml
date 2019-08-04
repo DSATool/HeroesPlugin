@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?language javascript?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.HBox?>
@@ -9,9 +8,9 @@
 <ScrollPane fx:id="pane" hbarPolicy="NEVER" vbarPolicy="ALWAYS" fitToWidth="true" xmlns:fx="http://javafx.com/fxml" >
    <VBox fx:id="animalsBox" spacing="2" maxWidth="Infinity" fillWidth="true">
       <HBox spacing="2" >
-         <Button text="Vertrautentier hinzufügen" onAction="controller.addAnimal('Vertrautentier')" />
-         <Button text="Reittier hinzufügen" onAction="controller.addAnimal('Reittier')" />
-         <Button text="Sonstiges Tier hinzufügen" onAction="controller.addAnimal('Tier')" />
+         <Button text="Vertrautentier hinzufügen" onAction="#addAnimal" />
+         <Button text="Reittier hinzufügen" onAction="#addAnimal" />
+         <Button text="Sonstiges Tier hinzufügen" onAction="#addAnimal" />
       </HBox>
    </VBox>
 </ScrollPane>

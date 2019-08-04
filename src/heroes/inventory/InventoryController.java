@@ -40,6 +40,7 @@ import dsatool.util.ErrorLogger;
 import heroes.ui.HeroTabController;
 import heroes.util.UiUtil;
 import javafx.beans.binding.DoubleBinding;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -226,6 +227,11 @@ public class InventoryController extends HeroTabController {
 		addItem(item);
 	}
 
+	@SuppressWarnings("unchecked")
+	public void addItem(final ActionEvent event) {
+		addItem((ComboBox<String>) ((Button) event.getSource()).getParent().getChildrenUnmodifiable().get(0));
+	}
+
 	public void addItem(final ComboBox<String> list) {
 		final String itemName = list.getSelectionModel().getSelectedItem();
 		final JSONObject item = equipment.getObj(itemName).clone(items);
@@ -316,31 +322,14 @@ public class InventoryController extends HeroTabController {
 				final InventoryItem item = row.getItem();
 				final Window window = pane.getScene().getWindow();
 				switch (category) {
-				case "Nahkampfwaffe":
-					new CloseCombatWeaponEditor(window, (CloseCombatWeapon) item);
-					break;
-				case "Fernkampfwaffe":
-					new RangedWeaponEditor(window, (RangedWeapon) item);
-					break;
-				case "Schild":
-				case "Parierwaffe":
-					new DefensiveWeaponEditor(window, (DefensiveWeapon) item);
-					break;
-				case "Rüstung":
-					new ArmorEditor(window, (Armor) item);
-					break;
-				case "Ritualobjekt":
-					new RitualObjectEditor(window, (RitualObject) item);
-					break;
-				case "Artefakt":
-					new ArtifactEditor(window, (Artifact) item);
-					break;
-				case "Kleidung":
-					new ClothingEditor(window, (Clothing) item);
-					break;
-				default:
-					new ItemEditor(window, item);
-					break;
+					case "Nahkampfwaffe" -> new CloseCombatWeaponEditor(window, (CloseCombatWeapon) item);
+					case "Fernkampfwaffe" -> new RangedWeaponEditor(window, (RangedWeapon) item);
+					case "Schild", "Parierwaffe" -> new DefensiveWeaponEditor(window, (DefensiveWeapon) item);
+					case "Rüstung" -> new ArmorEditor(window, (Armor) item);
+					case "Ritualobjekt" -> new RitualObjectEditor(window, (RitualObject) item);
+					case "Artefakt" -> new ArtifactEditor(window, (Artifact) item);
+					case "Kleidung" -> new ClothingEditor(window, (Clothing) item);
+					default -> new ItemEditor(window, item);
 				}
 			};
 
