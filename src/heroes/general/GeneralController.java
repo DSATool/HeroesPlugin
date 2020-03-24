@@ -511,44 +511,17 @@ public class GeneralController extends HeroTabController {
 		}
 		culture.setText(cultureString.toString());
 
-		final StringBuilder professionString = new StringBuilder(bio.getStringOrDefault("Profession", ""));
-		if (bio.containsKey("Profession:Modifikation")) {
-			final JSONArray professionModifiers = bio.getArr("Profession:Modifikation");
-			professionString.append(" (");
-			professionString.append(String.join(", ", professionModifiers.getStrings()));
-			professionString.append(")");
-		}
-		profession.setText(professionString.toString());
+		final JSONObject professions = ResourceManager.getResource("data/Professionen");
 
-		final StringBuilder professionModifierString = new StringBuilder();
-		final JSONObject pros = hero.getObj("Vorteile");
-		if (pros != null) {
-			if (pros.containsKey("Veteran")) {
-				final JSONObject veteran = pros.getObj("Veteran");
-				professionModifierString.append("Veteran");
-				if (veteran != null && veteran.containsKey("Profession:Modifikation")) {
-					professionModifierString.append(' ');
-					professionModifierString.append(String.join(", ", veteran.getArr("Profession:Modifikation").getStrings()));
-				}
-			}
-			if (pros.containsKey("Breitgefächerte Bildung")) {
-				final JSONObject bgb = pros.getObj("Breitgefächerte Bildung");
-				professionModifierString.append("BGB ");
-				professionModifierString.append(bgb.getString("Profession"));
-				if (bgb.containsKey("Profession:Modifikation")) {
-					professionModifierString.append(" (");
-					professionModifierString.append(String.join(", ", bgb.getArr("Profession:Modifikation").getStrings()));
-					professionModifierString.append(")");
-				}
-			}
-		}
-		professionModifier.setText(professionModifierString.toString());
+		profession.setText(HeroUtil.getProfessionString(hero, bio, professions, false));
+
+		professionModifier.setText(HeroUtil.getVeteranBGBString(hero, bio, professions).toString());
 	}
 
 	@Override
 	public void setHero(final JSONObject hero) {
-		if (this.hero != null) {
-			this.hero.getObj("Biografie").removeListener(heroBioListener);
+		if (hero != null) {
+			hero.getObj("Biografie").removeListener(heroBioListener);
 		}
 		super.setHero(hero);
 		if (hero != null) {
@@ -559,9 +532,11 @@ public class GeneralController extends HeroTabController {
 	@Override
 	protected void update() {
 		update = true;
-		setBiography();
-		setAppearance();
-		setAttributesAndDerivedValues();
+		if (hero != null) {
+			setBiography();
+			setAppearance();
+			setAttributesAndDerivedValues();
+		}
 		update = false;
 	}
 }
