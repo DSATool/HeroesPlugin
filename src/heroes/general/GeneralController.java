@@ -188,24 +188,34 @@ public class GeneralController extends HeroTabController {
 
 	@Override
 	protected void changeEditable() {
-		name.setEditable(HeroTabController.isEditable.get());
-		surname.setEditable(HeroTabController.isEditable.get());
-		player.setEditable(HeroTabController.isEditable.get());
-		race.setEditable(HeroTabController.isEditable.get());
-		culture.setEditable(HeroTabController.isEditable.get());
-		profession.setEditable(HeroTabController.isEditable.get());
-		freeAp.setDisable(!HeroTabController.isEditable.get());
-		socialstate.setDisable(!HeroTabController.isEditable.get());
-		birthday.setDisable(!HeroTabController.isEditable.get());
-		birthmonth.setDisable(!HeroTabController.isEditable.get());
-		birthyear.setDisable(!HeroTabController.isEditable.get());
-		gender.setDisable(!HeroTabController.isEditable.get());
-		size.setDisable(!HeroTabController.isEditable.get());
-		weight.setDisable(!HeroTabController.isEditable.get());
-		eyecolor.setDisable(!HeroTabController.isEditable.get());
-		haircolor.setDisable(!HeroTabController.isEditable.get());
-		skincolor.setDisable(!HeroTabController.isEditable.get());
-		energiesPermanentColumn.setEditable(HeroTabController.isEditable.get());
+		final boolean isEditable = HeroTabController.isEditable.get();
+		name.setEditable(isEditable);
+		surname.setEditable(isEditable);
+		player.setEditable(isEditable);
+		race.setEditable(isEditable);
+		culture.setEditable(isEditable);
+		final JSONObject bio = hero.getObj("Biografie");
+		if ("weiblich".equals(bio.getString("Geschlecht"))) {
+			final JSONObject professions = ResourceManager.getResource("data/Professionen");
+			if (isEditable) {
+				profession.setText(HeroUtil.getProfessionString(hero, bio, professions, false, false));
+			} else {
+				profession.setText(HeroUtil.getProfessionString(hero, bio, professions, false, true));
+			}
+		}
+		profession.setEditable(isEditable);
+		freeAp.setDisable(!isEditable);
+		socialstate.setDisable(!isEditable);
+		birthday.setDisable(!isEditable);
+		birthmonth.setDisable(!isEditable);
+		birthyear.setDisable(!isEditable);
+		gender.setDisable(!isEditable);
+		size.setDisable(!isEditable);
+		weight.setDisable(!isEditable);
+		eyecolor.setDisable(!isEditable);
+		haircolor.setDisable(!isEditable);
+		skincolor.setDisable(!isEditable);
+		energiesPermanentColumn.setEditable(isEditable);
 	}
 
 	private void changeModifiedString(final String base, final String input) {
@@ -513,7 +523,7 @@ public class GeneralController extends HeroTabController {
 
 		final JSONObject professions = ResourceManager.getResource("data/Professionen");
 
-		profession.setText(HeroUtil.getProfessionString(hero, bio, professions, false));
+		profession.setText(HeroUtil.getProfessionString(hero, bio, professions, false, true));
 
 		professionModifier.setText(HeroUtil.getVeteranBGBString(hero, bio, professions).toString());
 	}
