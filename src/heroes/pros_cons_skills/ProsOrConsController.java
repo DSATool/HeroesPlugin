@@ -157,7 +157,7 @@ public class ProsOrConsController {
 				}
 			}
 		});
-		descColumn.setOnEditCommit(t -> t.getRowValue().setDescription(t.getNewValue()));
+		descColumn.setOnEditCommit(t -> t.getRowValue().setDescription(t.getNewValue(), true));
 
 		variantColumn.setCellValueFactory(new PropertyValueFactory<ProOrCon, String>("variant"));
 		variantColumn.setCellFactory(c -> new GraphicTableCell<>(false) {
@@ -187,7 +187,7 @@ public class ProsOrConsController {
 				}
 			}
 		});
-		variantColumn.setOnEditCommit(t -> t.getRowValue().setVariant(t.getNewValue()));
+		variantColumn.setOnEditCommit(t -> t.getRowValue().setVariant(t.getNewValue(), true));
 
 		valueColumn.setCellValueFactory(new PropertyValueFactory<ProOrCon, Integer>("value"));
 		valueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 9999, 1, false) {

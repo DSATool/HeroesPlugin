@@ -104,14 +104,14 @@ public class SkillAcquisitionDialog {
 		}
 
 		description.getSelectionModel().selectedItemProperty().addListener((o, oldV, newV) -> {
-			actualSkill.setDescription(newV == null ? "" : newV);
+			actualSkill.setDescription(newV == null ? "" : newV, false);
 			variant.setItems(FXCollections.observableArrayList(actualSkill.getSecondChoiceItems(true)));
 			variant.getSelectionModel().select(0);
 			ap.getValueFactory().setValue(actualSkill.getCost());
 		});
 
 		variant.getSelectionModel().selectedItemProperty().addListener((o, oldV, newV) -> {
-			actualSkill.setVariant(newV == null ? "" : newV);
+			actualSkill.setVariant(newV == null ? "" : newV, false);
 			ap.getValueFactory().setValue(actualSkill.getCost());
 		});
 

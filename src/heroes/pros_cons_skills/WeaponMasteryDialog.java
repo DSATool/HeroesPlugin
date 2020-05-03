@@ -146,15 +146,15 @@ public class WeaponMasteryDialog {
 				initCloseCombat(actual);
 				stage.setHeight(613);
 			}
-			skillCopy.setDescription(newV);
+			skillCopy.setDescription(newV, false);
 			weapon.setItems(FXCollections.observableArrayList(skillCopy.getSecondChoiceItems(false)));
 		});
 
 		okButton.setOnAction(event -> {
 			final boolean ranged = rangedCombatTalents.containsKey(talent.getValue());
 
-			skill.setDescription(talent.getValue());
-			skill.setVariant(weapon.getValue());
+			skill.setDescription(talent.getValue(), true);
+			skill.setVariant(weapon.getValue(), true);
 
 			if (ranged || ini.getValue() == 0) {
 				actual.removeKey("Initiative:Modifikator");
@@ -294,7 +294,7 @@ public class WeaponMasteryDialog {
 		list.setMinHeight(height);
 		list.setMaxHeight(height);
 
-		list.setCellFactory(c -> new GraphicListCell<String>(false) {
+		list.setCellFactory(c -> new GraphicListCell<>(false) {
 			@Override
 			protected void createGraphic() {
 				final TextField t = new TextField();
@@ -363,7 +363,7 @@ public class WeaponMasteryDialog {
 		table.setMinHeight(101);
 		table.setMaxHeight(101);
 
-		((TableColumn<ManeuverOrPro, String>) table.getColumns().get(0)).setCellFactory(c -> new GraphicTableCell<ManeuverOrPro, String>(false) {
+		((TableColumn<ManeuverOrPro, String>) table.getColumns().get(0)).setCellFactory(c -> new GraphicTableCell<>(false) {
 			@Override
 			protected void createGraphic() {
 				final TextField t = new TextField();
