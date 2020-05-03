@@ -160,7 +160,7 @@ public class GeneralController extends HeroTabController {
 		investedAp.setText(Integer.toString(ap.getValue() - freeAp.getValue()));
 		changeModifiedString("Rasse", race.getText());
 		changeModifiedString("Kultur", culture.getText());
-		changeModifiedString("Profession", profession.getText());
+		changeModifiedProfession(profession.getText());
 		bio.put("Geburtstag", birthday.getValue());
 		bio.put("Geburtsmonat", birthmonth.getSelectionModel().getSelectedIndex() + 1);
 		bio.put("Geburtsjahr", birthyear.getValue());
@@ -194,15 +194,6 @@ public class GeneralController extends HeroTabController {
 		player.setEditable(isEditable);
 		race.setEditable(isEditable);
 		culture.setEditable(isEditable);
-		final JSONObject bio = hero.getObj("Biografie");
-		if ("weiblich".equals(bio.getString("Geschlecht"))) {
-			final JSONObject professions = ResourceManager.getResource("data/Professionen");
-			if (isEditable) {
-				profession.setText(HeroUtil.getProfessionString(hero, bio, professions, false, false));
-			} else {
-				profession.setText(HeroUtil.getProfessionString(hero, bio, professions, false, true));
-			}
-		}
 		profession.setEditable(isEditable);
 		freeAp.setDisable(!isEditable);
 		socialstate.setDisable(!isEditable);
@@ -216,6 +207,22 @@ public class GeneralController extends HeroTabController {
 		haircolor.setDisable(!isEditable);
 		skincolor.setDisable(!isEditable);
 		energiesPermanentColumn.setEditable(isEditable);
+	}
+
+	private void changeModifiedProfession(final String input) {
+		final JSONObject bio = hero.getObj("Biografie");
+		final boolean female = "weiblich".equals(gender.getSelectionModel().getSelectedItem());
+		final Tuple<String, String[]> tuple = splitModifiedString(input);
+		bio.put("Profession", female ? DSAUtil.replaceProfessionGender(tuple._1) : tuple._1);
+		if (tuple._2.length > 0) {
+			final JSONArray modifikation = new JSONArray(bio);
+			for (final String modifier : tuple._2) {
+				modifikation.add(female ? DSAUtil.replaceProfessionGender(modifier) : modifier);
+			}
+			bio.put("Profession:Modifikation", modifikation);
+		} else {
+			bio.removeKey("Profession:Modifikation");
+		}
 	}
 
 	private void changeModifiedString(final String base, final String input) {
@@ -523,7 +530,7 @@ public class GeneralController extends HeroTabController {
 
 		final JSONObject professions = ResourceManager.getResource("data/Professionen");
 
-		profession.setText(HeroUtil.getProfessionString(hero, bio, professions, false, true));
+		profession.setText(HeroUtil.getProfessionString(hero, bio, professions, false));
 
 		professionModifier.setText(HeroUtil.getVeteranBGBString(hero, bio, professions).toString());
 	}
