@@ -319,7 +319,7 @@
                <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
                <columns>
                   <TableColumn fx:id="attributesNameColumn" text="Eigenschaft" minWidth="75" sortable="false" styleClass="left-aligned" style="-fx-alignment: CENTER-LEFT;" />
-                  <TableColumn fx:id="attributesValueColumn" text="Wert" prefWidth="50" resizable="false" sortable="false" style="-fx-alignment: CENTER;" editable="true" />
+                  <TableColumn fx:id="attributesValueColumn" text="Wert" prefWidth="60" resizable="false" sortable="false" style="-fx-alignment: CENTER;" editable="true" />
                   <TableColumn fx:id="attributesModifierColumn" text="Mod." prefWidth="60" resizable="false" sortable="false" style="-fx-alignment: CENTER;" editable="true" />
                   <TableColumn fx:id="attributesCurrentColumn" text="Akt." prefWidth="50" resizable="false" sortable="false" style="-fx-alignment: CENTER;" />
                </columns>
@@ -329,7 +329,7 @@
                   <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
                   <columns>
                      <TableColumn fx:id="statsNameColumn" text="Eigenschaft" minWidth="100" sortable="false" styleClass="left-aligned" style="-fx-alignment: CENTER-LEFT;" />
-                     <TableColumn fx:id="statsValueColumn" text="Wert" prefWidth="50" resizable="false" sortable="false" style="-fx-alignment: CENTER;" editable="true" />
+                     <TableColumn fx:id="statsValueColumn" text="Wert" prefWidth="60" resizable="false" sortable="false" style="-fx-alignment: CENTER;" editable="true" />
                      <TableColumn fx:id="statsBoughtColumn" text="Kauf" prefWidth="60" resizable="false" sortable="false" style="-fx-alignment: CENTER;" editable="true" />
                      <TableColumn fx:id="statsModifierColumn" text="Mod." prefWidth="60" resizable="false" sortable="false" style="-fx-alignment: CENTER;" editable="true" />
                      <TableColumn fx:id="statsCurrentColumn" text="Akt." prefWidth="50" resizable="false" sortable="false" />
