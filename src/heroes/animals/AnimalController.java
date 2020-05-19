@@ -1210,6 +1210,8 @@ public class AnimalController {
 			}
 			if (type == AnimalType.MAGIC) {
 				statsTable.getItems().add(new AnimalAttribute("Astralenergie", baseValues.getObj("Astralenergie")));
+			} else {
+				statsTable.getItems().add(new AnimalAttribute("Fährtensuchen", baseValues.getObjOrDefault("Fährtensuchen", new JSONObject(baseValues))));
 			}
 
 			statsTable.setPrefHeight(statsTable.getItems().size() * 28 + 26);
