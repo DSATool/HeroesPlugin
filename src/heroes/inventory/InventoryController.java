@@ -37,6 +37,7 @@ import dsatool.resources.Settings;
 import dsatool.ui.GraphicTableCell;
 import dsatool.ui.ReactiveSpinner;
 import dsatool.util.ErrorLogger;
+import dsatool.util.Util;
 import heroes.ui.HeroTabController;
 import heroes.util.UiUtil;
 import javafx.beans.binding.DoubleBinding;
@@ -60,6 +61,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
@@ -79,125 +81,137 @@ import jsonant.value.JSONValue;
 
 public class InventoryController extends HeroTabController {
 	@FXML
+	private ScrollPane pane;
+	@FXML
+	private VBox inventoryBox;
+
+	@FXML
+	private HBox moneyBox;
+	@FXML
+	private ReactiveSpinner<Integer> ducats;
+	@FXML
+	private ReactiveSpinner<Integer> silver;
+	@FXML
+	private ReactiveSpinner<Integer> heller;
+	@FXML
+	private ReactiveSpinner<Integer> kreuzer;
+
+	@FXML
+	private Button armorAddButton;
+	@FXML
+	private TableColumn<Armor, Integer> armorBackColumn;
+	@FXML
+	private TableColumn<Armor, Double> armorBeColumn;
+	@FXML
+	private TableColumn<Armor, Integer> armorBellyColumn;
+	@FXML
+	private TableColumn<Armor, Integer> armorBreastColumn;
+	@FXML
+	private TableColumn<Armor, Integer> armorHeadColumn;
+	@FXML
+	private TableColumn<Armor, Integer> armorLarmColumn;
+	@FXML
+	private ComboBox<String> armorList;
+	@FXML
+	private TableColumn<Armor, Integer> armorLlegColumn;
+	@FXML
+	private TableColumn<Armor, String> armorNameColumn;
+	@FXML
+	private TableColumn<Armor, Integer> armorRarmColumn;
+	@FXML
+	private TableColumn<Armor, Integer> armorRlegColumn;
+	@FXML
+	private TableColumn<Armor, Double> armorRsColumn;
+	@FXML
+	private TableView<Armor> armorTable;
+	@FXML
+	private TableColumn<Armor, Double> armorWeightColumn;
+
+	@FXML
+	private Button artifactAddButton;
+	@FXML
 	private TableColumn<Artifact, String> artifactNameColumn;
 	@FXML
 	private TableColumn<Artifact, String> artifactNotesColumn;
 	@FXML
 	private TableView<Artifact> artifactTable;
 	@FXML
+	private TextField newArtifactField;
+
+	@FXML
+	private Button closeCombatAddButton;
+	@FXML
+	private TableColumn<CloseCombatWeapon, Integer> closeCombatBFColumn;
+	@FXML
+	private TableColumn<CloseCombatWeapon, String> closeCombatNameColumn;
+	@FXML
+	private ComboBox<String> closeCombatList;
+	@FXML
+	private TableView<CloseCombatWeapon> closeCombatTable;
+	@FXML
+	private TableColumn<DefensiveWeapon, Double> closeCombatWeightColumn;
+
+	@FXML
+	private ComboBox<String> clothingList;
+	@FXML
 	private TableColumn<Clothing, String> clothingNameColumn;
 	@FXML
 	private TableColumn<Clothing, String> clothingNotesColumn;
 	@FXML
 	private TableView<Clothing> clothingTable;
+
 	@FXML
-	private ReactiveSpinner<Integer> ducats;
+	private Button defensiveWeaponsAddButton;
+	@FXML
+	private TableColumn<DefensiveWeapon, Integer> defensiveWeaponsBFColumn;
+	@FXML
+	private ComboBox<String> defensiveWeaponsList;
+	@FXML
+	private TableView<DefensiveWeapon> defensiveWeaponsTable;
+	@FXML
+	private TableColumn<DefensiveWeapon, Double> defensiveWeaponsWeightColumn;
+
+	@FXML
+	private ComboBox<String> equipmentList;
 	@FXML
 	private TableColumn<InventoryItem, String> equipmentNameColumn;
 	@FXML
 	private TableColumn<InventoryItem, String> equipmentNotesColumn;
 	@FXML
 	private TableView<InventoryItem> equipmentTable;
+
 	@FXML
-	private ReactiveSpinner<Integer> heller;
+	private Button rangedAddButton;
 	@FXML
-	private VBox inventoryBox;
-	@FXML
-	private ReactiveSpinner<Integer> kreuzer;
-	@FXML
-	private HBox moneyBox;
-	@FXML
-	private ScrollPane pane;
-	@FXML
-	private TableColumn<CloseCombatWeapon, Integer> closeCombatBFColumn;
+	private ComboBox<String> rangedList;
 	@FXML
 	private TableView<RangedWeapon> rangedTable;
 	@FXML
 	private TableColumn<DefensiveWeapon, Double> rangedWeightColumn;
-	@FXML
-	private TableView<CloseCombatWeapon> closeCombatTable;
-	@FXML
-	private TableColumn<DefensiveWeapon, Double> closeCombatWeightColumn;
-	@FXML
-	private ReactiveSpinner<Integer> silver;
-	@FXML
-	private TableColumn<DefensiveWeapon, Integer> defensiveWeaponsBFColumn;
-	@FXML
-	private TableView<DefensiveWeapon> defensiveWeaponsTable;
-	@FXML
-	private TableColumn<DefensiveWeapon, Double> defensiveWeaponsWeightColumn;
-	@FXML
-	private TableColumn<DefensiveWeapon, Integer> shieldsBFColumn;
-	@FXML
-	private TableColumn<DefensiveWeapon, Double> shieldsWeightColumn;
-	@FXML
-	private TableView<DefensiveWeapon> shieldsTable;
-	@FXML
-	private TableView<Armor> armorTable;
-	@FXML
-	private TableColumn<Armor, Integer> armorHeadColumn;
-	@FXML
-	private TableColumn<Armor, Integer> armorBreastColumn;
-	@FXML
-	private TableColumn<Armor, Integer> armorBackColumn;
-	@FXML
-	private TableColumn<Armor, Integer> armorBellyColumn;
-	@FXML
-	private TableColumn<Armor, Integer> armorLarmColumn;
-	@FXML
-	private TableColumn<Armor, Integer> armorRarmColumn;
-	@FXML
-	private TableColumn<Armor, Integer> armorLlegColumn;
-	@FXML
-	private TableColumn<Armor, Integer> armorRlegColumn;
-	@FXML
-	private TableColumn<Armor, Double> armorRsColumn;
-	@FXML
-	private TableColumn<Armor, Double> armorBeColumn;
-	@FXML
-	private TableColumn<Armor, Double> armorWeightColumn;
-	@FXML
-	private TableColumn<Armor, String> armorNameColumn;
-	@FXML
-	private TableView<RitualObject> ritualObjectTable;
-	@FXML
-	private TableColumn<RitualObject, String> ritualObjectNameColumn;
-	@FXML
-	private TableColumn<RitualObject, String> ritualObjectTypeColumn;
-	@FXML
-	private ComboBox<String> closeCombatList;
-	@FXML
-	private ComboBox<String> rangedList;
-	@FXML
-	private ComboBox<String> shieldsList;
-	@FXML
-	private ComboBox<String> defensiveWeaponsList;
-	@FXML
-	private ComboBox<String> armorList;
-	@FXML
-	private ComboBox<String> ritualObjectList;
-	@FXML
-	private TextField newArtifactField;
-	@FXML
-	private ComboBox<String> clothingList;
-	@FXML
-	private ComboBox<String> equipmentList;
-	@FXML
-	private Button closeCombatAddButton;
-	@FXML
-	private Button rangedAddButton;
-	@FXML
-	private Button shieldsAddButton;
-	@FXML
-	private Button defensiveWeaponsAddButton;
-	@FXML
-	private Button armorAddButton;
+
 	@FXML
 	private Button ritualObjectAddButton;
 	@FXML
-	private Button artifactAddButton;
+	private ComboBox<String> ritualObjectList;
+	@FXML
+	private TableColumn<RitualObject, String> ritualObjectNameColumn;
 	@FXML
 	private TitledPane ritualObjectPane;
+	@FXML
+	private TableView<RitualObject> ritualObjectTable;
+	@FXML
+	private TableColumn<RitualObject, String> ritualObjectTypeColumn;
+
+	@FXML
+	private Button shieldsAddButton;
+	@FXML
+	private TableColumn<DefensiveWeapon, Integer> shieldsBFColumn;
+	@FXML
+	private ComboBox<String> shieldsList;
+	@FXML
+	private TableView<DefensiveWeapon> shieldsTable;
+	@FXML
+	private TableColumn<DefensiveWeapon, Double> shieldsWeightColumn;
 
 	private final JSONObject equipment;
 	private JSONArray items;
@@ -494,6 +508,22 @@ public class InventoryController extends HeroTabController {
 				}
 			});
 		}
+
+		for (final TableView<? extends InventoryItem> table : new TableView[] { closeCombatTable, rangedTable, shieldsTable, defensiveWeaponsTable, armorTable,
+				ritualObjectTable, clothingTable, equipmentTable }) {
+			((TableColumn<InventoryItem, String>) table.getColumns().get(0)).setCellFactory(c -> new TextFieldTableCell<>() {
+				@Override
+				public void updateItem(final String name, final boolean empty) {
+					super.updateItem(name, empty);
+					final InventoryItem item = getTableRow().getItem();
+					if (item != null) {
+						final String type = item.getItemType();
+						Util.addReference(this, equipment.getObj(type.isEmpty() ? name : type), 15, table.getColumns().get(0).widthProperty());
+					}
+				}
+			});
+		}
+
 		newArtifactField.setOnAction(e -> addArtifact());
 
 		equipment.addListener(o -> updateLists());
