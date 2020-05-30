@@ -180,7 +180,11 @@ public class RangedWeaponEditor {
 				if (newV == 0) {
 					ammunition.removeKey(type);
 				} else {
-					ammunition.getObj(type).put("Gesamt", newV);
+					final JSONObject currentType = ammunition.getObj(type);
+					if (!currentType.containsKey("Aktuell") || currentType.getInt("Aktuell") == currentType.getIntOrDefault("Gesamt", oldV)) {
+						currentType.put("Aktuell", newV);
+					}
+					currentType.put("Gesamt", newV);
 				}
 			});
 			bulletBox.getChildren().add(new HBox(2, label, spinner));

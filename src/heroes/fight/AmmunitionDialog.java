@@ -33,29 +33,52 @@ import jsonant.value.JSONObject;
 
 public class AmmunitionDialog {
 
-	public AmmunitionDialog(Window window, RangedWeapon weapon) {
+	public AmmunitionDialog(final Window window, final RangedWeapon weapon) {
 		final VBox root = new VBox(2);
 		root.setPadding(new Insets(5, 5, 5, 5));
+
+		final HBox header = new HBox(2);
+
+		final Label typeLabel = new Label("Typ");
+		typeLabel.setMaxWidth(Double.POSITIVE_INFINITY);
+
+		final Label curLabel = new Label("Aktuell");
+		curLabel.setPrefWidth(70);
+
+		final Label maxLabel = new Label("Gesamt");
+		maxLabel.setPrefWidth(70);
+
+		header.getChildren().addAll(typeLabel, curLabel, new Label("/"), maxLabel);
+		HBox.setHgrow(typeLabel, Priority.ALWAYS);
+		root.getChildren().add(header);
 
 		final JSONObject ammunition = weapon.getAmmunitionTypes().clone(null);
 
 		final JSONObject ammunitionTypes = ResourceManager.getResource("data/Geschosstypen");
 		for (final String name : ammunitionTypes.keySet()) {
 			final HBox row = new HBox(2);
+
 			final Label nameLabel = new Label(name);
 			nameLabel.setMaxWidth(Double.POSITIVE_INFINITY);
+
 			final ReactiveSpinner<Integer> amount = new ReactiveSpinner<>(0, 999, ammunition.getObj(name).getIntOrDefault("Aktuell", 0));
 			amount.setPrefWidth(70);
 			amount.setEditable(true);
 			amount.valueProperty().addListener((o, oldV, newV) -> ammunition.getObj(name).put("Aktuell", newV));
-			row.getChildren().addAll(nameLabel, amount);
+
+			final ReactiveSpinner<Integer> max = new ReactiveSpinner<>(0, 999, ammunition.getObj(name).getIntOrDefault("Gesamt", 0));
+			max.setPrefWidth(70);
+			max.setEditable(true);
+			max.valueProperty().addListener((o, oldV, newV) -> ammunition.getObj(name).put("Gesamt", newV));
+
+			row.getChildren().addAll(nameLabel, amount, new Label("/"), max);
 			HBox.setHgrow(nameLabel, Priority.ALWAYS);
 			root.getChildren().add(row);
 		}
 
 		final Stage stage = new Stage();
 		stage.setTitle("Munition für " + weapon.getName());
-		stage.setScene(new Scene(root, 250, 35 + 27 * ammunitionTypes.size()));
+		stage.setScene(new Scene(root, 330, 55 + 27 * ammunitionTypes.size()));
 		stage.initModality(Modality.WINDOW_MODAL);
 		stage.initOwner(window);
 
