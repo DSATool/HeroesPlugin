@@ -17,6 +17,7 @@ package heroes.animals;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import dsa41basis.hero.Attribute;
@@ -43,7 +44,10 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -432,8 +436,17 @@ public class AnimalController {
 		final ContextMenu contextMenu = new ContextMenu();
 		final MenuItem deleteItem = new MenuItem("Löschen");
 		deleteItem.setOnAction(e -> {
-			hero.getArr("Tiere").remove(animal);
-			hero.getArr("Tiere").notifyListeners(null);
+			final Alert deleteConfirmation = new Alert(AlertType.CONFIRMATION);
+			deleteConfirmation.setTitle("Tier löschen?");
+			deleteConfirmation.setHeaderText("Tier " + animal.getObj("Biografie").getString("Name") + " löschen?");
+			deleteConfirmation.setContentText("Das Tier kann danach nicht wiederhergestellt werden!");
+			deleteConfirmation.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO);
+
+			final Optional<ButtonType> result = deleteConfirmation.showAndWait();
+			if (result.isPresent() && result.get().equals(ButtonType.YES)) {
+				hero.getArr("Tiere").remove(animal);
+				hero.getArr("Tiere").notifyListeners(null);
+			}
 		});
 		contextMenu.getItems().add(deleteItem);
 
