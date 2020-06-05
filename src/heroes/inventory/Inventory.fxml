@@ -237,7 +237,69 @@
                </Button>
             </HBox>
          </VBox>
-      </TitledPane>      
+      </TitledPane>
+      <TitledPane text="Wertgegenstände" >
+         <VBox fillWidth="true" style="-fx-padding: 0, 0, 0, 0;" >
+            <TableView fx:id="valuablesTable" editable="true" fixedCellSize="25" >
+               <styleClass>
+                  <String fx:value="remove-vertical-scrollbar" />
+                  <String fx:value="remove-horizontal-scrollbar" />
+               </styleClass>
+               <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+               <placeholder>
+                  <Label minHeight="0" />
+               </placeholder>
+               <columns>
+                  <TableColumn fx:id="valuablesNameColumn" text="Gegenstand" minWidth="100" editable="true" />
+                  <TableColumn fx:id="valuablesNotesColumn" text="Anmerkungen" minWidth="100" editable="true" />
+               </columns>
+            </TableView>
+            <HBox spacing="2" >
+               <TextField fx:id="newValuableField" onAction="#addValuable" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+               <Button fx:id="valuablesAddButton" onAction="#addValuable" prefHeight="25" prefWidth="25" text="&#xE145;" >
+                  <padding><Insets top="0" right="0" bottom="0" left="0"/></padding>
+                  <font>
+                     <Font name="Material Icons" size="20.0" />
+                  </font>
+                  <tooltip>
+                     <Tooltip text="Hinzufügen" />
+                  </tooltip>
+               </Button>
+            </HBox>
+         </VBox>
+      </TitledPane>
+      <TitledPane text="Tränke" >
+         <VBox fillWidth="true" style="-fx-padding: 0, 0, 0, 0;" >
+            <TableView fx:id="potionsTable" editable="true" fixedCellSize="25" >
+               <styleClass>
+                  <String fx:value="remove-vertical-scrollbar" />
+                  <String fx:value="remove-horizontal-scrollbar" />
+               </styleClass>
+               <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+               <placeholder>
+                  <Label minHeight="0" />
+               </placeholder>
+               <columns>
+                  <TableColumn fx:id="potionsNameColumn" text="Trank" minWidth="100" editable="false" />
+                  <TableColumn fx:id="potionsNotesColumn" text="Anmerkungen" minWidth="100" editable="false" />
+                  <TableColumn fx:id="potionsQualityColumn" text="Qual." prefWidth="40" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="potionsAmountColumn" text="Anz." prefWidth="40" resizable="false" editable="true" style="-fx-alignment: CENTER;" />
+               </columns>
+            </TableView>
+            <HBox spacing="2" >
+               <ReactiveComboBox fx:id="potionsList" editable="true" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+               <Button fx:id="potionsAddButton" onAction="#addItem" prefHeight="25" prefWidth="25" text="&#xE145;" >
+                  <padding><Insets top="0" right="0" bottom="0" left="0"/></padding>
+                  <font>
+                     <Font name="Material Icons" size="20.0" />
+                  </font>
+                  <tooltip>
+                     <Tooltip text="Hinzufügen" />
+                  </tooltip>
+               </Button>
+            </HBox>
+         </VBox>
+      </TitledPane>
       <TitledPane text="Artefakte" >
          <VBox fillWidth="true" style="-fx-padding: 0, 0, 0, 0;" >
             <TableView fx:id="artifactTable" fixedCellSize="25" >

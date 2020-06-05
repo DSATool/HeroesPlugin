@@ -27,7 +27,9 @@ import dsa41basis.fight.RangedWeapon;
 import dsa41basis.inventory.Artifact;
 import dsa41basis.inventory.Clothing;
 import dsa41basis.inventory.InventoryItem;
+import dsa41basis.inventory.Potion;
 import dsa41basis.inventory.RitualObject;
+import dsa41basis.inventory.Valuable;
 import dsa41basis.util.DSAUtil;
 import dsa41basis.util.HeroUtil;
 import dsatool.gui.GUIUtil;
@@ -181,6 +183,19 @@ public class InventoryController extends HeroTabController {
 	private TableView<InventoryItem> equipmentTable;
 
 	@FXML
+	private ComboBox<String> potionsList;
+	@FXML
+	private TableView<Potion> potionsTable;
+	@FXML
+	private TableColumn<Potion, Integer> potionsAmountColumn;
+	@FXML
+	private TableColumn<Potion, String> potionsNameColumn;
+	@FXML
+	private TableColumn<Potion, String> potionsNotesColumn;
+	@FXML
+	private TableColumn<Potion, String> potionsQualityColumn;
+
+	@FXML
 	private Button rangedAddButton;
 	@FXML
 	private ComboBox<String> rangedList;
@@ -213,6 +228,17 @@ public class InventoryController extends HeroTabController {
 	@FXML
 	private TableColumn<DefensiveWeapon, Double> shieldsWeightColumn;
 
+	@FXML
+	private Button valuablesAddButton;
+	@FXML
+	private TableColumn<Valuable, String> valuablesNameColumn;
+	@FXML
+	private TableColumn<Valuable, String> valuablesNotesColumn;
+	@FXML
+	private TableView<Valuable> valuablesTable;
+	@FXML
+	private TextField newValuableField;
+
 	private final JSONObject equipment;
 	private JSONArray items;
 	private final JSONListener heroMoneyListener = o -> refreshMoney();
@@ -220,8 +246,10 @@ public class InventoryController extends HeroTabController {
 
 	private final List<String> ritualObjectGroups = new ArrayList<>();
 
-	private final String[] categoryNames = { "Nahkampfwaffe", "Fernkampfwaffe", "Schild", "Parierwaffe", "Rüstung", "Kleidung", "Ritualobjekt" };
-	private final String[] categoryLongNames = { "Nahkampfwaffen", "Fernkampfwaffen", "Schilde", "Parierwaffen", "Rüstung", "Kleidung", "Ritualobjekte" };
+	private final String[] categoryNames = { "Nahkampfwaffe", "Fernkampfwaffe", "Schild", "Parierwaffe", "Rüstung", "Ritualobjekt", "Wertrgegenstand", "Trank",
+			"Artefakt", "Kleidung" };
+	private final String[] categoryLongNames = { "Nahkampfwaffen", "Fernkampfwaffen", "Schilde", "Parierwaffen", "Rüstung", "Ritualobjekte", "Wertgegenstände",
+			"Tränke", "Artefakte", "Kleidung" };
 
 	private JSONObject money;
 
@@ -252,12 +280,14 @@ public class InventoryController extends HeroTabController {
 		if (!item.containsKey("Name")) {
 			item.put("Name", itemName);
 		}
-		if (list == clothingList) {
-			final JSONArray categories = new JSONArray(item);
-			categories.add("Kleidung");
-			item.put("Kategorien", categories);
+		if (!item.containsKey("Kategorien")) {
+			if (list == potionsList && (!item.containsKey("Kategorien") || !item.getArr("Kategorien").getStrings().contains("Tränke"))) {
+				item.getArr("Kategorien").add("Trank");
+			} else if (list == clothingList && (!item.containsKey("Kategorien") || !item.getArr("Kategorien").getStrings().contains("Kleidung"))) {
+				item.getArr("Kategorien").add("Kleidung");
+			}
 		}
-		if (list == clothingList || list == equipmentList) {
+		if (list == potionsList || list == clothingList || list == equipmentList) {
 			list.setValue("");
 		}
 		addItem(item);
@@ -270,6 +300,15 @@ public class InventoryController extends HeroTabController {
 		} else {
 			new ItemPurchaseDialog(pane.getScene().getWindow(), hero, item);
 		}
+	}
+
+	public void addValuable() {
+		final String itemName = newValuableField.getText();
+		newValuableField.setText("");
+		final JSONObject item = new JSONObject(items);
+		item.put("Name", itemName);
+		item.put("Kategorien", new JSONArray(new ArrayList<>(List.of("Wertgegenstand")), item));
+		addItem(item);
 	}
 
 	private final <T extends InventoryItem> Callback<TableView<T>, TableRow<T>> contextMenu(final String name, final String category) {
@@ -336,6 +375,8 @@ public class InventoryController extends HeroTabController {
 					case "Schild", "Parierwaffe" -> new DefensiveWeaponEditor(window, (DefensiveWeapon) item);
 					case "Rüstung" -> new ArmorEditor(window, (Armor) item);
 					case "Ritualobjekt" -> new RitualObjectEditor(window, (RitualObject) item);
+					case "Wertgegenstand" -> new ValuableEditor(window, (Valuable) item);
+					case "Trank" -> new PotionEditor(window, (Potion) item);
 					case "Artefakt" -> new ArtifactEditor(window, (Artifact) item);
 					case "Kleidung" -> new ClothingEditor(window, (Clothing) item);
 					default -> new ItemEditor(window, item);
@@ -492,12 +533,14 @@ public class InventoryController extends HeroTabController {
 		initializeDefensiveWeaponsTable();
 		initializeArmorTable();
 		initializeRitualObjectTable();
+		initializeValuablesTable();
+		initializePotionsTable();
 		initializeArtifactTable();
 		initializeClothingTable();
 		initializeEquipmentTable();
 
 		for (final ComboBox<String> list : new ComboBox[] { closeCombatList, rangedList, shieldsList, defensiveWeaponsList, armorList, ritualObjectList,
-				clothingList, equipmentList }) {
+				potionsList, clothingList, equipmentList }) {
 			final EventHandler<? super KeyEvent> keyPressed = list.getOnKeyPressed();
 			list.setOnKeyPressed(e -> {
 				if (e.getCode() == KeyCode.ENTER) {
@@ -509,7 +552,7 @@ public class InventoryController extends HeroTabController {
 		}
 
 		for (final TableView<? extends InventoryItem> table : new TableView[] { closeCombatTable, rangedTable, shieldsTable, defensiveWeaponsTable, armorTable,
-				ritualObjectTable, clothingTable, equipmentTable }) {
+				ritualObjectTable, potionsTable, clothingTable, equipmentTable }) {
 			((TableColumn<InventoryItem, String>) table.getColumns().get(0)).setCellFactory(c -> new TextFieldTableCell<>() {
 				@Override
 				public void updateItem(final String name, final boolean empty) {
@@ -678,6 +721,23 @@ public class InventoryController extends HeroTabController {
 		});
 	}
 
+	private void initializePotionsTable() {
+		GUIUtil.cellValueFactories(potionsTable, "name", "notes", "quality", "amount");
+
+		DoubleBinding potionsWidth = potionsTable.widthProperty().subtract(2);
+		potionsWidth = potionsWidth.subtract(potionsQualityColumn.widthProperty());
+		potionsWidth = potionsWidth.subtract(potionsAmountColumn.widthProperty());
+		potionsWidth = potionsWidth.divide(2);
+
+		potionsNameColumn.prefWidthProperty().bind(potionsWidth);
+		potionsNotesColumn.prefWidthProperty().bind(potionsWidth);
+
+		potionsAmountColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 99, 1, false));
+		potionsAmountColumn.setOnEditCommit(t -> t.getRowValue().setAmount(t.getNewValue()));
+
+		potionsTable.setRowFactory(contextMenu("Tränke", "Trank"));
+	}
+
 	private void initializeRangedTable() {
 		GUIUtil.autosizeTable(rangedTable, 0, 2);
 		GUIUtil.cellValueFactories(rangedTable, "name", "tp", "distance", "distancetp", "weight", "load");
@@ -702,6 +762,49 @@ public class InventoryController extends HeroTabController {
 		shieldsTable.setRowFactory(contextMenu("Schilde", "Schild"));
 	}
 
+	private void initializeValuablesTable() {
+		GUIUtil.cellValueFactories(valuablesTable, "name", "notes");
+
+		valuablesNameColumn.setCellFactory(o -> {
+			final TableCell<Valuable, String> cell = new GraphicTableCell<>(false) {
+				@Override
+				protected void createGraphic() {
+					final TextField t = new TextField();
+					createGraphic(t, () -> t.getText(), s -> t.setText(s));
+				}
+			};
+			return cell;
+		});
+		valuablesNameColumn.setOnEditCommit(event -> {
+			final JSONObject item = event.getRowValue().getItem();
+			item.put("Name", event.getNewValue());
+			item.notifyListeners(null);
+		});
+
+		valuablesNotesColumn.setCellFactory(o -> {
+			final TableCell<Valuable, String> cell = new GraphicTableCell<>(false) {
+				@Override
+				protected void createGraphic() {
+					final TextField t = new TextField();
+					createGraphic(t, () -> t.getText(), s -> t.setText(s));
+				}
+			};
+			return cell;
+		});
+		valuablesNotesColumn.setOnEditCommit(event -> {
+			final String note = event.getNewValue();
+			final JSONObject item = event.getRowValue().getItem();
+			if ("".equals(note)) {
+				item.removeKey("Anmerkungen");
+			} else {
+				item.put("Anmerkungen", note);
+			}
+			item.notifyListeners(null);
+		});
+
+		valuablesTable.setRowFactory(contextMenu("Wertgegenstände", "Wertgegenstand"));
+	}
+
 	private void refreshMoney() {
 		final JSONObject money = hero.getObj("Besitz").getObj("Geld");
 		ducats.getValueFactory().setValue(money.getIntOrDefault("Dukaten", 0));
@@ -717,6 +820,8 @@ public class InventoryController extends HeroTabController {
 		defensiveWeaponsTable.getItems().clear();
 		armorTable.getItems().clear();
 		ritualObjectTable.getItems().clear();
+		valuablesTable.getItems().clear();
+		potionsTable.getItems().clear();
 		artifactTable.getItems().clear();
 		clothingTable.getItems().clear();
 		equipmentTable.getItems().clear();
@@ -761,6 +866,16 @@ public class InventoryController extends HeroTabController {
 					armorTable.getItems().add(new Armor(actual, item));
 					found = true;
 				}
+				if (categories.contains("Wertgegenstand")) {
+					final JSONObject actual = item.getObjOrDefault("Wertgegenstand", item);
+					valuablesTable.getItems().add(new Valuable(actual, item));
+					found = true;
+				}
+				if (categories.contains("Trank")) {
+					final JSONObject actual = item.getObjOrDefault("Trank", item);
+					potionsTable.getItems().add(new Potion(actual, item));
+					found = true;
+				}
 				if (categories.contains("Artefakt")) {
 					final JSONObject actual = item.getObjOrDefault("Artefakt", item);
 					artifactTable.getItems().add(new Artifact(actual, item));
@@ -799,6 +914,10 @@ public class InventoryController extends HeroTabController {
 		armorTable.setMinHeight((armorTable.getItems().size() + 1) * 25 + 1);
 		ritualObjectTable.setPrefHeight((ritualObjectTable.getItems().size() + 1) * 25 + 1);
 		ritualObjectTable.setMinHeight((ritualObjectTable.getItems().size() + 1) * 25 + 1);
+		valuablesTable.setPrefHeight((valuablesTable.getItems().size() + 1) * 25 + 1);
+		valuablesTable.setMinHeight((valuablesTable.getItems().size() + 1) * 25 + 1);
+		potionsTable.setPrefHeight((potionsTable.getItems().size() + 1) * 25 + 1);
+		potionsTable.setMinHeight((potionsTable.getItems().size() + 1) * 25 + 1);
 		artifactTable.setPrefHeight((artifactTable.getItems().size() + 1) * 25 + 1);
 		artifactTable.setMinHeight((artifactTable.getItems().size() + 1) * 25 + 1);
 		clothingTable.setPrefHeight((clothingTable.getItems().size() + 1) * 26 + 1);
@@ -878,6 +997,7 @@ public class InventoryController extends HeroTabController {
 		defensiveWeaponsList.getItems().clear();
 		armorList.getItems().clear();
 		ritualObjectList.getItems().clear();
+		potionsList.getItems().clear();
 		clothingList.getItems().clear();
 		equipmentList.getItems().clear();
 
@@ -906,6 +1026,10 @@ public class InventoryController extends HeroTabController {
 			}
 			if (categories.contains("Rüstung")) {
 				armorList.getItems().add(itemName);
+				found = true;
+			}
+			if (categories.contains("Trank")) {
+				potionsList.getItems().add(itemName);
 				found = true;
 			}
 			for (final String ritualGroupName : ritualObjectGroups) {
