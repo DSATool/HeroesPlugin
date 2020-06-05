@@ -16,7 +16,7 @@
 package heroes.general;
 
 import dsatool.ui.Colorable;
-import javafx.beans.binding.When;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -31,7 +31,7 @@ public class Energy extends dsa41basis.hero.Energy implements Colorable {
 	public Energy(final String name, final JSONObject derivation, final JSONObject hero, final Color color) {
 		super(name, derivation, hero);
 
-		text.bind(new When(current.isEqualTo(max)).then(max.asString()).otherwise(current.asString().concat('/').concat(max)));
+		text.bind(Bindings.when(current.isEqualTo(max)).then(max.asString()).otherwise(current.asString().concat('/').concat(max)));
 
 		this.color = color;
 	}
