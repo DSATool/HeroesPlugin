@@ -524,8 +524,6 @@ public class InventoryController extends HeroTabController {
 			});
 		}
 
-		newArtifactField.setOnAction(e -> addArtifact());
-
 		equipment.addListener(o -> updateLists());
 
 		updateLists();

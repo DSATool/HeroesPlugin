@@ -255,8 +255,8 @@
                </columns>
             </TableView>
             <HBox spacing="2" >
-               <TextField fx:id="newArtifactField" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-               <Button fx:id="artifactAddButton" onAction="#addItem" prefHeight="25" prefWidth="25" text="&#xE145;" >
+               <TextField fx:id="newArtifactField" onAction="#addArtifact" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+               <Button fx:id="artifactAddButton" onAction="#addArtifact" prefHeight="25" prefWidth="25" text="&#xE145;" >
                   <padding><Insets top="0" right="0" bottom="0" left="0"/></padding>
                   <font>
                      <Font name="Material Icons" size="20.0" />
