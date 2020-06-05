@@ -61,7 +61,7 @@
    </HBox>
    <HBox spacing="2" alignment="CENTER_LEFT" >
       <Label text="Gewicht: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-      <ReactiveSpinner fx:id="weight" imin="0" imax="999" editable="true" prefWidth="60" />
+      <ReactiveSpinner fx:id="weight" dmin="0" dmax="999.95" amountToStepBy="0.05" editable="true" prefWidth="80" />
    </HBox>
    <HBox spacing="2" alignment="CENTER_LEFT" >
       <Label text="Geschosstyp: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
@@ -70,7 +70,7 @@
    </HBox>
    <HBox spacing="2" alignment="CENTER_LEFT" >
       <Label text="Gewicht (Geschoss): " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-      <ReactiveSpinner fx:id="weightBullet" imin="0" imax="999" editable="true" prefWidth="60" />
+      <ReactiveSpinner fx:id="weightBullet" dmin="0" dmax="999.95" amountToStepBy="0.05" editable="true" prefWidth="80" />
    </HBox>
    <VBox fx:id="bulletBox">
    </VBox>

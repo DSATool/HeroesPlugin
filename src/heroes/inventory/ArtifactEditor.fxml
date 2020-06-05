@@ -60,7 +60,7 @@
    </TableView>
    <HBox spacing="2" alignment="CENTER_LEFT" >
       <Label text="Gewicht: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-      <ReactiveSpinner fx:id="weight" dmin="0.0" dmax="999.0" initialValue="0.0" amountToStepBy="0.05" editable="true" prefWidth="80" />
+      <ReactiveSpinner fx:id="weight" dmin="0.0" dmax="999.95" initialValue="0.0" amountToStepBy="0.05" editable="true" prefWidth="80" />
    </HBox>
    <HBox spacing="2" alignment="CENTER_LEFT" >
       <Label text="Anmerkungen: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />

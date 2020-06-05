@@ -56,13 +56,13 @@ public class RangedWeaponEditor {
 	@FXML
 	private CheckBox noBullet;
 	@FXML
-	private ReactiveSpinner<Integer> weight;
+	private ReactiveSpinner<Double> weight;
 	@FXML
 	private ComboBox<String> bulletType;
 	@FXML
 	private VBox bulletBox;
 	@FXML
-	private ReactiveSpinner<Integer> weightBullet;
+	private ReactiveSpinner<Double> weightBullet;
 	@FXML
 	private Node ammunitionBox;
 	@FXML
@@ -153,7 +153,7 @@ public class RangedWeaponEditor {
 		distanceTPMedium.getValueFactory().setValue(distanceTp._3);
 		distanceTPFar.getValueFactory().setValue(distanceTp._4);
 		distanceTPVeryFar.getValueFactory().setValue(distanceTp._5);
-		weight.getValueFactory().setValue((int) weapon.getWeight());
+		weight.getValueFactory().setValue(weapon.getWeight());
 
 		bulletType.setItems(FXCollections.observableArrayList("Pfeile", "Bolzen"));
 
@@ -168,7 +168,7 @@ public class RangedWeaponEditor {
 		setAmmunitionVisible("Pfeile".equals(ammunitionType) || "Bolzen".equals(ammunitionType));
 
 		final double bulletWeight = weapon.getBulletweight();
-		weightBullet.getValueFactory().setValue(bulletWeight == Double.NEGATIVE_INFINITY ? 0 : (int) bulletWeight);
+		weightBullet.getValueFactory().setValue(bulletWeight == Double.NEGATIVE_INFINITY ? 0 : bulletWeight);
 
 		final JSONObject ammunition = weapon.getAmmunitionTypes().clone(null);
 		for (final String type : ammunitionTypes.keySet()) {

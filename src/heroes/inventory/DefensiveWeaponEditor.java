@@ -41,7 +41,7 @@ public class DefensiveWeaponEditor {
 	@FXML
 	private Button okButton;
 	@FXML
-	private ReactiveSpinner<Integer> weight;
+	private ReactiveSpinner<Double> weight;
 	@FXML
 	private ReactiveSpinner<Integer> ini;
 	@FXML
@@ -74,7 +74,7 @@ public class DefensiveWeaponEditor {
 
 		name.setText(weapon.getName());
 		type.setText(weapon.getItemType());
-		weight.getValueFactory().setValue((int) weapon.getWeight());
+		weight.getValueFactory().setValue(weapon.getWeight());
 		noBf.setSelected(weapon.getBf() != Integer.MIN_VALUE);
 		if (weapon.getBf() == Integer.MIN_VALUE) {
 			bf.setDisable(true);

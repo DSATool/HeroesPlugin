@@ -43,7 +43,7 @@
    </HBox>
    <HBox spacing="2" alignment="CENTER_LEFT" >
       <Label text="Gewicht: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-      <ReactiveSpinner fx:id="weight" imin="0" imax="999" editable="true" prefWidth="60" />
+      <ReactiveSpinner fx:id="weight" dmin="0" dmax="999.95" amountToStepBy="0.05" editable="true" prefWidth="80" />
    </HBox>
    <HBox spacing="2" alignment="CENTER_LEFT" >
       <Label text="Länge: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
