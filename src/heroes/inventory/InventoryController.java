@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import dsa41basis.fight.Armor;
 import dsa41basis.fight.CloseCombatWeapon;
@@ -35,14 +34,15 @@ import dsatool.gui.GUIUtil;
 import dsatool.resources.ResourceManager;
 import dsatool.resources.Settings;
 import dsatool.ui.GraphicTableCell;
+import dsatool.ui.IntegerSpinnerTableCell;
 import dsatool.ui.ReactiveSpinner;
 import dsatool.util.ErrorLogger;
 import dsatool.util.Util;
 import heroes.ui.HeroTabController;
-import heroes.util.UiUtil;
 import javafx.beans.binding.DoubleBinding;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -149,7 +149,7 @@ public class InventoryController extends HeroTabController {
 	@FXML
 	private TableView<CloseCombatWeapon> closeCombatTable;
 	@FXML
-	private TableColumn<DefensiveWeapon, Double> closeCombatWeightColumn;
+	private TableColumn<CloseCombatWeapon, Double> closeCombatWeightColumn;
 
 	@FXML
 	private ComboBox<String> clothingList;
@@ -187,7 +187,7 @@ public class InventoryController extends HeroTabController {
 	@FXML
 	private TableView<RangedWeapon> rangedTable;
 	@FXML
-	private TableColumn<DefensiveWeapon, Double> rangedWeightColumn;
+	private TableColumn<RangedWeapon, Double> rangedWeightColumn;
 
 	@FXML
 	private Button ritualObjectAddButton;
@@ -332,7 +332,7 @@ public class InventoryController extends HeroTabController {
 
 			final ContextMenu rowMenu = new ContextMenu();
 
-			final Consumer<Object> edit = obj -> {
+			final Runnable edit = () -> {
 				final InventoryItem item = row.getItem();
 				final Window window = pane.getScene().getWindow();
 				switch (category) {
@@ -347,16 +347,20 @@ public class InventoryController extends HeroTabController {
 				}
 			};
 
-			if (!("Kleidung".equals(name) || "Ausrüstung".equals(name))) {
-				row.setOnMouseClicked(event -> {
-					if (event.getButton().equals(MouseButton.PRIMARY) && event.getClickCount() == 2) {
-						edit.accept(null);
+			row.setOnMouseClicked(event -> {
+				if (event.getButton().equals(MouseButton.PRIMARY) && event.getClickCount() == 2) {
+					EventTarget target = event.getTarget();
+					while (!(target instanceof TableCell)) {
+						target = ((Node) target).getParent();
 					}
-				});
-			}
+					if (target == null || !((TableCell<?, ?>) target).getTableColumn().isEditable()) {
+						edit.run();
+					}
+				}
+			});
 
 			final MenuItem editItem = new MenuItem("Bearbeiten");
-			editItem.setOnAction(event -> edit.accept(null));
+			editItem.setOnAction(event -> edit.run());
 
 			final Menu addItem = new Menu("Hinzufügen zu ...");
 			for (int i = 0; i < categoryNames.length; ++i) {
@@ -573,13 +577,12 @@ public class InventoryController extends HeroTabController {
 		artifactTable.setRowFactory(contextMenu("Artefakte", "Artefakt"));
 	}
 
-	@SuppressWarnings("unchecked")
 	private void initializeCloseCombatTable() {
 		GUIUtil.autosizeTable(closeCombatTable, 0, 2);
 		GUIUtil.cellValueFactories(closeCombatTable, "name", "tp", "tpkk", "weight", "length", "bf", "ini", "wm", "special", "dk");
 
-		closeCombatWeightColumn.setCellFactory(UiUtil.integerCellFactory);
-		closeCombatBFColumn.setCellFactory(UiUtil.integerCellFactory);
+		closeCombatBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12, 1, false));
+		closeCombatBFColumn.setOnEditCommit(t -> t.getRowValue().setBf(t.getNewValue()));
 
 		closeCombatTable.setRowFactory(contextMenu("Nahkampfwaffen", "Nahkampfwaffe"));
 	}
@@ -599,9 +602,8 @@ public class InventoryController extends HeroTabController {
 			};
 			return cell;
 		});
-
 		clothingNameColumn.setOnEditCommit(event -> {
-			final JSONObject item = clothingTable.getItems().get(event.getTablePosition().getRow()).getItem();
+			final JSONObject item = event.getRowValue().getItem();
 			item.put("Name", event.getNewValue());
 			item.notifyListeners(null);
 		});
@@ -618,7 +620,7 @@ public class InventoryController extends HeroTabController {
 		});
 		clothingNotesColumn.setOnEditCommit(event -> {
 			final String note = event.getNewValue();
-			final JSONObject item = clothingTable.getItems().get(event.getTablePosition().getRow()).getItem();
+			final JSONObject item = event.getRowValue().getItem();
 			if ("".equals(note)) {
 				item.removeKey("Anmerkungen");
 			} else {
@@ -628,13 +630,12 @@ public class InventoryController extends HeroTabController {
 		});
 	}
 
-	@SuppressWarnings("unchecked")
 	private void initializeDefensiveWeaponsTable() {
 		GUIUtil.autosizeTable(defensiveWeaponsTable, 0, 2);
 		GUIUtil.cellValueFactories(defensiveWeaponsTable, "name", "wm", "ini", "bf", "weight");
 
-		defensiveWeaponsBFColumn.setCellFactory(UiUtil.integerCellFactory);
-		defensiveWeaponsWeightColumn.setCellFactory(UiUtil.integerCellFactory);
+		defensiveWeaponsBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12, 1, false));
+		defensiveWeaponsBFColumn.setOnEditCommit(t -> t.getRowValue().setBf(t.getNewValue()));
 
 		defensiveWeaponsTable.setRowFactory(contextMenu("Parierwaffen", "Parierwaffe"));
 	}
@@ -655,7 +656,7 @@ public class InventoryController extends HeroTabController {
 			return cell;
 		});
 		equipmentNameColumn.setOnEditCommit(event -> {
-			final JSONObject item = equipmentTable.getItems().get(event.getTablePosition().getRow()).getItem();
+			final JSONObject item = event.getRowValue().getItem();
 			item.put("Name", event.getNewValue());
 			item.notifyListeners(null);
 		});
@@ -672,7 +673,7 @@ public class InventoryController extends HeroTabController {
 		});
 		equipmentNotesColumn.setOnEditCommit(event -> {
 			final String note = event.getNewValue();
-			final JSONObject item = equipmentTable.getItems().get(event.getTablePosition().getRow()).getItem();
+			final JSONObject item = event.getRowValue().getItem();
 			if ("".equals(note)) {
 				item.removeKey("Anmerkungen");
 			} else {
@@ -682,12 +683,9 @@ public class InventoryController extends HeroTabController {
 		});
 	}
 
-	@SuppressWarnings("unchecked")
 	private void initializeRangedTable() {
 		GUIUtil.autosizeTable(rangedTable, 0, 2);
 		GUIUtil.cellValueFactories(rangedTable, "name", "tp", "distance", "distancetp", "weight", "load");
-
-		rangedWeightColumn.setCellFactory(UiUtil.integerCellFactory);
 
 		rangedTable.setRowFactory(contextMenu("Fernkampfwaffen", "Fernkampfwaffe"));
 	}
@@ -699,13 +697,12 @@ public class InventoryController extends HeroTabController {
 		ritualObjectTable.setRowFactory(contextMenu("Ritualobjekte", "Ritualobjekt"));
 	}
 
-	@SuppressWarnings("unchecked")
 	private void initializeShieldsTable() {
 		GUIUtil.autosizeTable(shieldsTable, 0, 2);
 		GUIUtil.cellValueFactories(shieldsTable, "name", "wm", "ini", "bf", "weight");
 
-		shieldsWeightColumn.setCellFactory(UiUtil.integerCellFactory);
-		shieldsBFColumn.setCellFactory(UiUtil.integerCellFactory);
+		shieldsBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12, 1, false));
+		shieldsBFColumn.setOnEditCommit(t -> t.getRowValue().setBf(t.getNewValue()));
 
 		shieldsTable.setRowFactory(contextMenu("Schilde", "Schild"));
 	}
@@ -807,12 +804,12 @@ public class InventoryController extends HeroTabController {
 		armorTable.setMinHeight((armorTable.getItems().size() + 1) * 25 + 1);
 		ritualObjectTable.setPrefHeight((ritualObjectTable.getItems().size() + 1) * 25 + 1);
 		ritualObjectTable.setMinHeight((ritualObjectTable.getItems().size() + 1) * 25 + 1);
-		artifactTable.setPrefHeight((artifactTable.getItems().size() + 1) * 26 + 1);
+		artifactTable.setPrefHeight((artifactTable.getItems().size() + 1) * 25 + 1);
 		artifactTable.setMinHeight((artifactTable.getItems().size() + 1) * 25 + 1);
 		clothingTable.setPrefHeight((clothingTable.getItems().size() + 1) * 26 + 1);
-		clothingTable.setMinHeight((clothingTable.getItems().size() + 1) * 25 + 1);
+		clothingTable.setMinHeight((clothingTable.getItems().size() + 1) * 26 + 1);
 		equipmentTable.setPrefHeight((equipmentTable.getItems().size() + 1) * 26 + 1);
-		equipmentTable.setMinHeight((equipmentTable.getItems().size() + 1) * 25 + 1);
+		equipmentTable.setMinHeight((equipmentTable.getItems().size() + 1) * 26 + 1);
 	}
 
 	@Override

@@ -32,7 +32,7 @@
       </TitledPane>
       <TitledPane text="Nahkampfwaffen" >
          <VBox style="-fx-padding: 0, 0, 0, 0;" >
-            <TableView fx:id="closeCombatTable" fixedCellSize="25" >
+            <TableView fx:id="closeCombatTable" editable="true" fixedCellSize="25" >
                <styleClass>
                   <String fx:value="remove-vertical-scrollbar" />
                   <String fx:value="remove-horizontal-scrollbar" />
@@ -42,16 +42,16 @@
                   <Label minHeight="0" />
                </placeholder>
                <columns>
-                  <TableColumn fx:id="closeCombatNameColumn" text="Waffe" minWidth="100" />
-                  <TableColumn fx:id="closeCombatTPColumn" text="TP" prefWidth="70" resizable="false" style="-fx-alignment: CENTER;" />
-                  <TableColumn fx:id="closeCombatTPKKColumn" text="TP/KK" prefWidth="50" resizable="false" style="-fx-alignment: CENTER;" />
-                  <TableColumn fx:id="closeCombatWeightColumn" text="Gewicht" prefWidth="50" resizable="false" style="-fx-alignment: CENTER;" />
-                  <TableColumn fx:id="closeCombatLengthColumn" text="Länge" prefWidth="50" resizable="false" style="-fx-alignment: CENTER;" />
-                  <TableColumn fx:id="closeCombatBFColumn" text="BF" prefWidth="50" resizable="false" style="-fx-alignment: CENTER;" />
-                  <TableColumn fx:id="closeCombatINIColumn" text="INI" prefWidth="50" resizable="false" style="-fx-alignment: CENTER;" />
-                  <TableColumn fx:id="closeCombatWMColumn" text="WM" prefWidth="50" resizable="false" style="-fx-alignment: CENTER;" />
-                  <TableColumn fx:id="closeCombatSpecialColumn" text="Bem." prefWidth="50" resizable="false" style="-fx-alignment: CENTER;" />
-                  <TableColumn fx:id="closeCombatDistanceColumn" text="DK" prefWidth="50" resizable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="closeCombatNameColumn" text="Waffe" editable="false" minWidth="100" />
+                  <TableColumn fx:id="closeCombatTPColumn" text="TP" prefWidth="70" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="closeCombatTPKKColumn" text="TP/KK" prefWidth="50" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="closeCombatWeightColumn" text="Gewicht" prefWidth="50" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="closeCombatLengthColumn" text="Länge" prefWidth="50" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="closeCombatBFColumn" text="BF" prefWidth="50" resizable="false" editable="true" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="closeCombatINIColumn" text="INI" prefWidth="50" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="closeCombatWMColumn" text="WM" prefWidth="50" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="closeCombatSpecialColumn" text="Bem." prefWidth="50" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="closeCombatDistanceColumn" text="DK" prefWidth="50" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
                </columns>
             </TableView>
             <HBox spacing="2" >
@@ -80,12 +80,12 @@
                   <Label minHeight="0" />
                </placeholder>
                <columns>
-                  <TableColumn fx:id="rangedNameColumn" text="Waffe" minWidth="100" />
-                  <TableColumn fx:id="rangedTPColumn" text="TP" prefWidth="70" resizable="false" style="-fx-alignment: CENTER;" />
-                  <TableColumn fx:id="rangedDistancesColumn" text="Entfernung" prefWidth="120" resizable="false" style="-fx-alignment: CENTER;" />
-                  <TableColumn fx:id="rangedDistanceTPColumn" text="TP/Entf." prefWidth="120" resizable="false" style="-fx-alignment: CENTER;" />
-                  <TableColumn fx:id="rangedWeightColumn" text="Gewicht" prefWidth="50" resizable="false" style="-fx-alignment: CENTER;" />
-                  <TableColumn fx:id="rangedLoadColumn" text="Laden" prefWidth="50" resizable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="rangedNameColumn" text="Waffe" editable="false" minWidth="100" />
+                  <TableColumn fx:id="rangedTPColumn" text="TP" prefWidth="70" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="rangedDistancesColumn" text="Entfernung" prefWidth="120" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="rangedDistanceTPColumn" text="TP/Entf." prefWidth="120" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="rangedWeightColumn" text="Gewicht" prefWidth="50" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="rangedLoadColumn" text="Laden" prefWidth="50" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
                </columns>
             </TableView>
             <HBox spacing="2" >
@@ -104,7 +104,7 @@
       </TitledPane>
       <TitledPane text="Schilde" >
          <VBox fillWidth="true" style="-fx-padding: 0, 0, 0, 0;" >
-            <TableView fx:id="shieldsTable" fixedCellSize="25" >
+            <TableView fx:id="shieldsTable" editable="true" fixedCellSize="25" >
                <styleClass>
                   <String fx:value="remove-vertical-scrollbar" />
                   <String fx:value="remove-horizontal-scrollbar" />
@@ -114,11 +114,11 @@
                   <Label minHeight="0" />
                </placeholder>
                <columns>
-                  <TableColumn fx:id="shieldsNameColumn" text="Schild" minWidth="100" />
-                  <TableColumn fx:id="shieldsWMColumn" text="WM" prefWidth="50" resizable="false" style="-fx-alignment: CENTER;" />
-                  <TableColumn fx:id="shieldsIniColumn" text="Ini" prefWidth="50" resizable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="shieldsNameColumn" text="Schild" editable="false" minWidth="100" />
+                  <TableColumn fx:id="shieldsWMColumn" text="WM" prefWidth="50" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="shieldsIniColumn" text="Ini" prefWidth="50" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
                   <TableColumn fx:id="shieldsBFColumn" text="BF" prefWidth="50" resizable="false" editable="true" style="-fx-alignment: CENTER;" />
-                  <TableColumn fx:id="shieldsWeightColumn" text="Gewicht" prefWidth="50" resizable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="shieldsWeightColumn" text="Gewicht" prefWidth="50" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
                </columns>
             </TableView>
             <HBox spacing="2" >
@@ -137,7 +137,7 @@
       </TitledPane>
       <TitledPane text="Parierwaffen" >
          <VBox fillWidth="true" style="-fx-padding: 0, 0, 0, 0;" >
-            <TableView fx:id="defensiveWeaponsTable" fixedCellSize="25" >
+            <TableView fx:id="defensiveWeaponsTable" editable="true" fixedCellSize="25" >
                <styleClass>
                   <String fx:value="remove-vertical-scrollbar" />
                   <String fx:value="remove-horizontal-scrollbar" />
@@ -147,11 +147,11 @@
                   <Label minHeight="0" />
                </placeholder>
                <columns>
-                  <TableColumn fx:id="defensiveWeaponsNameColumn" text="Waffe" minWidth="100" />
-                  <TableColumn fx:id="defensiveWeaponsWMColumn" text="WM" prefWidth="50" resizable="false" style="-fx-alignment: CENTER;" />
-                  <TableColumn fx:id="defensiveWeaponsIniColumn" text="Ini" prefWidth="50" resizable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="defensiveWeaponsNameColumn" text="Waffe" editable="false" minWidth="100" />
+                  <TableColumn fx:id="defensiveWeaponsWMColumn" text="WM" prefWidth="50" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="defensiveWeaponsIniColumn" text="Ini" prefWidth="50" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
                   <TableColumn fx:id="defensiveWeaponsBFColumn" text="BF" prefWidth="50" resizable="false" editable="true" style="-fx-alignment: CENTER;" />
-                  <TableColumn fx:id="defensiveWeaponsWeightColumn" text="Gewicht" prefWidth="50" resizable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="defensiveWeaponsWeightColumn" text="Gewicht" prefWidth="50" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
                </columns>
             </TableView>
             <HBox spacing="2" >
@@ -180,18 +180,18 @@
                   <Label minHeight="0" />
                </placeholder>
                <columns>
-                  <TableColumn fx:id="armorNameColumn" text="Rüstungsteil" minWidth="150" resizable="false" />
-                  <TableColumn fx:id="armorHeadColumn" text="Kopf" prefWidth="60" resizable="false" style="-fx-alignment: CENTER;" />
-                  <TableColumn fx:id="armorBreastColumn" text="Brust" prefWidth="60" resizable="false" style="-fx-alignment: CENTER;" />
-                  <TableColumn fx:id="armorBackColumn" text="Rücken" prefWidth="60" resizable="false" style="-fx-alignment: CENTER;" />
-                  <TableColumn fx:id="armorBellyColumn" text="Bauch" prefWidth="60" resizable="false" style="-fx-alignment: CENTER;" />
-                  <TableColumn fx:id="armorLarmColumn" text="LArm" prefWidth="60" resizable="false" style="-fx-alignment: CENTER;" />
-                  <TableColumn fx:id="armorRarmColumn" text="RArm" prefWidth="60" resizable="false" style="-fx-alignment: CENTER;" />
-                  <TableColumn fx:id="armorLlegColumn" text="LBein" prefWidth="60" resizable="false" style="-fx-alignment: CENTER;" />
-                  <TableColumn fx:id="armorRlegColumn" text="RBein" prefWidth="60" resizable="false" style="-fx-alignment: CENTER;" />
-                  <TableColumn fx:id="armorRsColumn" text="RS" prefWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
-                  <TableColumn fx:id="armorBeColumn" text="BE" prefWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
-                  <TableColumn fx:id="armorWeightColumn" text="Gewicht" prefWidth="50" resizable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="armorNameColumn" text="Rüstungsteil" minWidth="150" resizable="false" editable="false" />
+                  <TableColumn fx:id="armorHeadColumn" text="Kopf" prefWidth="60" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="armorBreastColumn" text="Brust" prefWidth="60" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="armorBackColumn" text="Rücken" prefWidth="60" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="armorBellyColumn" text="Bauch" prefWidth="60" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="armorLarmColumn" text="LArm" prefWidth="60" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="armorRarmColumn" text="RArm" prefWidth="60" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="armorLlegColumn" text="LBein" prefWidth="60" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="armorRlegColumn" text="RBein" prefWidth="60" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="armorRsColumn" text="RS" prefWidth="40" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="armorBeColumn" text="BE" prefWidth="40" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="armorWeightColumn" text="Gewicht" prefWidth="50" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
                </columns>
             </TableView>
             <HBox spacing="2" >
@@ -210,7 +210,7 @@
       </TitledPane>
       <TitledPane fx:id="ritualObjectPane" text="Ritualobjekte" >
          <VBox fillWidth="true" style="-fx-padding: 0, 0, 0, 0;" >
-            <TableView fx:id="ritualObjectTable" editable="true" fixedCellSize="25" >
+            <TableView fx:id="ritualObjectTable" fixedCellSize="25" >
                <styleClass>
                   <String fx:value="remove-vertical-scrollbar" />
                   <String fx:value="remove-horizontal-scrollbar" />
@@ -220,8 +220,8 @@
                   <Label minHeight="0" />
                </placeholder>
                <columns>
-                  <TableColumn fx:id="ritualObjectNameColumn" text="Ritualobjekt" minWidth="100" />
-                  <TableColumn fx:id="ritualObjectTypeColumn" text="Typ" minWidth="100" />
+                  <TableColumn fx:id="ritualObjectNameColumn" text="Ritualobjekt" minWidth="100" editable="false" />
+                  <TableColumn fx:id="ritualObjectTypeColumn" text="Typ" minWidth="100" editable="false" />
                </columns>
             </TableView>
             <HBox spacing="2" >
@@ -240,7 +240,7 @@
       </TitledPane>      
       <TitledPane text="Artefakte" >
          <VBox fillWidth="true" style="-fx-padding: 0, 0, 0, 0;" >
-            <TableView fx:id="artifactTable" editable="true" fixedCellSize="26" >
+            <TableView fx:id="artifactTable" fixedCellSize="25" >
                <styleClass>
                   <String fx:value="remove-vertical-scrollbar" />
                   <String fx:value="remove-horizontal-scrollbar" />
@@ -250,8 +250,8 @@
                   <Label minHeight="0" />
                </placeholder>
                <columns>
-                  <TableColumn fx:id="artifactNameColumn" text="Artefakt" minWidth="100" editable="true" />
-                  <TableColumn fx:id="artifactNotesColumn" text="Anmerkungen" minWidth="100" editable="true" />
+                  <TableColumn fx:id="artifactNameColumn" text="Artefakt" minWidth="100" editable="false" />
+                  <TableColumn fx:id="artifactNotesColumn" text="Anmerkungen" minWidth="100" editable="false" />
                </columns>
             </TableView>
             <HBox spacing="2" >
