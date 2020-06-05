@@ -146,7 +146,7 @@ public class ArtifactEditor {
 
 		final Stage stage = new Stage();
 		stage.setTitle("Bearbeiten");
-		stage.setScene(new Scene(root, 330, 400));
+		stage.setScene(new Scene(root, 330, 390));
 		stage.initModality(Modality.WINDOW_MODAL);
 		stage.initOwner(window);
 
@@ -181,7 +181,7 @@ public class ArtifactEditor {
 		});
 
 		spellNameColumn.setCellFactory(o -> {
-			final TableCell<Spell, String> cell = new GraphicTableCell<Spell, String>(false) {
+			final TableCell<Spell, String> cell = new GraphicTableCell<>(false) {
 				@Override
 				protected void createGraphic() {
 					final TextField t = new TextField();
@@ -208,12 +208,12 @@ public class ArtifactEditor {
 					updateSpellTable();
 				}
 			} else {
-				spellTable.getItems().get(event.getTablePosition().getRow()).setName(event.getNewValue());
+				event.getRowValue().setName(event.getNewValue());
 			}
 		});
 
 		spellVariantColumn.setCellFactory(o -> {
-			final TableCell<Spell, String> cell = new GraphicTableCell<Spell, String>(false) {
+			final TableCell<Spell, String> cell = new GraphicTableCell<>(false) {
 				@Override
 				protected void createGraphic() {
 					final TextField t = new TextField();
@@ -232,7 +232,7 @@ public class ArtifactEditor {
 		spellVariantColumn.setOnEditCommit(event -> {
 			if (event.getTablePosition().getRow() < spellTable.getItems().size() - 1) {
 				final String variant = event.getNewValue();
-				spellTable.getItems().get(event.getTablePosition().getRow()).setVariant(variant);
+				event.getRowValue().setVariant(variant);
 			}
 		});
 
