@@ -295,6 +295,8 @@ public class InventoryController extends HeroTabController {
 		if (HeroTabController.isEditable.get()) {
 			items.add(item);
 			items.notifyListeners(null);
+		} else if (item.getArr("Kategorien").getStrings().contains("Alchemikum")) {
+			new PotionPurchaseDialog(pane.getScene().getWindow(), hero, item);
 		} else {
 			new ItemPurchaseDialog(pane.getScene().getWindow(), hero, item);
 		}
