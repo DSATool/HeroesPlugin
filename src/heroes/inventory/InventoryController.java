@@ -42,6 +42,7 @@ import dsatool.util.ErrorLogger;
 import dsatool.util.Util;
 import heroes.ui.HeroTabController;
 import javafx.beans.binding.DoubleBinding;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;
@@ -243,6 +244,8 @@ public class InventoryController extends HeroTabController {
 	private JSONArray items;
 	private final JSONListener heroMoneyListener = o -> refreshMoney();
 	private final JSONListener heroItemListener = o -> refreshTables();
+
+	private final HashMap<ComboBox<String>, ObservableList<String>> itemLists = new HashMap<>();
 
 	private final List<String> ritualObjectGroups = new ArrayList<>();
 
@@ -541,6 +544,9 @@ public class InventoryController extends HeroTabController {
 
 		for (final ComboBox<String> list : new ComboBox[] { closeCombatList, rangedList, shieldsList, defensiveWeaponsList, armorList, ritualObjectList,
 				potionsList, clothingList, equipmentList }) {
+			final ObservableList<String> unsorted = list.getItems();
+			itemLists.put(list, unsorted);
+			list.setItems(unsorted.sorted());
 			final EventHandler<? super KeyEvent> keyPressed = list.getOnKeyPressed();
 			list.setOnKeyPressed(e -> {
 				if (e.getCode() == KeyCode.ENTER) {
@@ -991,57 +997,49 @@ public class InventoryController extends HeroTabController {
 	}
 
 	private void updateLists() {
-		closeCombatList.getItems().clear();
-		rangedList.getItems().clear();
-		shieldsList.getItems().clear();
-		defensiveWeaponsList.getItems().clear();
-		armorList.getItems().clear();
-		ritualObjectList.getItems().clear();
-		potionsList.getItems().clear();
-		clothingList.getItems().clear();
-		equipmentList.getItems().clear();
+		itemLists.values().forEach(list -> list.clear());
 
 		DSAUtil.foreach(item -> true, (itemName, item) -> {
 			final JSONArray categories = item.getArr("Kategorien");
 			boolean found = false;
 			if (categories.contains("Kleidung")) {
-				clothingList.getItems().add(itemName);
+				itemLists.get(clothingList).add(itemName);
 				found = true;
 			}
 			if (categories.contains("Nahkampfwaffe")) {
-				closeCombatList.getItems().add(itemName);
+				itemLists.get(closeCombatList).add(itemName);
 				found = true;
 			}
 			if (categories.contains("Fernkampfwaffe")) {
-				rangedList.getItems().add(itemName);
+				itemLists.get(rangedList).add(itemName);
 				found = true;
 			}
 			if (categories.contains("Schild")) {
-				shieldsList.getItems().add(itemName);
+				itemLists.get(shieldsList).add(itemName);
 				found = true;
 			}
 			if (categories.contains("Parierwaffe")) {
-				defensiveWeaponsList.getItems().add(itemName);
+				itemLists.get(defensiveWeaponsList).add(itemName);
 				found = true;
 			}
 			if (categories.contains("Rüstung")) {
-				armorList.getItems().add(itemName);
+				itemLists.get(armorList).add(itemName);
 				found = true;
 			}
 			if (categories.contains("Alchemikum")) {
-				potionsList.getItems().add(itemName);
+				itemLists.get(potionsList).add(itemName);
 				found = true;
 			}
 			for (final String ritualGroupName : ritualObjectGroups) {
 				final JSONObject ritualGroup = ritualGroups.getObj(ritualGroupName);
 				if (categories.contains(ritualGroup.getString("Ritualobjekt"))) {
-					ritualObjectList.getItems().add(itemName);
+					itemLists.get(ritualObjectList).add(itemName);
 					found = true;
 					break;
 				}
 			}
 			if (!found) {
-				equipmentList.getItems().add(itemName);
+				itemLists.get(equipmentList).add(itemName);
 			}
 		}, equipment);
 
