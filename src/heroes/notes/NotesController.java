@@ -36,11 +36,6 @@ public class NotesController extends HeroTabController implements JSONListener {
 	}
 
 	@Override
-	protected void changeEditable() {
-		// Nothing to do here, notes are always editable
-	}
-
-	@Override
 	protected Node getControl() {
 		return text;
 	}

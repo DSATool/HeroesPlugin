@@ -49,13 +49,6 @@ public class TalentsController extends HeroTabController {
 	}
 
 	@Override
-	protected void changeEditable() {
-		for (final TalentGroupController controller : talentControllers) {
-			controller.changeEditable();
-		}
-	}
-
-	@Override
 	protected Node getControl() {
 		return pane;
 	}

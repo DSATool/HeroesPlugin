@@ -67,13 +67,6 @@ public class AnimalsController extends HeroTabController {
 	}
 
 	@Override
-	protected void changeEditable() {
-		for (final AnimalController controller : controllers) {
-			controller.changeEditable();
-		}
-	}
-
-	@Override
 	protected Node getControl() {
 		return pane;
 	}
@@ -116,7 +109,6 @@ public class AnimalsController extends HeroTabController {
 				default -> new AnimalController(hero, animal, AnimalType.ANIMAL);
 			};
 			items.add(i, newController.getControl());
-			newController.changeEditable();
 			controllers.add(newController);
 		}
 

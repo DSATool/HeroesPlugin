@@ -39,7 +39,6 @@ public class HeroesController extends HeroSelector {
 			SpecialSkillsController.class, TalentsController.class, SpellsController.class, FightController.class, InventoryController.class,
 			AnimalsController.class, NotesController.class));
 
-	private final boolean editable = true;
 	@FXML
 	private StackPane stackPane;
 	@FXML
@@ -73,10 +72,6 @@ public class HeroesController extends HeroSelector {
 		load();
 	}
 
-	public boolean isEditable() {
-		return editable;
-	}
-
 	@Override
 	public void load() {
 		super.load();
@@ -84,7 +79,6 @@ public class HeroesController extends HeroSelector {
 		final HeroTabController firstPage = (HeroTabController) controllers.get(0);
 		firstPage.init();
 		firstPage.update();
-		firstPage.changeEditable();
 		tabPane.getTabs().get(0).setContent(firstPage.getControl());
 	}
 

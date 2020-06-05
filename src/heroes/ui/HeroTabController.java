@@ -32,14 +32,13 @@ public abstract class HeroTabController implements HeroController {
 
 	private boolean stopInit = true;
 
-	public HeroTabController(TabPane pane) {
+	public HeroTabController(final TabPane pane) {
 		tab = new Tab(getText());
 		tab.setClosable(false);
 		tab.setOnSelectionChanged(e -> {
 			if (tab.isSelected() && getControl() == null && !stopInit) {
 				init();
 				update();
-				changeEditable();
 				tab.setContent(getControl());
 			}
 		});
@@ -47,18 +46,14 @@ public abstract class HeroTabController implements HeroController {
 		stopInit = false;
 	}
 
-	protected abstract void changeEditable();
-
 	protected abstract Node getControl();
 
 	protected abstract String getText();
 
-	protected void init() {
-		isEditable.addListener((o, oldV, newV) -> changeEditable());
-	}
+	protected void init() {}
 
 	@Override
-	public void setHero(JSONObject hero) {
+	public void setHero(final JSONObject hero) {
 		this.hero = hero;
 		if (getControl() != null) {
 			update();

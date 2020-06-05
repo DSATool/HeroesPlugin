@@ -21,8 +21,11 @@ import dsa41basis.util.HeroUtil;
 import dsatool.resources.ResourceManager;
 import dsatool.ui.IntegerSpinnerTableCell;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.cell.PropertyValueFactory;
 import jsonant.value.JSONArray;
 import jsonant.value.JSONObject;
@@ -37,22 +40,6 @@ public class CheaperSkillsController extends ProsOrConsController {
 		valueColumn.setCellValueFactory(new PropertyValueFactory<ProOrCon, Integer>("numCheaper"));
 		valueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(1, 9, 1, false));
 		valueColumn.setOnEditCommit(t -> t.getRowValue().setNumCheaper(t.getNewValue()));
-
-		deleteItem.setOnAction(o -> {
-			final JSONObject actual = hero.getObj(category);
-			final ProOrCon item = table.getSelectionModel().getSelectedItem();
-			if (item != null) {
-				final String skillName = item.getName();
-				final JSONObject skill = HeroUtil.findSkill(skillName);
-				if (skill.containsKey("Auswahl") || skill.containsKey("Freitext")) {
-					actual.getArr(skillName).remove(item.getActual());
-				} else {
-					actual.removeKey(skillName);
-				}
-				actual.notifyListeners(null);
-				fillList();
-			}
-		});
 	}
 
 	@Override
@@ -76,6 +63,23 @@ public class CheaperSkillsController extends ProsOrConsController {
 			actual.put(skillName, actualProOrCon);
 		}
 		actual.notifyListeners(null);
+	}
+
+	@Override
+	protected EventHandler<ActionEvent> deleteAction(final TableRow<ProOrCon> row) {
+		return o -> {
+			final JSONObject actual = hero.getObj(category);
+			final ProOrCon item = row.getItem();
+			final String skillName = item.getName();
+			final JSONObject skill = HeroUtil.findSkill(skillName);
+			if (skill.containsKey("Auswahl") || skill.containsKey("Freitext")) {
+				actual.getArr(skillName).remove(item.getActual());
+			} else {
+				actual.removeKey(skillName);
+			}
+			actual.notifyListeners(null);
+			fillList();
+		};
 	}
 
 	@Override
@@ -104,7 +108,6 @@ public class CheaperSkillsController extends ProsOrConsController {
 
 		if (list.getItems().size() > 0) {
 			list.getSelectionModel().select(0);
-			addButton.setDisable(false);
 		}
 	}
 

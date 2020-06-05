@@ -25,10 +25,13 @@ import dsatool.ui.ReactiveComboBox;
 import dsatool.util.ErrorLogger;
 import dsatool.util.Util;
 import heroes.ui.HeroTabController;
+import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -52,7 +55,7 @@ import jsonant.value.JSONObject;
 
 public class ProsOrConsController {
 	@FXML
-	protected Button addButton;
+	private Button addButton;
 	@FXML
 	private TableColumn<ProOrCon, String> descColumn;
 	@FXML
@@ -69,9 +72,6 @@ public class ProsOrConsController {
 	private TableColumn<ProOrCon, String> variantColumn;
 	@FXML
 	private TableColumn<ProOrCon, Boolean> validColumn;
-
-	protected ContextMenu contextMenu;
-	protected MenuItem deleteItem;
 
 	protected final JSONObject prosOrCons;
 	protected JSONObject hero;
@@ -224,62 +224,61 @@ public class ProsOrConsController {
 			}
 		});
 
-		contextMenu = new ContextMenu();
-		if ("Verbilligte Sonderfertigkeiten".equals(name)) {
-			final MenuItem acquisitionItem = new MenuItem("Erwerben");
-			contextMenu.getItems().add(acquisitionItem);
-			acquisitionItem.setOnAction(o -> {
-				final ProOrCon skill = table.getSelectionModel().getSelectedItem();
-				final ProOrCon dummy = new ProOrCon(skill.getName(), hero, skill.getProOrCon(), skill.getActual().clone(null));
-				new SkillAcquisitionDialog(pane.getScene().getWindow(), dummy, hero);
-			});
-		}
-		if ("Nachteile".equals(name)) {
-			final MenuItem reductionItem = new MenuItem("Senken");
-			contextMenu.getItems().add(reductionItem);
-			reductionItem.setOnAction(o -> {
-				final ProOrCon con = table.getSelectionModel().getSelectedItem();
-				new QuirkReductionDialog(pane.getScene().getWindow(), con, hero, con.getValue() - 1);
-			});
-			contextMenu.setOnShowing(o -> {
-				final ProOrCon con = table.getSelectionModel().getSelectedItem();
-				reductionItem.setVisible(con.getProOrCon().getBoolOrDefault("Schlechte Eigenschaft", false));
-			});
-		}
-		if ("Kampf-Sonderfertigkeiten".equals(name)) {
-			final MenuItem weaponMasteryItem = new MenuItem("Bearbeiten");
-			contextMenu.getItems().add(weaponMasteryItem);
-			weaponMasteryItem.setOnAction(o -> {
-				final ProOrCon skill = table.getSelectionModel().getSelectedItem();
-				new WeaponMasteryDialog(pane.getScene().getWindow(), skill);
-			});
-			contextMenu.setOnShowing(o -> {
-				final ProOrCon skill = table.getSelectionModel().getSelectedItem();
-				weaponMasteryItem.setVisible("Waffenmeister".equals(skill.getName()));
-			});
-		}
-		deleteItem = new MenuItem("Löschen");
-		contextMenu.getItems().add(deleteItem);
-		deleteItem.setOnAction(o -> {
-			final JSONObject actual = hero.getObj(category);
-			final ProOrCon item = table.getSelectionModel().getSelectedItem();
-			if (item != null) {
-				final String proOrConName = item.getName();
-				final JSONObject proOrCon = prosOrCons.getObj(proOrConName);
-				if (proOrCon.containsKey("Auswahl") || proOrCon.containsKey("Freitext")) {
-					actual.getArr(proOrConName).remove(item.getActual());
-				} else {
-					actual.removeKey(proOrConName);
-				}
-				HeroUtil.unapplyEffect(hero, proOrConName, proOrCon, item.getActual());
-				actual.notifyListeners(null);
-				fillList();
+		table.setRowFactory(t -> {
+			final TableRow<ProOrCon> row = new TableRow<>();
+
+			final ContextMenu contextMenu = new ContextMenu();
+			if ("Verbilligte Sonderfertigkeiten".equals(name)) {
+				final MenuItem acquisitionItem = new MenuItem("Erwerben");
+				contextMenu.getItems().add(acquisitionItem);
+				acquisitionItem.setOnAction(o -> {
+					final ProOrCon skill = row.getItem();
+					final ProOrCon dummy = new ProOrCon(skill.getName(), hero, skill.getProOrCon(), skill.getActual().clone(null));
+					new SkillAcquisitionDialog(pane.getScene().getWindow(), dummy, hero);
+				});
 			}
+			if ("Nachteile".equals(name)) {
+				final MenuItem reductionItem = new MenuItem("Senken");
+				reductionItem.setOnAction(o -> {
+					final ProOrCon con = row.getItem();
+					new QuirkReductionDialog(pane.getScene().getWindow(), con, hero, con.getValue() - 1);
+				});
+				contextMenu.setOnShowing(o -> {
+					final ProOrCon con = row.getItem();
+					reductionItem.setVisible(con.getProOrCon().getBoolOrDefault("Schlechte Eigenschaft", false));
+				});
+				contextMenu.getItems().add(reductionItem);
+			}
+			if ("Kampf-Sonderfertigkeiten".equals(name)) {
+				final MenuItem weaponMasteryItem = new MenuItem("Bearbeiten");
+				weaponMasteryItem.setOnAction(o -> {
+					final ProOrCon skill = row.getItem();
+					new WeaponMasteryDialog(pane.getScene().getWindow(), skill);
+				});
+				weaponMasteryItem.visibleProperty().bind(row.itemProperty().isEqualTo("Waffenmeister"));
+				contextMenu.getItems().add(weaponMasteryItem);
+			}
+			final MenuItem deleteItem = new MenuItem("Löschen");
+			deleteItem.setOnAction(deleteAction(row));
+			deleteItem.visibleProperty().bind(HeroTabController.isEditable.and(row.itemProperty().isNotNull()));
+			contextMenu.getItems().add(deleteItem);
+
+			row.setContextMenu(contextMenu);
+
+			return row;
 		});
-		table.setContextMenu(contextMenu);
+
+		descColumn.editableProperty().bind(HeroTabController.isEditable);
+		variantColumn.editableProperty().bind(HeroTabController.isEditable);
+		if (!"Sonderfertigkeiten".equals(category)) {
+			list.disableProperty().bind(HeroTabController.isEditable.not());
+			addButton.disableProperty().bind(HeroTabController.isEditable.not().or(Bindings.size(list.getItems()).isEqualTo(0)));
+		} else {
+			addButton.disableProperty().bind(Bindings.size(list.getItems()).isEqualTo(0));
+		}
 
 		showAll.addListener((o, oldV, newV) -> setVisibility());
-	}
+	};
 
 	@FXML
 	protected void add() {
@@ -311,14 +310,21 @@ public class ProsOrConsController {
 		}
 	}
 
-	public void changeEditable() {
-		descColumn.setEditable(HeroTabController.isEditable.get());
-		variantColumn.setEditable(HeroTabController.isEditable.get());
-		deleteItem.setVisible(HeroTabController.isEditable.get());
-		if (!"Sonderfertigkeiten".equals(category)) {
-			list.setDisable(!HeroTabController.isEditable.get());
-			addButton.setDisable(!HeroTabController.isEditable.get());
-		}
+	protected EventHandler<ActionEvent> deleteAction(final TableRow<ProOrCon> row) {
+		return o -> {
+			final JSONObject actual = hero.getObj(category);
+			final ProOrCon item = row.getItem();
+			final String proOrConName = item.getName();
+			final JSONObject proOrCon = prosOrCons.getObj(proOrConName);
+			if (proOrCon.containsKey("Auswahl") || proOrCon.containsKey("Freitext")) {
+				actual.getArr(proOrConName).remove(item.getActual());
+			} else {
+				actual.removeKey(proOrConName);
+			}
+			HeroUtil.unapplyEffect(hero, proOrConName, proOrCon, item.getActual());
+			actual.notifyListeners(null);
+			fillList();
+		};
 	}
 
 	protected void fillList() {
@@ -336,9 +342,6 @@ public class ProsOrConsController {
 
 		if (list.getItems().size() > 0) {
 			list.getSelectionModel().select(0);
-			addButton.setDisable(false);
-		} else {
-			addButton.setDisable(true);
 		}
 	}
 

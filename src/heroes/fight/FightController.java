@@ -153,11 +153,6 @@ public class FightController extends HeroTabController {
 		super(tabPane);
 	}
 
-	@Override
-	protected void changeEditable() {
-		// Nothing to do here, editing BFs is always possible
-	}
-
 	private void fillTables() {
 		closeCombatTable.getItems().clear();
 		rangedCombatTable.getItems().clear();
@@ -260,7 +255,7 @@ public class FightController extends HeroTabController {
 		GUIUtil.cellValueFactories(closeCombatTable, "name", "type", "ebe", "tp", "at", "pa", "ini", "dk", "bf");
 
 		closeCombatTypeColumn.setCellFactory(p -> {
-			final ComboBoxTableCell<CloseCombatWeapon, String> cell = new ComboBoxTableCell<CloseCombatWeapon, String>() {
+			final ComboBoxTableCell<CloseCombatWeapon, String> cell = new ComboBoxTableCell<>() {
 				@Override
 				public void updateItem(final String item, final boolean empty) {
 					super.updateItem(item, empty);
@@ -294,7 +289,7 @@ public class FightController extends HeroTabController {
 		GUIUtil.cellValueFactories(rangedCombatTable, "name", "type", "ebe", "tp", "at", "load", "distance", "distancetp", "ammunition");
 
 		rangedCombatTypeColumn.setCellFactory(p -> {
-			final ComboBoxTableCell<RangedWeapon, String> cell = new ComboBoxTableCell<RangedWeapon, String>() {
+			final ComboBoxTableCell<RangedWeapon, String> cell = new ComboBoxTableCell<>() {
 
 				@Override
 				public void updateItem(final String item, final boolean empty) {
@@ -317,7 +312,7 @@ public class FightController extends HeroTabController {
 			};
 			return cell;
 		});
-		rangedCombatAmmunitionColumn.setCellFactory(o -> new GraphicTableCell<RangedWeapon, String>(false) {
+		rangedCombatAmmunitionColumn.setCellFactory(o -> new GraphicTableCell<>(false) {
 			@Override
 			protected void createGraphic() {
 				if (!"Pfeile".equals(getItem()) && !"Bolzen".equals(getItem())) {

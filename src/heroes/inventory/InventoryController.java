@@ -272,11 +272,6 @@ public class InventoryController extends HeroTabController {
 		}
 	}
 
-	@Override
-	protected void changeEditable() {
-		// Nothing to do here, inventory is always editable
-	}
-
 	private final <T extends InventoryItem> Callback<TableView<T>, TableRow<T>> contextMenu(final String name, final String category) {
 		return tableView -> {
 			final TableRow<T> row = new TableRow<>();

@@ -186,29 +186,6 @@ public class GeneralController extends HeroTabController {
 		super(tabPane);
 	}
 
-	@Override
-	protected void changeEditable() {
-		final boolean isEditable = HeroTabController.isEditable.get();
-		name.setEditable(isEditable);
-		surname.setEditable(isEditable);
-		player.setEditable(isEditable);
-		race.setEditable(isEditable);
-		culture.setEditable(isEditable);
-		profession.setEditable(isEditable);
-		freeAp.setDisable(!isEditable);
-		socialstate.setDisable(!isEditable);
-		birthday.setDisable(!isEditable);
-		birthmonth.setDisable(!isEditable);
-		birthyear.setDisable(!isEditable);
-		gender.setDisable(!isEditable);
-		size.setDisable(!isEditable);
-		weight.setDisable(!isEditable);
-		eyecolor.setDisable(!isEditable);
-		haircolor.setDisable(!isEditable);
-		skincolor.setDisable(!isEditable);
-		energiesPermanentColumn.setEditable(isEditable);
-	}
-
 	private void changeModifiedProfession(final String input) {
 		final JSONObject bio = hero.getObj("Biografie");
 		final boolean female = "weiblich".equals(gender.getSelectionModel().getSelectedItem());
@@ -373,6 +350,25 @@ public class GeneralController extends HeroTabController {
 		energiesTable.setContextMenu(energiesContextMenu);
 
 		registerListeners();
+
+		name.editableProperty().bind(HeroTabController.isEditable);
+		surname.editableProperty().bind(HeroTabController.isEditable);
+		player.editableProperty().bind(HeroTabController.isEditable);
+		race.editableProperty().bind(HeroTabController.isEditable);
+		culture.editableProperty().bind(HeroTabController.isEditable);
+		profession.editableProperty().bind(HeroTabController.isEditable);
+		freeAp.disableProperty().bind(HeroTabController.isEditable.not());
+		socialstate.disableProperty().bind(HeroTabController.isEditable.not());
+		birthday.disableProperty().bind(HeroTabController.isEditable.not());
+		birthmonth.disableProperty().bind(HeroTabController.isEditable.not());
+		birthyear.disableProperty().bind(HeroTabController.isEditable.not());
+		gender.disableProperty().bind(HeroTabController.isEditable.not());
+		size.disableProperty().bind(HeroTabController.isEditable.not());
+		weight.disableProperty().bind(HeroTabController.isEditable.not());
+		eyecolor.disableProperty().bind(HeroTabController.isEditable.not());
+		haircolor.disableProperty().bind(HeroTabController.isEditable.not());
+		skincolor.disableProperty().bind(HeroTabController.isEditable.not());
+		energiesPermanentColumn.editableProperty().bind(HeroTabController.isEditable);
 	}
 
 	private void registerListeners() {

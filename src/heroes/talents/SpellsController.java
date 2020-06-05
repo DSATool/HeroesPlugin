@@ -38,15 +38,10 @@ public class SpellsController extends HeroTabController {
 	private TalentGroupController spellController;
 	private final JSONListener listener;
 
-	public SpellsController(TabPane tabPane) {
+	public SpellsController(final TabPane tabPane) {
 		super(tabPane);
 		this.tabPane = tabPane;
 		listener = o -> setTab();
-	}
-
-	@Override
-	protected void changeEditable() {
-		spellController.changeEditable();
 	}
 
 	private void createPane() {
@@ -83,7 +78,7 @@ public class SpellsController extends HeroTabController {
 	}
 
 	@Override
-	public void setHero(JSONObject hero) {
+	public void setHero(final JSONObject hero) {
 		if (this.hero != null) {
 			this.hero.getObj("Vorteile").removeListener(listener);
 		}

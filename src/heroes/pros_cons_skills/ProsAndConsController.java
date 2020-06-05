@@ -42,12 +42,6 @@ public class ProsAndConsController extends HeroTabController {
 	}
 
 	@Override
-	protected void changeEditable() {
-		pros.changeEditable();
-		cons.changeEditable();
-	}
-
-	@Override
 	protected Node getControl() {
 		return pane;
 	}

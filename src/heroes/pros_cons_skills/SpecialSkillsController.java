@@ -45,13 +45,6 @@ public class SpecialSkillsController extends HeroTabController {
 	}
 
 	@Override
-	protected void changeEditable() {
-		for (final ProsOrConsController controller : skillControllers) {
-			controller.changeEditable();
-		}
-	}
-
-	@Override
 	protected Node getControl() {
 		return pane;
 	}

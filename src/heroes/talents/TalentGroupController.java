@@ -143,6 +143,7 @@ public class TalentGroupController {
 		nameColumn.setOnEditCommit((final CellEditEvent<Talent, String> t) -> {
 			t.getRowValue().setVariant(t.getNewValue());
 		});
+		nameColumn.editableProperty().bind(HeroTabController.isEditable);
 
 		this.name = name;
 		this.talentGroup = talentGroup;
@@ -181,6 +182,8 @@ public class TalentGroupController {
 
 		switch (name) {
 			case "Nahkampftalente":
+				final TableColumn<Talent, Integer> atColumn = (TableColumn<Talent, Integer>) table.getColumns().get(i);
+				atColumn.editableProperty().bind(HeroTabController.isEditable);
 				final TableColumn<Talent, Integer> paColumn = (TableColumn<Talent, Integer>) table.getColumns().get(i + 1);
 				paColumn.setCellValueFactory(new PropertyValueFactory<Talent, Integer>("pa"));
 				paColumn.setCellFactory(
@@ -203,10 +206,11 @@ public class TalentGroupController {
 					((FightTalent) t.getRowValue()).setPa(t.getNewValue());
 				});
 				paColumn.setVisible(true);
+				paColumn.editableProperty().bind(HeroTabController.isEditable);
 			case "Fernkampftalente":
-				final TableColumn<Talent, Integer> atColumn = (TableColumn<Talent, Integer>) table.getColumns().get(i);
-				atColumn.setCellValueFactory(new PropertyValueFactory<Talent, Integer>("at"));
-				atColumn.setCellFactory(
+				final TableColumn<Talent, Integer> rangedAtColumn = (TableColumn<Talent, Integer>) table.getColumns().get(i);
+				rangedAtColumn.setCellValueFactory(new PropertyValueFactory<Talent, Integer>("at"));
+				rangedAtColumn.setCellFactory(
 						IntegerSpinnerTableCell.<Talent> forTableColumn(0, 0, 1, false, (final IntegerSpinnerTableCell<Talent> cell, final Boolean empty) -> {
 							if (empty) return new Tuple<>(0, 0);
 							final FightTalent talent = (FightTalent) cell.getTableView().getItems().get(cell.getIndex());
@@ -216,9 +220,10 @@ public class TalentGroupController {
 							final int min = Math.max(0, (int) Math.ceil((val - 5) / 2.0));
 							return new Tuple<>(min, val - min);
 						}));
-				atColumn.setOnEditCommit((final CellEditEvent<Talent, Integer> t) -> {
+				rangedAtColumn.setOnEditCommit((final CellEditEvent<Talent, Integer> t) -> {
 					((FightTalent) t.getRowValue()).setAt(t.getNewValue());
 				});
+				rangedAtColumn.editableProperty().bind(HeroTabController.isEditable);
 				++i;
 				++i;
 				final TableColumn fightBeColumn = table.getColumns().get(i);
@@ -248,6 +253,7 @@ public class TalentGroupController {
 				mlsltlColumn.setOnEditCommit((final CellEditEvent<Talent, String> t) -> {
 					((LanguageTalent) t.getRowValue()).setMlsltl(t.getNewValue());
 				});
+				mlsltlColumn.editableProperty().bind(HeroTabController.isEditable);
 				++i;
 				final TableColumn complexityColumn = table.getColumns().get(i);
 				complexityColumn.setCellValueFactory(new PropertyValueFactory<LanguageTalent, Integer>("complexity"));
@@ -274,6 +280,7 @@ public class TalentGroupController {
 				spellPrimaryColumn.setOnEditCommit((final CellEditEvent<Talent, Boolean> t) -> {
 					((Spell) t.getRowValue()).setPrimarySpell(t.getNewValue());
 				});
+				spellPrimaryColumn.editableProperty().bind(HeroTabController.isEditable);
 				++i;
 				contextMenu.getItems().add(rollItem);
 				contextMenu.getItems().add(rollGroupItem);
@@ -312,6 +319,7 @@ public class TalentGroupController {
 		primaryColumn.setOnEditCommit((final CellEditEvent<Talent, Boolean> t) -> {
 			t.getRowValue().setPrimaryTalent(t.getNewValue());
 		});
+		primaryColumn.editableProperty().bind(HeroTabController.isEditable);
 		++i;
 
 		final TableColumn<Talent, Integer> sesColumn = (TableColumn<Talent, Integer>) table.getColumns().get(i);
@@ -394,29 +402,6 @@ public class TalentGroupController {
 			newTalent = Talent.getTalent(talentName, group, talent, null, actual);
 		}
 		newTalent.insertTalent(false);
-	}
-
-	@SuppressWarnings("unchecked")
-	public void changeEditable() {
-		switch (name) {
-			case "Nahkampftalente":
-				final TableColumn<Talent, Integer> atColumn = (TableColumn<Talent, Integer>) table.getColumns().get(1);
-				atColumn.setEditable(HeroTabController.isEditable.get());
-				final TableColumn<Talent, Integer> paColumn = (TableColumn<Talent, Integer>) table.getColumns().get(2);
-				paColumn.setEditable(HeroTabController.isEditable.get());
-				break;
-			case "Sprachen und Schriften":
-				final TableColumn<Talent, String> mlsltlColumn = (TableColumn<Talent, String>) table.getColumns().get(1);
-				mlsltlColumn.setEditable(HeroTabController.isEditable.get());
-				break;
-			case "Zauber":
-				final TableColumn<Talent, Boolean> spellPrimaryColumn = (TableColumn<Talent, Boolean>) table.getColumns().get(4);
-				spellPrimaryColumn.setEditable(HeroTabController.isEditable.get());
-				break;
-		}
-		nameColumn.setEditable(HeroTabController.isEditable.get());
-		final TableColumn<Talent, Boolean> primaryColumn = (TableColumn<Talent, Boolean>) table.getColumns().get(table.getColumns().size() - 3);
-		primaryColumn.setEditable(HeroTabController.isEditable.get());
 	}
 
 	public Node getControl() {
