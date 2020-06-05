@@ -268,7 +268,7 @@
             </HBox>
          </VBox>
       </TitledPane>
-      <TitledPane text="Tränke" >
+      <TitledPane text="Alchemika" >
          <VBox fillWidth="true" style="-fx-padding: 0, 0, 0, 0;" >
             <TableView fx:id="potionsTable" editable="true" fixedCellSize="25" >
                <styleClass>
@@ -280,7 +280,7 @@
                   <Label minHeight="0" />
                </placeholder>
                <columns>
-                  <TableColumn fx:id="potionsNameColumn" text="Trank" minWidth="100" editable="false" />
+                  <TableColumn fx:id="potionsNameColumn" text="Alchemikum" minWidth="100" editable="false" />
                   <TableColumn fx:id="potionsNotesColumn" text="Anmerkungen" minWidth="100" editable="false" />
                   <TableColumn fx:id="potionsQualityColumn" text="Qual." prefWidth="40" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
                   <TableColumn fx:id="potionsAmountColumn" text="Anz." prefWidth="40" resizable="false" editable="true" style="-fx-alignment: CENTER;" />

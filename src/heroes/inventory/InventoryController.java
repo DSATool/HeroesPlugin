@@ -246,10 +246,10 @@ public class InventoryController extends HeroTabController {
 
 	private final List<String> ritualObjectGroups = new ArrayList<>();
 
-	private final String[] categoryNames = { "Nahkampfwaffe", "Fernkampfwaffe", "Schild", "Parierwaffe", "Rüstung", "Ritualobjekt", "Wertrgegenstand", "Trank",
-			"Artefakt", "Kleidung" };
+	private final String[] categoryNames = { "Nahkampfwaffe", "Fernkampfwaffe", "Schild", "Parierwaffe", "Rüstung", "Ritualobjekt", "Wertrgegenstand",
+			"Alchemikum", "Artefakt", "Kleidung" };
 	private final String[] categoryLongNames = { "Nahkampfwaffen", "Fernkampfwaffen", "Schilde", "Parierwaffen", "Rüstung", "Ritualobjekte", "Wertgegenstände",
-			"Tränke", "Artefakte", "Kleidung" };
+			"Alchemika", "Artefakte", "Kleidung" };
 
 	private JSONObject money;
 
@@ -280,12 +280,10 @@ public class InventoryController extends HeroTabController {
 		if (!item.containsKey("Name")) {
 			item.put("Name", itemName);
 		}
-		if (!item.containsKey("Kategorien")) {
-			if (list == potionsList && (!item.containsKey("Kategorien") || !item.getArr("Kategorien").getStrings().contains("Tränke"))) {
-				item.getArr("Kategorien").add("Trank");
-			} else if (list == clothingList && (!item.containsKey("Kategorien") || !item.getArr("Kategorien").getStrings().contains("Kleidung"))) {
-				item.getArr("Kategorien").add("Kleidung");
-			}
+		if (list == potionsList && (!item.containsKey("Kategorien") || !item.getArr("Kategorien").getStrings().contains("Alchemikum"))) {
+			item.getArr("Kategorien").add("Alchemikum");
+		} else if (list == clothingList && (!item.containsKey("Kategorien") || !item.getArr("Kategorien").getStrings().contains("Kleidung"))) {
+			item.getArr("Kategorien").add("Kleidung");
 		}
 		if (list == potionsList || list == clothingList || list == equipmentList) {
 			list.setValue("");
@@ -376,7 +374,7 @@ public class InventoryController extends HeroTabController {
 					case "Rüstung" -> new ArmorEditor(window, (Armor) item);
 					case "Ritualobjekt" -> new RitualObjectEditor(window, (RitualObject) item);
 					case "Wertgegenstand" -> new ValuableEditor(window, (Valuable) item);
-					case "Trank" -> new PotionEditor(window, (Potion) item);
+					case "Alchemikum" -> new PotionEditor(window, (Potion) item);
 					case "Artefakt" -> new ArtifactEditor(window, (Artifact) item);
 					case "Kleidung" -> new ClothingEditor(window, (Clothing) item);
 					default -> new ItemEditor(window, item);
@@ -735,7 +733,7 @@ public class InventoryController extends HeroTabController {
 		potionsAmountColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 99, 1, false));
 		potionsAmountColumn.setOnEditCommit(t -> t.getRowValue().setAmount(t.getNewValue()));
 
-		potionsTable.setRowFactory(contextMenu("Tränke", "Trank"));
+		potionsTable.setRowFactory(contextMenu("Alchemika", "Alchemikum"));
 	}
 
 	private void initializeRangedTable() {
@@ -871,8 +869,8 @@ public class InventoryController extends HeroTabController {
 					valuablesTable.getItems().add(new Valuable(actual, item));
 					found = true;
 				}
-				if (categories.contains("Trank")) {
-					final JSONObject actual = item.getObjOrDefault("Trank", item);
+				if (categories.contains("Alchemikum")) {
+					final JSONObject actual = item.getObjOrDefault("Alchemikum", item);
 					potionsTable.getItems().add(new Potion(actual, item));
 					found = true;
 				}
@@ -1028,7 +1026,7 @@ public class InventoryController extends HeroTabController {
 				armorList.getItems().add(itemName);
 				found = true;
 			}
-			if (categories.contains("Trank")) {
+			if (categories.contains("Alchemikum")) {
 				potionsList.getItems().add(itemName);
 				found = true;
 			}
