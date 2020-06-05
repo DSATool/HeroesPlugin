@@ -623,7 +623,7 @@ public class AnimalController {
 			return cell;
 		});
 		attackNameColumn.setOnEditCommit(event -> {
-			final Attack attack = attacksTable.getItems().get(event.getTablePosition().getRow());
+			final Attack attack = event.getRowValue();
 			attack.setName(event.getNewValue());
 		});
 
@@ -639,7 +639,7 @@ public class AnimalController {
 		});
 		attackNotesColumn.setOnEditCommit(event -> {
 			final String note = event.getNewValue();
-			final Attack attack = attacksTable.getItems().get(event.getTablePosition().getRow());
+			final Attack attack = event.getRowValue();
 			attack.setNotes(note);
 		});
 
@@ -670,7 +670,7 @@ public class AnimalController {
 			contextMenu.getItems().add(deleteItem);
 			deleteItem.setOnAction(o -> {
 				final Attack attack = row.getItem();
-				if (attack != null && !"".equals(attack.getName())) {
+				if (!"".equals(attack.getName())) {
 					final String name = attack.getName();
 					attacks.removeKey(name);
 					attacks.notifyListeners(null);
@@ -716,16 +716,20 @@ public class AnimalController {
 		attributesTable.setMinHeight(attributesTable.getItems().size() * 28 + 26);
 		attributesTable.setMaxHeight(attributesTable.getItems().size() * 28 + 26);
 
-		final ContextMenu contextMenu = new ContextMenu();
-		final MenuItem attributesContextMenuItem = new MenuItem("Bearbeiten");
-		contextMenu.getItems().add(attributesContextMenuItem);
-		attributesContextMenuItem.setOnAction(o -> {
-			final Attribute attribute = attributesTable.getSelectionModel().getSelectedItem();
-			if (attribute != null) {
+		attributesTable.setRowFactory(t -> {
+			final TableRow<AnimalAttribute> row = new TableRow<>();
+
+			final ContextMenu contextMenu = new ContextMenu();
+			final MenuItem attributesContextMenuItem = new MenuItem("Bearbeiten");
+			contextMenu.getItems().add(attributesContextMenuItem);
+			attributesContextMenuItem.setOnAction(o -> {
+				final Attribute attribute = row.getItem();
 				new AnimalAttributeEditor(pane.getScene().getWindow(), attribute, type == AnimalType.MAGIC);
-			}
+			});
+			row.setContextMenu(contextMenu);
+
+			return row;
 		});
-		attributesTable.setContextMenu(contextMenu);
 	}
 
 	private void initBiography() {
@@ -798,7 +802,7 @@ public class AnimalController {
 			return cell;
 		});
 		equipmentNameColumn.setOnEditCommit(event -> {
-			final JSONObject item = equipmentTable.getItems().get(event.getTablePosition().getRow()).getItem();
+			final JSONObject item = event.getRowValue().getItem();
 			item.put("Name", event.getNewValue());
 			item.notifyListeners(null);
 		});
@@ -815,7 +819,7 @@ public class AnimalController {
 		});
 		equipmentNotesColumn.setOnEditCommit(event -> {
 			final String note = event.getNewValue();
-			final JSONObject item = equipmentTable.getItems().get(event.getTablePosition().getRow()).getItem();
+			final JSONObject item = event.getRowValue().getItem();
 			if ("".equals(note)) {
 				item.removeKey("Anmerkungen");
 			} else {
@@ -934,13 +938,15 @@ public class AnimalController {
 		proConValueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 9999, 1, false));
 		proConValueColumn.setOnEditCommit(t -> t.getRowValue().setValue(t.getNewValue()));
 
-		final ContextMenu proConContextMenu = new ContextMenu();
-		final MenuItem proConDeleteItem = new MenuItem("Löschen");
-		proConContextMenu.getItems().add(proConDeleteItem);
-		proConDeleteItem.setOnAction(o -> {
-			final JSONObject actual = actualAnimal.getObj("Eigenarten");
-			final ProConSkill item = proConsTable.getSelectionModel().getSelectedItem();
-			if (item != null) {
+		proConsTable.setRowFactory(t -> {
+			final TableRow<ProConSkill> row = new TableRow<>();
+
+			final ContextMenu proConContextMenu = new ContextMenu();
+			final MenuItem proConDeleteItem = new MenuItem("Löschen");
+			proConContextMenu.getItems().add(proConDeleteItem);
+			proConDeleteItem.setOnAction(o -> {
+				final JSONObject actual = actualAnimal.getObj("Eigenarten");
+				final ProConSkill item = row.getItem();
 				final String proOrConName = item.getName();
 				final JSONObject proOrCon = ResourceManager.getResource("data/Tiereigenarten").getObj(type == AnimalType.HORSE ? "Reittiere" : "Allgemein")
 						.getObj(proOrConName);
@@ -950,9 +956,11 @@ public class AnimalController {
 					actual.removeKey(proOrConName);
 				}
 				actual.notifyListeners(null);
-			}
+			});
+			row.contextMenuProperty().bind(Bindings.when(row.itemProperty().isNotNull()).then(proConContextMenu).otherwise((ContextMenu) null));
+
+			return row;
 		});
-		proConsTable.setContextMenu(proConContextMenu);
 
 		actualAnimal.getObj("Eigenarten").addListener(o -> updateProCons());
 
@@ -960,18 +968,22 @@ public class AnimalController {
 			GUIUtil.autosizeTable(ritualsTable, 0, 2);
 			ritualNameColumn.setCellValueFactory(p -> new ReadOnlyObjectWrapper<>(p.getValue()));
 
-			final ContextMenu ritualContextMenu = new ContextMenu();
-			final MenuItem ritualDeleteItem = new MenuItem("Löschen");
-			ritualContextMenu.getItems().add(ritualDeleteItem);
-			ritualDeleteItem.setOnAction(o -> {
-				final JSONObject actual = actualAnimal.getObj("Fertigkeiten");
-				final String item = ritualsTable.getSelectionModel().getSelectedItem();
-				if (item != null) {
+			ritualsTable.setRowFactory(t -> {
+				final TableRow<String> row = new TableRow<>();
+
+				final ContextMenu ritualContextMenu = new ContextMenu();
+				final MenuItem ritualDeleteItem = new MenuItem("Löschen");
+				ritualContextMenu.getItems().add(ritualDeleteItem);
+				ritualDeleteItem.setOnAction(o -> {
+					final JSONObject actual = actualAnimal.getObj("Fertigkeiten");
+					final String item = row.getItem();
 					actual.removeKey(item);
 					actual.notifyListeners(null);
-				}
+				});
+				row.contextMenuProperty().bind(Bindings.when(row.itemProperty().isNotNull()).then(ritualContextMenu).otherwise((ContextMenu) null));
+
+				return row;
 			});
-			ritualsTable.setContextMenu(ritualContextMenu);
 
 			actualAnimal.getObj("Fertigkeiten").addListener(o -> updateRituals());
 
@@ -1007,13 +1019,15 @@ public class AnimalController {
 		});
 		skillDescColumn.setOnEditCommit(t -> t.getRowValue().setDescription(t.getNewValue()));
 
-		final ContextMenu skillContextMenu = new ContextMenu();
-		final MenuItem skillDeleteItem = new MenuItem("Löschen");
-		skillContextMenu.getItems().add(skillDeleteItem);
-		skillDeleteItem.setOnAction(o -> {
-			final JSONObject actual = actualAnimal.getObj("Fertigkeiten");
-			final ProConSkill item = skillsTable.getSelectionModel().getSelectedItem();
-			if (item != null) {
+		skillsTable.setRowFactory(t -> {
+			final TableRow<ProConSkill> row = new TableRow<>();
+
+			final ContextMenu skillContextMenu = new ContextMenu();
+			final MenuItem skillDeleteItem = new MenuItem("Löschen");
+			skillContextMenu.getItems().add(skillDeleteItem);
+			skillDeleteItem.setOnAction(o -> {
+				final JSONObject actual = actualAnimal.getObj("Fertigkeiten");
+				final ProConSkill item = row.getItem();
 				final String skillName = item.getName();
 				final JSONObject skill = ResourceManager.getResource("data/Tierfertigkeiten").getObj(type == AnimalType.HORSE ? "Reittiere" : "Allgemein")
 						.getObj(skillName);
@@ -1023,9 +1037,12 @@ public class AnimalController {
 					actual.removeKey(skillName);
 				}
 				actual.notifyListeners(null);
-			}
+			});
+
+			row.contextMenuProperty().bind(Bindings.when(row.itemProperty().isNotNull()).then(skillContextMenu).otherwise((ContextMenu) null));
+
+			return row;
 		});
-		skillsTable.setContextMenu(skillContextMenu);
 
 		actualAnimal.getObj("Fertigkeiten").addListener(o -> updateSkills());
 
@@ -1230,16 +1247,21 @@ public class AnimalController {
 			statsTable.setPrefHeight(statsTable.getItems().size() * 28 + 26);
 			statsTable.setMinHeight(statsTable.getItems().size() * 28 + 26);
 
-			final ContextMenu contextMenu = new ContextMenu();
-			final MenuItem attributesContextMenuItem = new MenuItem("Bearbeiten");
-			contextMenu.getItems().add(attributesContextMenuItem);
-			attributesContextMenuItem.setOnAction(o -> {
-				final Attribute attribute = statsTable.getSelectionModel().getSelectedItem();
-				if (attribute != null) {
+			statsTable.setRowFactory(t -> {
+				final TableRow<AnimalAttribute> row = new TableRow<>();
+
+				final ContextMenu contextMenu = new ContextMenu();
+				final MenuItem attributesContextMenuItem = new MenuItem("Bearbeiten");
+				contextMenu.getItems().add(attributesContextMenuItem);
+				attributesContextMenuItem.setOnAction(o -> {
+					final Attribute attribute = row.getItem();
 					new AnimalAttributeEditor(pane.getScene().getWindow(), attribute, false);
-				}
+				});
+
+				row.contextMenuProperty().bind(Bindings.when(row.itemProperty().isNotNull()).then(contextMenu).otherwise((ContextMenu) null));
+
+				return row;
 			});
-			statsTable.setContextMenu(contextMenu);
 		}
 	}
 

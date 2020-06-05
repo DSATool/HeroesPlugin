@@ -43,6 +43,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -275,20 +276,27 @@ public class GeneralController extends HeroTabController {
 		attributesModifierColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99, 1, false));
 		attributesModifierColumn.setOnEditCommit(t -> t.getRowValue().setManualModifier(t.getNewValue()));
 
-		final ContextMenu attributesContextMenu = new ContextMenu();
-		final MenuItem attributesEnhanceItem = new MenuItem("Steigern");
-		attributesContextMenu.getItems().add(attributesEnhanceItem);
-		attributesEnhanceItem.setOnAction(o -> {
-			final Attribute attribute = attributesTable.getSelectionModel().getSelectedItem();
-			new AttributeEnhancementDialog(pane.getScene().getWindow(), attribute, hero, attribute.getValue() + 1);
+		attributesTable.setRowFactory(t -> {
+			final TableRow<Attribute> row = new TableRow<>();
+
+			final ContextMenu attributesContextMenu = new ContextMenu();
+			final MenuItem attributesEnhanceItem = new MenuItem("Steigern");
+			attributesContextMenu.getItems().add(attributesEnhanceItem);
+			attributesEnhanceItem.setOnAction(o -> {
+				final Attribute attribute = row.getItem();
+				new AttributeEnhancementDialog(pane.getScene().getWindow(), attribute, hero, attribute.getValue() + 1);
+			});
+			final MenuItem attributesEditItem = new MenuItem("Bearbeiten");
+			attributesContextMenu.getItems().add(attributesEditItem);
+			attributesEditItem.setOnAction(o -> {
+				final Attribute attribute = row.getItem();
+				new AttributeEditor(pane.getScene().getWindow(), attribute);
+			});
+
+			row.setContextMenu(attributesContextMenu);
+
+			return row;
 		});
-		final MenuItem attributesEditItem = new MenuItem("Bearbeiten");
-		attributesContextMenu.getItems().add(attributesEditItem);
-		attributesEditItem.setOnAction(o -> {
-			final Attribute attribute = attributesTable.getSelectionModel().getSelectedItem();
-			new AttributeEditor(pane.getScene().getWindow(), attribute);
-		});
-		attributesTable.setContextMenu(attributesContextMenu);
 
 		derivedValuesTable.prefWidthProperty().bind(pane.widthProperty().subtract(22).divide(2));
 
@@ -298,14 +306,21 @@ public class GeneralController extends HeroTabController {
 		derivedModifierColumn.setOnEditCommit(t -> t.getRowValue().setManualModifier(t.getNewValue()));
 		derivedCurrentColumn.setCellValueFactory(new PropertyValueFactory<DerivedValue, Integer>("current"));
 
-		final ContextMenu derivedContextMenu = new ContextMenu();
-		final MenuItem derivedContextMenuItem = new MenuItem("Bearbeiten");
-		derivedContextMenu.getItems().add(derivedContextMenuItem);
-		derivedContextMenuItem.setOnAction(o -> {
-			final DerivedValue value = derivedValuesTable.getSelectionModel().getSelectedItem();
-			new DerivedValueEditor(pane.getScene().getWindow(), value, false);
+		derivedValuesTable.setRowFactory(t -> {
+			final TableRow<DerivedValue> row = new TableRow<>();
+
+			final ContextMenu derivedContextMenu = new ContextMenu();
+			final MenuItem derivedContextMenuItem = new MenuItem("Bearbeiten");
+			derivedContextMenu.getItems().add(derivedContextMenuItem);
+			derivedContextMenuItem.setOnAction(o -> {
+				final DerivedValue value = row.getItem();
+				new DerivedValueEditor(pane.getScene().getWindow(), value, false);
+			});
+
+			row.setContextMenu(derivedContextMenu);
+
+			return row;
 		});
-		derivedValuesTable.setContextMenu(derivedContextMenu);
 
 		energiesTable.prefWidthProperty().bind(pane.widthProperty().subtract(17));
 
@@ -326,28 +341,34 @@ public class GeneralController extends HeroTabController {
 		energiesModifierColumn.setOnEditCommit(t -> t.getRowValue().setManualModifier(t.getNewValue()));
 		energiesCurrentColumn.setCellFactory(o -> new ColoredProgressBarTableCell<>());
 
-		final ContextMenu energiesContextMenu = new ContextMenu();
-		final MenuItem energiesEnhanceItem = new MenuItem("Zukaufen");
-		energiesContextMenu.getItems().add(energiesEnhanceItem);
-		energiesEnhanceItem.setOnAction(o -> {
-			final Energy value = energiesTable.getSelectionModel().getSelectedItem();
-			if ("Karmaenergie".equals(value.getName())) {
-				final Alert alert = new Alert(AlertType.WARNING);
-				alert.setTitle("Zukauf nicht möglich");
-				alert.setHeaderText("Karmaenergie kann nicht zugekauft werden");
-				alert.setContentText("Nutze die Karmalqueste, um mehr Karmaenegie zu erhalten");
-				alert.showAndWait();
-			} else {
-				new EnergyEnhancementDialog(pane.getScene().getWindow(), value, hero, value.getMax() + 1);
-			}
+		energiesTable.setRowFactory(t -> {
+			final TableRow<Energy> row = new TableRow<>();
+
+			final ContextMenu energiesContextMenu = new ContextMenu();
+			final MenuItem energiesEnhanceItem = new MenuItem("Zukaufen");
+			energiesContextMenu.getItems().add(energiesEnhanceItem);
+			energiesEnhanceItem.setOnAction(o -> {
+				final Energy value = row.getItem();
+				if ("Karmaenergie".equals(value.getName())) {
+					final Alert alert = new Alert(AlertType.WARNING);
+					alert.setTitle("Zukauf nicht möglich");
+					alert.setHeaderText("Karmaenergie kann nicht zugekauft werden");
+					alert.setContentText("Nutze die Karmalqueste, um mehr Karmaenegie zu erhalten");
+					alert.showAndWait();
+				} else {
+					new EnergyEnhancementDialog(pane.getScene().getWindow(), value, hero, value.getMax() + 1);
+				}
+			});
+			final MenuItem energiesEditItem = new MenuItem("Bearbeiten");
+			energiesContextMenu.getItems().add(energiesEditItem);
+			energiesEditItem.setOnAction(o -> {
+				final DerivedValue value = row.getItem();
+				new DerivedValueEditor(pane.getScene().getWindow(), value, !"Karmaenergie".equals(value.getName()));
+			});
+			row.setContextMenu(energiesContextMenu);
+
+			return row;
 		});
-		final MenuItem energiesEditItem = new MenuItem("Bearbeiten");
-		energiesContextMenu.getItems().add(energiesEditItem);
-		energiesEditItem.setOnAction(o -> {
-			final DerivedValue value = energiesTable.getSelectionModel().getSelectedItem();
-			new DerivedValueEditor(pane.getScene().getWindow(), value, !"Karmaenergie".equals(value.getName()));
-		});
-		energiesTable.setContextMenu(energiesContextMenu);
 
 		registerListeners();
 

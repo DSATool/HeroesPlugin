@@ -28,6 +28,7 @@ import dsatool.resources.ResourceManager;
 import dsatool.ui.GraphicTableCell;
 import dsatool.ui.ReactiveSpinner;
 import dsatool.util.ErrorLogger;
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -38,6 +39,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
@@ -191,7 +193,7 @@ public class RitualObjectEditor {
 		GUIUtil.autosizeTable(ritualTable, 0, 2);
 		GUIUtil.cellValueFactories(ritualTable, "name", "choice");
 
-		choiceColumn.setCellFactory(c -> new GraphicTableCell<Ritual, Object>(false) {
+		choiceColumn.setCellFactory(c -> new GraphicTableCell<>(false) {
 			@Override
 			protected void createGraphic() {
 				final Object choice = getTableView().getItems().get(getIndex()).getChoice();
@@ -210,20 +212,22 @@ public class RitualObjectEditor {
 		});
 		choiceColumn.setOnEditCommit(t -> t.getRowValue().setChoice(t.getNewValue()));
 
-		final ContextMenu contextMenu = new ContextMenu();
-		final MenuItem contextMenuItem = new MenuItem("Löschen");
-		contextMenu.getItems().add(contextMenuItem);
-		contextMenuItem.setOnAction(o -> {
-			final Ritual item = ritualTable.getSelectionModel().getSelectedItem();
-			if (item != null) {
+		ritualTable.setRowFactory(t -> {
+			final TableRow<Ritual> row = new TableRow<>();
+
+			final ContextMenu contextMenu = new ContextMenu();
+			final MenuItem contextMenuItem = new MenuItem("Löschen");
+			contextMenu.getItems().add(contextMenuItem);
+			contextMenuItem.setOnAction(o -> {
+				final Ritual item = row.getItem();
 				ritualTable.getItems().remove(item);
 				updateList();
-			}
+			});
+
+			row.contextMenuProperty().bind(Bindings.when(row.itemProperty().isNotNull()).then(contextMenu).otherwise((ContextMenu) null));
+
+			return row;
 		});
-		contextMenu.setOnShowing(o -> {
-			contextMenuItem.setVisible(ritualTable.getSelectionModel().getSelectedItem() != null);
-		});
-		ritualTable.setContextMenu(contextMenu);
 
 		ritualTable.setPrefHeight(151);
 		ritualTable.setMinHeight(151);

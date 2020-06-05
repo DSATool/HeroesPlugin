@@ -37,9 +37,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
@@ -294,34 +296,36 @@ public class WeaponMasteryDialog {
 		list.setMinHeight(height);
 		list.setMaxHeight(height);
 
-		list.setCellFactory(c -> new GraphicListCell<>(false) {
-			@Override
-			protected void createGraphic() {
-				final TextField t = new TextField();
-				createGraphic(t, () -> t.getText(), s -> t.setText(s));
-			}
-		});
+		list.setCellFactory(c -> {
+			final ListCell<String> cell = new GraphicListCell<>(false) {
 
-		final ContextMenu contextMenu = new ContextMenu();
+				@Override
+				protected void createGraphic() {
+					final TextField t = new TextField();
+					createGraphic(t, () -> t.getText(), s -> t.setText(s));
+				}
+			};
 
-		final MenuItem deleteItem = new MenuItem("Löschen");
-		deleteItem.setOnAction(e -> {
-			final int index = list.getSelectionModel().getSelectedIndex();
-			list.getItems().remove(index);
-		});
-		contextMenu.getItems().add(deleteItem);
-		contextMenu.setOnShowing(o -> {
-			final String selected = list.getSelectionModel().getSelectedItem();
-			deleteItem.setVisible(selected != null);
-		});
+			final ContextMenu contextMenu = new ContextMenu();
 
-		final MenuItem addItem = new MenuItem("Hinzufügen");
-		addItem.setOnAction(e -> {
-			list.getItems().add("Beschreibung");
-		});
-		contextMenu.getItems().add(addItem);
+			final MenuItem deleteItem = new MenuItem("Löschen");
+			deleteItem.setOnAction(e -> {
+				final int index = cell.getIndex();
+				list.getItems().remove(index);
+			});
+			deleteItem.visibleProperty().bind(cell.itemProperty().isNotNull());
+			contextMenu.getItems().add(deleteItem);
 
-		list.setContextMenu(contextMenu);
+			final MenuItem addItem = new MenuItem("Hinzufügen");
+			addItem.setOnAction(e -> {
+				list.getItems().add("Beschreibung");
+			});
+			contextMenu.getItems().add(addItem);
+
+			cell.setContextMenu(contextMenu);
+
+			return cell;
+		});
 
 		list.getItems().clear();
 
@@ -375,26 +379,29 @@ public class WeaponMasteryDialog {
 
 		GUIUtil.cellValueFactories(table, "name", "value");
 
-		final ContextMenu contextMenu = new ContextMenu();
+		table.setRowFactory(t -> {
+			final TableRow<ManeuverOrPro> row = new TableRow<>();
 
-		final MenuItem deleteItem = new MenuItem("Löschen");
-		deleteItem.setOnAction(e -> {
-			final int index = table.getSelectionModel().getSelectedIndex();
-			table.getItems().remove(index);
-		});
-		contextMenu.getItems().add(deleteItem);
-		contextMenu.setOnShowing(o -> {
-			final ManeuverOrPro selected = table.getSelectionModel().getSelectedItem();
-			deleteItem.setVisible(selected != null);
-		});
+			final ContextMenu contextMenu = new ContextMenu();
 
-		final MenuItem addItem = new MenuItem("Hinzufügen");
-		addItem.setOnAction(e -> {
-			table.getItems().add(new ManeuverOrPro("Beschreibung", 1));
-		});
-		contextMenu.getItems().add(addItem);
+			final MenuItem deleteItem = new MenuItem("Löschen");
+			deleteItem.setOnAction(e -> {
+				final int index = row.getIndex();
+				table.getItems().remove(index);
+			});
+			deleteItem.visibleProperty().bind(row.itemProperty().isNotNull());
+			contextMenu.getItems().add(deleteItem);
 
-		table.setContextMenu(contextMenu);
+			final MenuItem addItem = new MenuItem("Hinzufügen");
+			addItem.setOnAction(e -> {
+				table.getItems().add(new ManeuverOrPro("Beschreibung", 1));
+			});
+			contextMenu.getItems().add(addItem);
+
+			row.setContextMenu(contextMenu);
+
+			return row;
+		});
 
 		if (actual.containsKey(key)) {
 			final JSONObject items = actual.getObj(key);

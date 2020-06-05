@@ -16,6 +16,7 @@
 package heroes.talents;
 
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,6 +51,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TablePosition;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.cell.CheckBoxTableCell;
@@ -78,7 +80,6 @@ public class TalentGroupController {
 	private JSONObject talents;
 	private JSONObject hero;
 
-	private ContextMenu contextMenu;
 	private final JSONListener listener = o -> refreshTable();
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -151,34 +152,69 @@ public class TalentGroupController {
 
 		int i = 1;
 
-		contextMenu = new ContextMenu();
+		table.setRowFactory(t -> {
+			final TableRow<Talent> row = new TableRow<>();
 
-		final MenuItem editItem = new MenuItem("Bearbeiten");
-		editItem.setOnAction(o -> {
-			final Talent item = table.getSelectionModel().getSelectedItem();
-			new TalentEditDialog(pane.getScene().getWindow(), item);
-		});
-		final MenuItem enhanceItem = new MenuItem("Steigern");
-		enhanceItem.setOnAction(o -> {
-			final Talent item = table.getSelectionModel().getSelectedItem();
-			new TalentEnhancementDialog(pane.getScene().getWindow(), item, hero, item.getValue() == Integer.MIN_VALUE ? 0 : item.getValue() + 1);
-		});
-		final MenuItem rollItem = new MenuItem("Talentprobe");
-		rollItem.setOnAction(o -> {
-			final Talent item = table.getSelectionModel().getSelectedItem();
-			new TalentRollDialog(pane.getScene().getWindow(), item.getName(), item instanceof Spell ? ((Spell) item).getRepresentation() : null,
-					new JSONObject[] { hero });
-		});
-		final MenuItem rollGroupItem = new MenuItem("Gruppenprobe");
-		rollGroupItem.setOnAction(o -> {
-			final Talent item = table.getSelectionModel().getSelectedItem();
-			final List<JSONObject> characters = ResourceManager.getAllResources("characters/");
-			new TalentRollDialog(pane.getScene().getWindow(), item.getName(), item instanceof Spell ? ((Spell) item).getRepresentation() : null,
-					characters.toArray(new JSONObject[characters.size()]));
-		});
+			final ContextMenu contextMenu = new ContextMenu();
 
-		contextMenu.getItems().add(editItem);
-		contextMenu.getItems().add(enhanceItem);
+			final MenuItem editItem = new MenuItem("Bearbeiten");
+			editItem.setOnAction(o -> {
+				final Talent item = row.getItem();
+				new TalentEditDialog(pane.getScene().getWindow(), item);
+			});
+			final MenuItem enhanceItem = new MenuItem("Steigern");
+			enhanceItem.setOnAction(o -> {
+				final Talent item = row.getItem();
+				new TalentEnhancementDialog(pane.getScene().getWindow(), item, hero, item.getValue() == Integer.MIN_VALUE ? 0 : item.getValue() + 1);
+			});
+			final MenuItem rollItem = new MenuItem("Talentprobe");
+			rollItem.setOnAction(o -> {
+				final Talent item = row.getItem();
+				new TalentRollDialog(pane.getScene().getWindow(), item.getName(), item instanceof Spell ? ((Spell) item).getRepresentation() : null,
+						new JSONObject[] { hero });
+			});
+			final MenuItem rollGroupItem = new MenuItem("Gruppenprobe");
+			rollGroupItem.setOnAction(o -> {
+				final Talent item = row.getItem();
+				final List<JSONObject> characters = ResourceManager.getAllResources("characters/");
+				new TalentRollDialog(pane.getScene().getWindow(), item.getName(), item instanceof Spell ? ((Spell) item).getRepresentation() : null,
+						characters.toArray(new JSONObject[characters.size()]));
+			});
+
+			contextMenu.getItems().add(editItem);
+			contextMenu.getItems().add(enhanceItem);
+
+			if (Arrays.asList("Liturgiekenntnis", "Sprachen und Schriften", "Zauber").contains(name)) {
+				contextMenu.getItems().add(rollItem);
+				contextMenu.getItems().add(rollGroupItem);
+			}
+
+			final MenuItem deleteItem = new MenuItem("Löschen");
+			contextMenu.getItems().add(deleteItem);
+			deleteItem.setOnAction(o -> {
+				final Talent item = row.getItem();
+				item.removeTalent();
+			});
+
+			contextMenu.setOnShowing(e -> {
+				deleteItem.setVisible(true);
+				final Talent item = row.getItem();
+				editItem.setVisible(item.getTalent().containsKey("Auswahl") || item.getTalent().containsKey("Freitext"));
+				if (item != null) {
+					if (item.getTalent().getBoolOrDefault("Basis", false)) {
+						deleteItem.setVisible(false);
+					} else if (!HeroTabController.isEditable.get()) {
+						if (item.getValue() != Integer.MIN_VALUE || item.getSes() != 0) {
+							deleteItem.setVisible(false);
+						}
+					}
+				}
+			});
+
+			row.setContextMenu(contextMenu);
+
+			return row;
+		});
 
 		switch (name) {
 			case "Nahkampftalente":
@@ -243,8 +279,6 @@ public class TalentGroupController {
 				final TableColumn attributesColumn = table.getColumns().get(i);
 				attributesColumn.setCellValueFactory(new PropertyValueFactory<Talent, String>("attributes"));
 				++i;
-				contextMenu.getItems().add(rollItem);
-				contextMenu.getItems().add(rollGroupItem);
 				break;
 			case "Sprachen und Schriften":
 				final TableColumn<Talent, String> mlsltlColumn = (TableColumn<Talent, String>) table.getColumns().get(i);
@@ -261,8 +295,6 @@ public class TalentGroupController {
 				final TableColumn langAttributesColumn = table.getColumns().get(i);
 				langAttributesColumn.setCellValueFactory(new PropertyValueFactory<LanguageTalent, String>("attributes"));
 				++i;
-				contextMenu.getItems().add(rollItem);
-				contextMenu.getItems().add(rollGroupItem);
 				break;
 			case "Zauber":
 				final TableColumn representationColumn = table.getColumns().get(i);
@@ -282,36 +314,10 @@ public class TalentGroupController {
 				});
 				spellPrimaryColumn.editableProperty().bind(HeroTabController.isEditable);
 				++i;
-				contextMenu.getItems().add(rollItem);
-				contextMenu.getItems().add(rollGroupItem);
 				break;
 			default:
 				break;
 		}
-
-		final MenuItem deleteItem = new MenuItem("Löschen");
-		contextMenu.getItems().add(deleteItem);
-		deleteItem.setOnAction(o -> {
-			final Talent item = table.getSelectionModel().getSelectedItem();
-			item.removeTalent();
-		});
-
-		contextMenu.setOnShowing(e -> {
-			deleteItem.setVisible(true);
-			final Talent item = table.getSelectionModel().getSelectedItem();
-			editItem.setVisible(item.getTalent().containsKey("Auswahl") || item.getTalent().containsKey("Freitext"));
-			if (item != null) {
-				if (item.getTalent().getBoolOrDefault("Basis", false)) {
-					deleteItem.setVisible(false);
-				} else if (!HeroTabController.isEditable.get()) {
-					if (item.getValue() != Integer.MIN_VALUE || item.getSes() != 0) {
-						deleteItem.setVisible(false);
-					}
-				}
-			}
-		});
-
-		table.setContextMenu(contextMenu);
 
 		final TableColumn<Talent, Boolean> primaryColumn = (TableColumn<Talent, Boolean>) table.getColumns().get(i);
 		primaryColumn.setCellValueFactory(new PropertyValueFactory<Talent, Boolean>("primaryTalent"));
