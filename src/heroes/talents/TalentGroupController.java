@@ -399,7 +399,8 @@ public class TalentGroupController {
 		final JSONObject talent = HeroUtil.findTalent(talentName)._1;
 		final Talent newTalent;
 		if ("Zauber".equals(name)) {
-			newTalent = Spell.getSpell(talentName, talent, null, actual.getObj(talentName), actual, representationsList.getSelectionModel().getSelectedItem());
+			newTalent = Spell.getSpell(talentName, talent, null, actual.getObjOrDefault(talentName, null), actual,
+					representationsList.getSelectionModel().getSelectedItem());
 		} else {
 			JSONObject group = talentGroup;
 			if ("Sprachen und Schriften".equals(name)) {
