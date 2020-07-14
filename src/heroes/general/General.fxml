@@ -31,7 +31,7 @@
                <Label text="Name:" />
                <TextField fx:id="name" GridPane.columnIndex="1" />
                <TextField fx:id="surname" GridPane.columnIndex="2" />
-               <Label text="Spieler:" GridPane.columnIndex="3" />
+               <Label text=" Spieler:" GridPane.columnIndex="3" />
                <TextField fx:id="player" GridPane.columnIndex="4" />
                <Label text="Rasse:" GridPane.rowIndex="1" />
                <TextField fx:id="race" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.rowIndex="1" />
@@ -41,7 +41,7 @@
                <TextField fx:id="profession" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3" />
                <Label fx:id="professionModifier" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="3" />
                <HBox spacing="2" GridPane.columnIndex="0" GridPane.columnSpan="5" GridPane.rowIndex="4" >
-                  <GridPane.margin><Insets top="7" right="0" bottom="0" left="0"/></GridPane.margin>
+                  <GridPane.margin><Insets top="5" right="0" bottom="0" left="0"/></GridPane.margin>
                   <Label text="SO:" alignment="CENTER_RIGHT" maxHeight="Infinity" />
                   <ReactiveSpinner fx:id="socialstate" imin="0" imax="22" initialValue="1" maxWidth="60" editable="true" GridPane.halignment="CENTER" >
                      <styleClass>
@@ -80,6 +80,7 @@
             <children>
                <Label text="Geburtstag:" />
                <HBox spacing="2" GridPane.columnIndex="1" GridPane.columnSpan="3" >
+                  <GridPane.margin><Insets top="2" right="0" bottom="0" left="0"/></GridPane.margin>
                   <ReactiveSpinner fx:id="birthday" imin="1" imax="30" initialValue="1" prefWidth="55" editable="true">
                      <styleClass>
                         <String fx:value="disabled-opaque" />
@@ -93,7 +94,7 @@
                   </ReactiveSpinner>
                </HBox>
                <Label text="Alter:" GridPane.columnIndex="4" />
-               <Label fx:id="age" style="-fx-padding: 8, 2, 2, 2;" GridPane.columnIndex="5" />
+               <Label fx:id="age" style="-fx-padding: 6, 2, 0, 2;" GridPane.columnIndex="5" />
                <Label text="Geschlecht:" GridPane.rowIndex="1" />
                <ReactiveComboBox fx:id="gender" styleClass="disabled-opaque" GridPane.rowIndex="1" GridPane.columnIndex="1" />
                <Label text="Größe:" GridPane.rowIndex="1" GridPane.columnIndex="2" />
