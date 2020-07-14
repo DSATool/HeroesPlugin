@@ -841,7 +841,6 @@ public class InventoryController extends HeroTabController {
 				if (categories.contains("Kleidung")) {
 					final JSONObject actual = item.getObjOrDefault("Kleidung", item);
 					final Clothing newItem = new Clothing(actual, item);
-					newItem.recompute();
 					clothingTable.getItems().add(newItem);
 					found = true;
 				}
@@ -903,7 +902,6 @@ public class InventoryController extends HeroTabController {
 			}
 			if (!found && !fromAnimal) {
 				final InventoryItem newItem = new InventoryItem(item, item);
-				newItem.recompute();
 				equipmentTable.getItems().add(newItem);
 			}
 		});
