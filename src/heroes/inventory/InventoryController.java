@@ -1068,12 +1068,36 @@ public class InventoryController extends HeroTabController {
 			names.put(animal, animalLocationItem);
 			location.getItems().add(animalLocationItem);
 		}
-		location.setOnShowing(e -> {
-			final JSONValue possessor = item.getParent() != null ? item.getParent().getParent() : null;
-			if (possessor != null && possessor.getParent() instanceof JSONObject) {
-				heroLocationItem.setSelected(true);
-				for (final JSONObject animal : names.keySet()) {
-					names.get(animal).setOnAction(e2 -> {
+
+		final JSONValue possessor = item.getParent() != null ? item.getParent().getParent() : null;
+		if (possessor != null && possessor.getParent() instanceof JSONObject) {
+			heroLocationItem.setSelected(true);
+			for (final JSONObject animal : names.keySet()) {
+				names.get(animal).setOnAction(e -> {
+					final JSONValue parent = item.getParent();
+					parent.remove(item);
+					parent.notifyListeners(null);
+					final JSONArray equipment = animal.getArr("Ausrüstung");
+					equipment.add(item.clone(equipment));
+					equipment.notifyListeners(null);
+					location.getParentPopup().hide();
+				});
+			}
+		} else {
+			heroLocationItem.setOnAction(e -> {
+				final JSONValue parent = item.getParent();
+				parent.remove(item);
+				parent.notifyListeners(null);
+				final JSONArray equipment = hero.getObj("Besitz").getArr("Ausrüstung");
+				equipment.add(item.clone(equipment));
+				equipment.notifyListeners(null);
+				location.getParentPopup().hide();
+			});
+			for (final JSONObject animal : names.keySet()) {
+				if (possessor != null && animal.equals(possessor)) {
+					names.get(animal).setSelected(true);
+				} else {
+					names.get(animal).setOnAction(e -> {
 						final JSONValue parent = item.getParent();
 						parent.remove(item);
 						parent.notifyListeners(null);
@@ -1083,32 +1107,8 @@ public class InventoryController extends HeroTabController {
 						location.getParentPopup().hide();
 					});
 				}
-			} else {
-				heroLocationItem.setOnAction(e2 -> {
-					final JSONValue parent = item.getParent();
-					parent.remove(item);
-					parent.notifyListeners(null);
-					final JSONArray equipment = hero.getObj("Besitz").getArr("Ausrüstung");
-					equipment.add(item.clone(equipment));
-					equipment.notifyListeners(null);
-				});
-				for (final JSONObject animal : names.keySet()) {
-					if (possessor != null && animal.equals(possessor)) {
-						names.get(animal).setSelected(true);
-					} else {
-						names.get(animal).setOnAction(e2 -> {
-							final JSONValue parent = item.getParent();
-							parent.remove(item);
-							parent.notifyListeners(null);
-							final JSONArray equipment = animal.getArr("Ausrüstung");
-							equipment.add(item.clone(equipment));
-							equipment.notifyListeners(null);
-							location.getParentPopup().hide();
-						});
-					}
-				}
 			}
-		});
+		}
 	}
 
 }
