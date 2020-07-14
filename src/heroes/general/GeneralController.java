@@ -47,7 +47,6 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.paint.Color;
 import jsonant.event.JSONListener;
 import jsonant.value.JSONArray;
 import jsonant.value.JSONObject;
@@ -491,16 +490,16 @@ public class GeneralController extends HeroTabController {
 			derivedValuesTable.getItems().add(new DerivedValue(derivedValue, derivedValues.getObj(derivedValue), hero));
 		}
 
-		energiesTable.getItems().add(new Energy("Lebensenergie", derivedValues.getObj("Lebensenergie"), hero, Color.RED));
-		energiesTable.getItems().add(new Energy("Ausdauer", derivedValues.getObj("Ausdauer"), hero, Color.DODGERBLUE));
+		energiesTable.getItems().add(new Energy("Lebensenergie", derivedValues.getObj("Lebensenergie"), hero, dsa41basis.hero.Energy.COLOR_LEP));
+		energiesTable.getItems().add(new Energy("Ausdauer", derivedValues.getObj("Ausdauer"), hero, dsa41basis.hero.Energy.COLOR_AUP));
 		if (HeroUtil.isMagical(hero)) {
 			energiesTable.getItems()
-					.add(new Energy("Astralenergie", derivedValues.getObj("Astralenergie"), hero, Color.VIOLET.saturate()));
+					.add(new Energy("Astralenergie", derivedValues.getObj("Astralenergie"), hero, dsa41basis.hero.Energy.COLOR_ASP));
 		}
 		if (HeroUtil.isClerical(hero, false)) {
-			energiesTable.getItems().add(new Energy("Karmaenergie", new JSONObject(null), hero, Color.YELLOW.darker()));
+			energiesTable.getItems().add(new Energy("Karmaenergie", new JSONObject(null), hero, dsa41basis.hero.Energy.COLOR_KAP));
 		}
-		energiesTable.getItems().add(new Energy("Magieresistenz", derivedValues.getObj("Magieresistenz"), hero, Color.WHITE));
+		energiesTable.getItems().add(new Energy("Magieresistenz", derivedValues.getObj("Magieresistenz"), hero, dsa41basis.hero.Energy.COLOR_MR));
 
 		attributesTable.setMinHeight(attributesTable.getItems().size() * 28 + 26);
 		attributesTable.setMaxHeight(attributesTable.getItems().size() * 28 + 26);
