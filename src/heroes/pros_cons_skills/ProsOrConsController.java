@@ -375,9 +375,8 @@ public class ProsOrConsController {
 	}
 
 	private JSONObject newProOrCon(final String name, final JSONObject proOrCon) {
-		JSONObject actualProOrCon;
+		final JSONObject actualProOrCon = new JSONObject(null);
 		if (proOrCon.containsKey("Auswahl") || proOrCon.containsKey("Freitext")) {
-			actualProOrCon = new JSONObject(null);
 			if (proOrCon.containsKey("Auswahl")) {
 				actualProOrCon.put("Auswahl", new ProOrCon(name, hero, proOrCon, actualProOrCon).getFirstChoiceItems(true).iterator().next());
 			}
@@ -385,10 +384,9 @@ public class ProsOrConsController {
 				actualProOrCon.put("Freitext", new ProOrCon(name, hero, proOrCon, actualProOrCon).getSecondChoiceItems(true).iterator().next());
 			}
 		} else if ("Breitgefächerte Bildung".equals(name)) {
-			actualProOrCon = new JSONObject(null);
 			actualProOrCon.put("Profession", "");
-		} else {
-			actualProOrCon = new JSONObject(null);
+		} else if ("Auswahl".equals(proOrCon.getString("Spezialisierung"))) {
+			actualProOrCon.put("Auswahl", "Raufen");
 		}
 		return actualProOrCon;
 	}
