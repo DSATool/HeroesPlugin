@@ -18,8 +18,8 @@ package heroes.animals;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Consumer;
 
+import dsa41basis.hero.AttackTable;
 import dsa41basis.hero.Attribute;
 import dsa41basis.inventory.InventoryItem;
 import dsa41basis.util.DSAUtil;
@@ -33,6 +33,8 @@ import dsatool.util.ErrorLogger;
 import dsatool.util.Util;
 import heroes.ui.HeroTabController;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringProperty;
@@ -67,12 +69,10 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Window;
 import jsonant.event.JSONListener;
 import jsonant.value.JSONArray;
 import jsonant.value.JSONObject;
@@ -317,24 +317,6 @@ public class AnimalController {
 	@FXML
 	private TableColumn<AnimalAttribute, Integer> statsValueColumn;
 	@FXML
-	private TableColumn<Attack, String> attackNameColumn;
-	@FXML
-	private TableColumn<Attack, String> attackTPColumn;
-	@FXML
-	private TableColumn<Attack, Integer> attackATColumn;
-	@FXML
-	private TableColumn<Attack, Integer> attackPAColumn;
-	@FXML
-	private TableColumn<Attack, String> attackDistanceColumn;
-	@FXML
-	private TableColumn<Attack, String> attackNotesColumn;
-	@FXML
-	private TableView<Attack> attacksTable;
-	@FXML
-	private TextField newAttackField;
-	@FXML
-	private Button attackAddButton;
-	@FXML
 	private Node skillsBox;
 	@FXML
 	private TableColumn<ProConSkill, String> proConDescColumn;
@@ -378,10 +360,15 @@ public class AnimalController {
 	private ComboBox<String> equipmentList;
 	@FXML
 	private TitledPane pane;
+	@FXML
+	private VBox statsAndAttacksBox;
+	@FXML
+	private GridPane grid;
 
 	private final JSONObject hero;
 	private final JSONObject actualAnimal;
 	private final AnimalType type;
+	private final AttackTable attacksTable;
 
 	public AnimalController(final JSONObject hero, final JSONObject animal, final AnimalType type) {
 		final FXMLLoader fxmlLoader = new FXMLLoader();
@@ -394,7 +381,7 @@ public class AnimalController {
 			ErrorLogger.logError(e);
 		}
 
-		final ObservableList<Node> controls = ((GridPane) pane.getContent()).getChildren();
+		final ObservableList<Node> controls = grid.getChildren();
 		if (type == AnimalType.HORSE) {
 			((VBox) statsTable.getParent()).getChildren().remove(statsTable);
 			controls.remove(mr);
@@ -464,9 +451,12 @@ public class AnimalController {
 		initBiography();
 		initAttributes();
 		initStats();
-		initAttacks();
 		initProConSkills();
 		initEquipment();
+
+		attacksTable = new AttackTable(HeroTabController.isEditable, attributesBox.widthProperty().subtract(2).divide(1.667), type == AnimalType.MAGIC);
+		attacksTable.setCharacter(animal);
+		statsAndAttacksBox.getChildren().add(attacksTable.getControl());
 
 		name.editableProperty().bind(HeroTabController.isEditable);
 		race.editableProperty().bind(HeroTabController.isEditable);
@@ -517,35 +507,13 @@ public class AnimalController {
 		rkw.disableProperty().bind(HeroTabController.isEditable.not());
 		attributesTable.editableProperty().bind(HeroTabController.isEditable);
 		statsTable.editableProperty().bind(HeroTabController.isEditable);
-		attacksTable.editableProperty().bind(HeroTabController.isEditable);
-		newAttackField.editableProperty().bind(HeroTabController.isEditable);
-		attackAddButton.disableProperty().bind(HeroTabController.isEditable.not());
 		proConsTable.editableProperty().bind(HeroTabController.isEditable);
 		proConsList.disableProperty().bind(HeroTabController.isEditable.not());
-		proConsAddButton.disableProperty().bind(HeroTabController.isEditable.not());
+		proConsAddButton.disableProperty().bind(HeroTabController.isEditable.not().or(Bindings.isEmpty(proConsList.getItems())));
 		ritualsList.disableProperty().bind(HeroTabController.isEditable.not());
-		ritualsAddButton.disableProperty().bind(HeroTabController.isEditable.not());
+		ritualsAddButton.disableProperty().bind(HeroTabController.isEditable.not().or(Bindings.isEmpty(ritualsList.getItems())));
 		skillsList.disableProperty().bind(HeroTabController.isEditable.not());
-		skillsAddButton.disableProperty().bind(HeroTabController.isEditable.not());
-	}
-
-	@FXML
-	private void addAttack() {
-		final JSONObject attacks = actualAnimal.getObj("Angriffe");
-		final JSONObject newAttack = new JSONObject(attacks);
-		newAttack.put("Trefferpunkte", new JSONObject(newAttack));
-		String name = newAttackField.getText();
-		name = "".equals(name) ? "Attacke" : name;
-		if (attacks.containsKey(name)) {
-			for (int i = 2; i < 100; ++i) {
-				if (!attacks.containsKey(name + i)) {
-					name = name + i;
-					break;
-				}
-			}
-		}
-		attacks.put(name, newAttack);
-		attacks.notifyListeners(null);
+		skillsAddButton.disableProperty().bind(HeroTabController.isEditable.not().or(Bindings.isEmpty(skillsList.getItems())));
 	}
 
 	@FXML
@@ -598,93 +566,6 @@ public class AnimalController {
 
 	public Node getControl() {
 		return pane;
-	}
-
-	private void initAttacks() {
-		attacksTable.prefWidthProperty().bind(attributesBox.widthProperty().subtract(2).divide(1.667));
-		GUIUtil.autosizeTable(attacksTable, 0, 2);
-		GUIUtil.cellValueFactories(attacksTable, "name", "tp", "at", "pa", "dk", "notes");
-
-		attackATColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 99, 1, false));
-		attackATColumn.setOnEditCommit(t -> t.getRowValue().setAt(t.getNewValue()));
-		attackPAColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 99, 1, false));
-		attackPAColumn.setOnEditCommit(t -> t.getRowValue().setPa(t.getNewValue()));
-
-		final JSONObject attacks = actualAnimal.getObj("Angriffe");
-
-		attackNameColumn.setCellFactory(o -> {
-			final TableCell<Attack, String> cell = new GraphicTableCell<>(false) {
-				@Override
-				protected void createGraphic() {
-					final TextField t = new TextField();
-					createGraphic(t, () -> t.getText(), s -> t.setText(s));
-				}
-			};
-			return cell;
-		});
-		attackNameColumn.setOnEditCommit(event -> {
-			final Attack attack = event.getRowValue();
-			attack.setName(event.getNewValue());
-		});
-
-		attackNotesColumn.setCellFactory(o -> {
-			final TableCell<Attack, String> cell = new GraphicTableCell<>(false) {
-				@Override
-				protected void createGraphic() {
-					final TextField t = new TextField();
-					createGraphic(t, () -> t.getText(), s -> t.setText(s));
-				}
-			};
-			return cell;
-		});
-		attackNotesColumn.setOnEditCommit(event -> {
-			final String note = event.getNewValue();
-			final Attack attack = event.getRowValue();
-			attack.setNotes(note);
-		});
-
-		attacksTable.setRowFactory(tableView -> {
-			final TableRow<Attack> row = new TableRow<>();
-
-			final ContextMenu contextMenu = new ContextMenu();
-
-			final Consumer<Object> edit = obj -> {
-				final Attack attack = row.getItem();
-				final Window window = pane.getScene().getWindow();
-				if (attack != null && !"".equals(attack.getName())) {
-					new AttackEditor(window, attack, type == AnimalType.MAGIC);
-				}
-			};
-
-			row.setOnMouseClicked(event -> {
-				if (event.getButton().equals(MouseButton.PRIMARY) && event.getClickCount() == 2) {
-					edit.accept(null);
-				}
-			});
-
-			final MenuItem editItem = new MenuItem("Bearbeiten");
-			contextMenu.getItems().add(editItem);
-			editItem.setOnAction(event -> edit.accept(null));
-
-			final MenuItem deleteItem = new MenuItem("Löschen");
-			contextMenu.getItems().add(deleteItem);
-			deleteItem.setOnAction(o -> {
-				final Attack attack = row.getItem();
-				if (!"".equals(attack.getName())) {
-					final String name = attack.getName();
-					attacks.removeKey(name);
-					attacks.notifyListeners(null);
-				}
-			});
-
-			row.setContextMenu(contextMenu);
-
-			return row;
-		});
-
-		actualAnimal.getObj("Angriffe").addListener(o -> updateAttacks());
-
-		updateAttacks();
 	}
 
 	private void initAttributes() {
@@ -1066,40 +947,30 @@ public class AnimalController {
 
 		mrChoice.setItems(FXCollections.observableArrayList("Magieresistenz", "MR (Geist/Körper)"));
 		final JSONObject actualMr = baseValues.getObj("Magieresistenz");
-		mrChoice.getSelectionModel().selectedIndexProperty().addListener((o, oldV, newV) -> {
-			if (newV.intValue() == 0 && type != AnimalType.HORSE) {
-				mr.setManaged(true);
-				mr.setVisible(true);
-				mrBox.setManaged(false);
-				mrBox.setVisible(false);
-				if (type == AnimalType.MAGIC) {
-					mrMod.setManaged(true);
-					mrMod.setVisible(true);
-					mrBought.setManaged(true);
-					mrBought.setVisible(true);
-				}
-				mrModBox.setManaged(false);
-				mrModBox.setVisible(false);
-				mrBoughtBox.setManaged(false);
-				mrBoughtBox.setVisible(false);
+
+		final BooleanBinding isSingleMR = mrChoice.getSelectionModel().selectedItemProperty().isEqualTo("Magieresistenz");
+		final BooleanExpression hasMRMod = new SimpleBooleanProperty(type == AnimalType.MAGIC);
+		mr.managedProperty().bind(isSingleMR);
+		mr.visibleProperty().bind(isSingleMR);
+		mrBox.managedProperty().bind(isSingleMR.not());
+		mrBox.visibleProperty().bind(isSingleMR.not());
+		mrMod.managedProperty().bind(hasMRMod.and(isSingleMR));
+		mrMod.visibleProperty().bind(hasMRMod.and(isSingleMR));
+		mrModBox.managedProperty().bind(hasMRMod.and(isSingleMR.not()));
+		mrModBox.visibleProperty().bind(hasMRMod.and(isSingleMR.not()));
+		mrBought.managedProperty().bind(hasMRMod.and(isSingleMR));
+		mrBought.visibleProperty().bind(hasMRMod.and(isSingleMR));
+		mrBoughtBox.managedProperty().bind(hasMRMod.and(isSingleMR.not()));
+		mrBoughtBox.visibleProperty().bind(hasMRMod.and(isSingleMR.not()));
+
+		isSingleMR.addListener((o, oldV, newV) -> {
+			if (newV) {
 				actualMr.removeKey("Geist");
 			} else {
-				mr.setManaged(false);
-				mr.setVisible(false);
-				mrBox.setManaged(true);
-				mrBox.setVisible(true);
-				mrMod.setManaged(false);
-				mrMod.setVisible(false);
-				mrBought.setManaged(false);
-				mrBought.setVisible(false);
-				if (type == AnimalType.MAGIC) {
-					mrModBox.setManaged(true);
-					mrModBox.setVisible(true);
-					mrBoughtBox.setManaged(true);
-					mrBoughtBox.setVisible(true);
-				}
+				actualMr.put("Geist", actualMr.getIntOrDefault("Wert", 0));
 			}
 		});
+
 		mrChoice.getSelectionModel().select(actualMr.containsKey("Geist") || type == AnimalType.HORSE ? 1 : 0);
 		mr.getValueFactory().setValue(actualMr.getIntOrDefault("Wert", 0));
 		mr.valueProperty().addListener((o, oldV, newV) -> actualMr.put("Wert", newV));
@@ -1120,11 +991,6 @@ public class AnimalController {
 			mrMindBought.valueProperty().addListener((o, oldV, newV) -> actualMr.put("Geist:Kauf", newV));
 			mrBodyBought.getValueFactory().setValue(actualMr.getIntOrDefault("Körper:Kauf", 0));
 			mrBodyBought.valueProperty().addListener((o, oldV, newV) -> actualMr.put("Körper:Kauf", newV));
-		} else {
-			mrMod.setVisible(false);
-			mrModBox.setVisible(false);
-			mrBought.setVisible(false);
-			mrBoughtBox.setVisible(false);
 		}
 
 		if (type == AnimalType.HORSE) {
@@ -1165,33 +1031,27 @@ public class AnimalController {
 			feedHeavy.valueProperty().addListener((o, oldV, newV) -> feed.put("Schwer", newV));
 		} else {
 			speedChoice.setItems(FXCollections.observableArrayList("Geschwindigkeit", "GS (Boden/Luft)"));
+
+			final BooleanBinding isSingleSpeed = speedChoice.getSelectionModel().selectedItemProperty().isEqualTo("Geschwindigkeit");
+			speed.managedProperty().bind(isSingleSpeed);
+			speed.visibleProperty().bind(isSingleSpeed);
+			speedBox.managedProperty().bind(isSingleSpeed.not());
+			speedBox.visibleProperty().bind(isSingleSpeed.not());
+			speedMod.managedProperty().bind(isSingleSpeed);
+			speedMod.visibleProperty().bind(isSingleSpeed);
+			speedModBox.managedProperty().bind(isSingleSpeed.not());
+			speedModBox.visibleProperty().bind(isSingleSpeed.not());
+			speedBought.managedProperty().bind(isSingleSpeed);
+			speedBought.visibleProperty().bind(isSingleSpeed);
+			speedBoughtBox.managedProperty().bind(isSingleSpeed.not());
+			speedBoughtBox.visibleProperty().bind(isSingleSpeed.not());
+
 			final JSONObject actualSpeed = baseValues.getObj("Geschwindigkeit");
-			speedChoice.getSelectionModel().selectedIndexProperty().addListener((o, oldV, newV) -> {
-				if (newV.intValue() == 0) {
-					speed.setManaged(true);
-					speed.setVisible(true);
-					speedBox.setManaged(false);
-					speedBox.setVisible(false);
-					speedMod.setManaged(true);
-					speedMod.setVisible(true);
-					speedModBox.setManaged(false);
-					speedModBox.setVisible(false);
-					speedBought.setManaged(true);
-					speedBought.setVisible(true);
+			isSingleSpeed.addListener((o, oldV, newV) -> {
+				if (newV) {
 					actualSpeed.removeKey("Boden");
 				} else {
-					speed.setManaged(false);
-					speed.setVisible(false);
-					speedBox.setManaged(true);
-					speedBox.setVisible(true);
-					speedMod.setManaged(false);
-					speedMod.setVisible(false);
-					speedModBox.setManaged(true);
-					speedModBox.setVisible(true);
-					speedBought.setManaged(false);
-					speedBought.setVisible(false);
-					speedBoughtBox.setManaged(true);
-					speedBoughtBox.setVisible(true);
+					actualSpeed.put("Boden", actualSpeed.getDoubleOrDefault("Wert", 0.0));
 				}
 			});
 			speedChoice.getSelectionModel().select(actualSpeed.containsKey("Boden") ? 1 : 0);
@@ -1220,7 +1080,6 @@ public class AnimalController {
 
 			if (type != AnimalType.MAGIC) {
 				statsBoughtColumn.setMinWidth(0.0);
-				statsBoughtColumn.setPrefWidth(0.0);
 				statsBoughtColumn.setMaxWidth(0.0);
 				statsBoughtColumn.setVisible(false);
 			}
@@ -1265,18 +1124,6 @@ public class AnimalController {
 		}
 	}
 
-	private void updateAttacks() {
-		attacksTable.getItems().clear();
-
-		final JSONObject attacks = actualAnimal.getObj("Angriffe");
-		for (final String attack : attacks.keySet()) {
-			attacksTable.getItems().add(new Attack(attack, attacks.getObj(attack)));
-		}
-
-		attacksTable.setMinHeight(attacksTable.getItems().size() * 28 + 26);
-		attacksTable.setMaxHeight(attacksTable.getItems().size() * 28 + 26);
-	}
-
 	private void updateEquipment() {
 		equipmentTable.getItems().clear();
 
@@ -1311,33 +1158,32 @@ public class AnimalController {
 			location.getItems().add(animalLocationItem);
 		}
 
-		location.setOnShowing(e -> {
-			final JSONValue possessor = item.getParent() != null ? item.getParent().getParent() : null;
-			heroLocationItem.setOnAction(e2 -> {
-				final JSONValue parent = item.getParent();
-				parent.remove(item);
-				parent.notifyListeners(null);
-				final JSONArray equipment = hero.getObj("Besitz").getArr("Ausrüstung");
-				equipment.add(item.clone(equipment));
-				equipment.notifyListeners(null);
-				location.getParentPopup().hide();
-			});
-			for (final JSONObject animal : animalItems.keySet()) {
-				if (possessor != null && animal.equals(possessor)) {
-					animalItems.get(animal).setSelected(true);
-				} else {
-					animalItems.get(animal).setOnAction(e2 -> {
-						final JSONValue parent = item.getParent();
-						parent.remove(item);
-						parent.notifyListeners(null);
-						final JSONArray equipment = animal.getArr("Ausrüstung");
-						equipment.add(item.clone(equipment));
-						equipment.notifyListeners(null);
-						location.getParentPopup().hide();
-					});
-				}
-			}
+		heroLocationItem.setOnAction(e -> {
+			final JSONValue parent = item.getParent();
+			parent.remove(item);
+			parent.notifyListeners(null);
+			final JSONArray equipment = hero.getObj("Besitz").getArr("Ausrüstung");
+			equipment.add(item.clone(equipment));
+			equipment.notifyListeners(null);
+			location.getParentPopup().hide();
 		});
+
+		final JSONValue possessor = item.getParent() != null ? item.getParent().getParent() : null;
+		for (final JSONObject animal : animalItems.keySet()) {
+			if (possessor != null && animal.equals(possessor)) {
+				animalItems.get(animal).setSelected(true);
+			} else {
+				animalItems.get(animal).setOnAction(e -> {
+					final JSONValue parent = item.getParent();
+					parent.remove(item);
+					parent.notifyListeners(null);
+					final JSONArray equipment = animal.getArr("Ausrüstung");
+					equipment.add(item.clone(equipment));
+					equipment.notifyListeners(null);
+					location.getParentPopup().hide();
+				});
+			}
+		}
 	}
 
 	private void updateProCons() {
@@ -1372,7 +1218,6 @@ public class AnimalController {
 		}
 
 		proConsList.getSelectionModel().select(0);
-		proConsAddButton.setDisable(proConsList.getItems().isEmpty());
 	}
 
 	private void updateRituals() {
@@ -1398,7 +1243,6 @@ public class AnimalController {
 		}
 
 		ritualsList.getSelectionModel().select(0);
-		ritualsAddButton.setDisable(ritualsList.getItems().isEmpty());
 	}
 
 	private void updateSkills() {
@@ -1433,6 +1277,5 @@ public class AnimalController {
 		}
 
 		skillsList.getSelectionModel().select(0);
-		skillsAddButton.setDisable(skillsList.getItems().isEmpty());
 	}
 }
