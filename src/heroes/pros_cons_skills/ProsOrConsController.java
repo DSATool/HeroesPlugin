@@ -243,27 +243,27 @@ public class ProsOrConsController {
 					final ProOrCon con = row.getItem();
 					new QuirkReductionDialog(pane.getScene().getWindow(), con, hero, con.getValue() - 1);
 				});
-				contextMenu.setOnShowing(o -> {
+				reductionItem.visibleProperty().bind(Bindings.createBooleanBinding(() -> {
 					final ProOrCon con = row.getItem();
-					reductionItem.setVisible(con.getProOrCon().getBoolOrDefault("Schlechte Eigenschaft", false));
-				});
+					return con != null && con.getProOrCon().getBoolOrDefault("Schlechte Eigenschaft", false);
+				}, row.itemProperty()));
 				contextMenu.getItems().add(reductionItem);
 			}
 			if ("Kampf-Sonderfertigkeiten".equals(name)) {
 				final MenuItem weaponMasteryItem = new MenuItem("Bearbeiten");
-				weaponMasteryItem.setOnAction(o -> {
+				weaponMasteryItem.setOnAction(o -> new WeaponMasteryDialog(pane.getScene().getWindow(), row.getItem()));
+				weaponMasteryItem.visibleProperty().bind(Bindings.createBooleanBinding(() -> {
 					final ProOrCon skill = row.getItem();
-					new WeaponMasteryDialog(pane.getScene().getWindow(), skill);
-				});
-				weaponMasteryItem.visibleProperty().bind(row.itemProperty().isEqualTo("Waffenmeister"));
+					return skill != null && "Waffenmeister".equals(skill.getName());
+				}, row.itemProperty()));
 				contextMenu.getItems().add(weaponMasteryItem);
 			}
 			final MenuItem deleteItem = new MenuItem("Löschen");
 			deleteItem.setOnAction(deleteAction(row));
-			deleteItem.visibleProperty().bind(HeroTabController.isEditable.and(row.itemProperty().isNotNull()));
 			contextMenu.getItems().add(deleteItem);
 
-			row.setContextMenu(contextMenu);
+			row.contextMenuProperty()
+					.bind(Bindings.when(HeroTabController.isEditable.and(row.itemProperty().isNotNull())).then(contextMenu).otherwise((ContextMenu) null));
 
 			return row;
 		});
