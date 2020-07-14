@@ -80,8 +80,8 @@ public class SkillAcquisitionDialog {
 		final JSONObject skill = actualSkill.getProOrCon();
 		final JSONObject actual = actualSkill.getActual();
 		final String name = actualSkill.getName();
-		final boolean hasChoice = skill.containsKey("Auswahl");
-		final boolean hasText = skill.containsKey("Freitext");
+		final boolean hasChoice = actualSkill.firstChoiceOrText() == ChoiceOrTextEnum.CHOICE;
+		final boolean hasText = actualSkill.firstChoiceOrText() == ChoiceOrTextEnum.TEXT || actualSkill.secondChoiceOrText() == ChoiceOrTextEnum.TEXT;
 
 		if (!includeCost) {
 			costBox.setVisible(false);
