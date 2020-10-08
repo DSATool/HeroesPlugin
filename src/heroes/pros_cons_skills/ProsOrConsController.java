@@ -203,10 +203,16 @@ public class ProsOrConsController {
 			}
 		});
 		valueColumn.setOnEditCommit(t -> {
+			final ProOrCon quirk = t.getRowValue();
+			final int newV = t.getNewValue();
 			if (HeroTabController.isEditable.get()) {
-				t.getRowValue().setValue(t.getNewValue());
+				if (newV == 0) {
+					quirk.remove();
+				} else {
+					quirk.setValue(newV);
+				}
 			} else {
-				new QuirkReductionDialog(pane.getScene().getWindow(), t.getRowValue(), hero, t.getNewValue());
+				new QuirkReductionDialog(pane.getScene().getWindow(), quirk, hero, newV);
 			}
 		});
 
@@ -312,17 +318,8 @@ public class ProsOrConsController {
 
 	protected EventHandler<ActionEvent> deleteAction(final TableRow<ProOrCon> row) {
 		return o -> {
-			final JSONObject actual = hero.getObj(category);
 			final ProOrCon item = row.getItem();
-			final String proOrConName = item.getName();
-			final JSONObject proOrCon = prosOrCons.getObj(proOrConName);
-			if (proOrCon.containsKey("Auswahl") || proOrCon.containsKey("Freitext")) {
-				actual.getArr(proOrConName).remove(item.getActual());
-			} else {
-				actual.removeKey(proOrConName);
-			}
-			HeroUtil.unapplyEffect(hero, proOrConName, proOrCon, item.getActual());
-			actual.notifyListeners(null);
+			item.remove();
 			fillList();
 		};
 	}

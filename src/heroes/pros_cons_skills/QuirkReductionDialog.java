@@ -98,13 +98,7 @@ public class QuirkReductionDialog {
 			final JSONObject bio = hero.getObj("Biografie");
 			bio.put("Abenteuerpunkte-Guthaben", bio.getIntOrDefault("Abenteuerpunkte-Guthaben", 0) - ap.getValue());
 			if (target.getValue() == 0) {
-				final JSONObject cons = hero.getObj("Nachteile");
-				if (con.containsKey("Auswahl") || con.containsKey("Freitext")) {
-					cons.getArr(quirk.getName()).remove(quirk.getActual());
-				} else {
-					cons.removeKey(quirk.getName());
-				}
-				cons.notifyListeners(null);
+				quirk.remove();
 			} else {
 				quirk.setValue(target.getValue());
 			}
