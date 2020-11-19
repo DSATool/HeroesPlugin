@@ -66,6 +66,7 @@ public class QuirkReductionDialog {
 		stage.setTitle("Schlechte Eigenschaft senken");
 		stage.setScene(new Scene(root, 250, 148));
 		stage.initModality(Modality.WINDOW_MODAL);
+		stage.setResizable(false);
 		stage.initOwner(window);
 
 		target.valueProperty().addListener((o, oldV, newV) -> ap.getValueFactory().setValue(getCalculatedAP(quirk, hero)));
@@ -106,9 +107,7 @@ public class QuirkReductionDialog {
 			stage.close();
 		});
 
-		cancelButton.setOnAction(event -> {
-			stage.close();
-		});
+		cancelButton.setOnAction(e -> stage.close());
 
 		nameLabel.setText(quirk.getName());
 		startLabel.setText(Integer.toString(quirk.getValue()));

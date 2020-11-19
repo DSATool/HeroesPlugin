@@ -18,8 +18,8 @@ package heroes.animals;
 import java.util.ArrayList;
 import java.util.List;
 
+import dsa41basis.ui.hero.BasicValuesController.CharacterType;
 import dsatool.util.ErrorLogger;
-import heroes.animals.AnimalController.AnimalType;
 import heroes.ui.HeroTabController;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -111,9 +111,9 @@ public class AnimalsController extends HeroTabController {
 		for (int i = 0; i < animals.size(); ++i) {
 			final JSONObject animal = animals.getObj(i);
 			final AnimalController newController = switch (animal.getObj("Biografie").getStringOrDefault("Typ", "Tier")) {
-				case "Reittier" -> new AnimalController(hero, animal, AnimalType.HORSE);
-				case "Vertrautentier" -> new AnimalController(hero, animal, AnimalType.MAGIC);
-				default -> new AnimalController(hero, animal, AnimalType.ANIMAL);
+				case "Reittier" -> new AnimalController(hero, animal, CharacterType.HORSE);
+				case "Vertrautentier" -> new AnimalController(hero, animal, CharacterType.MAGIC_ANIMAL);
+				default -> new AnimalController(hero, animal, CharacterType.ANIMAL);
 			};
 			items.add(i, newController.getControl());
 			controllers.add(newController);

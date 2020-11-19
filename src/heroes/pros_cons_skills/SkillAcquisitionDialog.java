@@ -92,6 +92,7 @@ public class SkillAcquisitionDialog {
 		stage.setTitle("Sonderfertigkeit erwerben");
 		stage.setScene(new Scene(root, 300, 157 - (hasChoice ? 0 : 27) - (hasText ? 0 : 27) - (includeCost ? 0 : 27)));
 		stage.initModality(Modality.WINDOW_MODAL);
+		stage.setResizable(false);
 		stage.initOwner(window);
 
 		if (!hasChoice || !hasText) {
@@ -179,9 +180,7 @@ public class SkillAcquisitionDialog {
 			stage.close();
 		});
 
-		cancelButton.setOnAction(event -> {
-			stage.close();
-		});
+		cancelButton.setOnAction(e -> stage.close());
 
 		nameLabel.setText(actualSkill.getName());
 		description.setEditable(actualSkill.firstChoiceOrText() == ChoiceOrTextEnum.TEXT);

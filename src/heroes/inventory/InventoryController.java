@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import dsa41basis.fight.Armor;
+import dsa41basis.fight.ArmorEditor;
 import dsa41basis.fight.CloseCombatWeapon;
 import dsa41basis.fight.DefensiveWeapon;
 import dsa41basis.fight.RangedWeapon;
@@ -324,6 +325,7 @@ public class InventoryController extends HeroTabController {
 				final ClipboardContent content = new ClipboardContent();
 				content.put(DataFormat.PLAIN_TEXT, row.getIndex());
 				dragBoard.setContent(content);
+				e.consume();
 			});
 
 			row.setOnDragDropped(e -> {
@@ -466,7 +468,7 @@ public class InventoryController extends HeroTabController {
 					updateLocationMenu(row.getItem().getItem(), location);
 				}
 			};
-			final JSONArray[] animals = new JSONArray[] { hero.getArr("Tiere") };
+			final JSONArray[] animals = { hero.getArr("Tiere") };
 			row.itemProperty().addListener((o, oldV, newV) -> {
 				if (newV != null) {
 					updateLocationMenu(newV.getItem(), location);
@@ -641,7 +643,7 @@ public class InventoryController extends HeroTabController {
 				@Override
 				protected void createGraphic() {
 					final TextField t = new TextField();
-					createGraphic(t, () -> t.getText(), s -> t.setText(s));
+					createGraphic(t, t::getText, t::setText);
 				}
 			};
 			return cell;
@@ -657,7 +659,7 @@ public class InventoryController extends HeroTabController {
 				@Override
 				protected void createGraphic() {
 					final TextField t = new TextField();
-					createGraphic(t, () -> t.getText(), s -> t.setText(s));
+					createGraphic(t, t::getText, t::setText);
 				}
 			};
 			return cell;
@@ -694,7 +696,7 @@ public class InventoryController extends HeroTabController {
 				@Override
 				protected void createGraphic() {
 					final TextField t = new TextField();
-					createGraphic(t, () -> t.getText(), s -> t.setText(s));
+					createGraphic(t, t::getText, t::setText);
 				}
 			};
 			return cell;
@@ -710,7 +712,7 @@ public class InventoryController extends HeroTabController {
 				@Override
 				protected void createGraphic() {
 					final TextField t = new TextField();
-					createGraphic(t, () -> t.getText(), s -> t.setText(s));
+					createGraphic(t, t::getText, t::setText);
 				}
 			};
 			return cell;
@@ -776,7 +778,7 @@ public class InventoryController extends HeroTabController {
 				@Override
 				protected void createGraphic() {
 					final TextField t = new TextField();
-					createGraphic(t, () -> t.getText(), s -> t.setText(s));
+					createGraphic(t, t::getText, t::setText);
 				}
 			};
 			return cell;
@@ -792,7 +794,7 @@ public class InventoryController extends HeroTabController {
 				@Override
 				protected void createGraphic() {
 					final TextField t = new TextField();
-					createGraphic(t, () -> t.getText(), s -> t.setText(s));
+					createGraphic(t, t::getText, t::setText);
 				}
 			};
 			return cell;
@@ -975,22 +977,22 @@ public class InventoryController extends HeroTabController {
 		refreshMoney();
 
 		ducats.valueProperty().addListener((o, oldV, newV) -> {
-			if (oldV == newV || newV == null || oldV == null || newV == money.getIntOrDefault("Dukaten", 0)) return;
+			if (newV == null || oldV == null || oldV.equals(newV) || newV.equals(money.getIntOrDefault("Dukaten", 0))) return;
 			money.put("Dukaten", newV);
 			money.notifyListeners(heroMoneyListener);
 		});
 		silver.valueProperty().addListener((o, oldV, newV) -> {
-			if (oldV == newV || newV == null || oldV == null || newV == money.getIntOrDefault("Silbertaler", 0)) return;
+			if (newV == null || oldV == null || oldV.equals(newV) || newV.equals(money.getIntOrDefault("Silbertaler", 0))) return;
 			money.put("Silbertaler", newV);
 			money.notifyListeners(heroMoneyListener);
 		});
 		heller.valueProperty().addListener((o, oldV, newV) -> {
-			if (oldV == newV || newV == null || oldV == null || newV == money.getIntOrDefault("Heller", 0)) return;
+			if (newV == null || oldV == null || oldV.equals(newV) || newV.equals(money.getIntOrDefault("Heller", 0))) return;
 			money.put("Heller", newV);
 			money.notifyListeners(heroMoneyListener);
 		});
 		kreuzer.valueProperty().addListener((o, oldV, newV) -> {
-			if (oldV == newV || newV == null || oldV == null || newV == money.getIntOrDefault("Kreuzer", 0)) return;
+			if (newV == null || oldV == null || oldV.equals(newV) || newV.equals(money.getIntOrDefault("Kreuzer", 0))) return;
 			money.put("Kreuzer", newV);
 			money.notifyListeners(heroMoneyListener);
 		});
@@ -1006,7 +1008,7 @@ public class InventoryController extends HeroTabController {
 	}
 
 	private void updateLists() {
-		itemLists.values().forEach(list -> list.clear());
+		itemLists.values().forEach(ObservableList::clear);
 
 		DSAUtil.foreach(item -> true, (itemName, item) -> {
 			final JSONArray categories = item.getArr("Kategorien");

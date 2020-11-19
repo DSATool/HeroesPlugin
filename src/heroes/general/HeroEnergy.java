@@ -23,12 +23,12 @@ import javafx.beans.property.StringProperty;
 import javafx.scene.paint.Color;
 import jsonant.value.JSONObject;
 
-public class Energy extends dsa41basis.hero.Energy implements Colorable {
+public class HeroEnergy extends dsa41basis.hero.Energy implements Colorable {
 
 	private final Color color;
 	private final StringProperty text = new SimpleStringProperty();
 
-	public Energy(final String name, final JSONObject derivation, final JSONObject hero, final Color color) {
+	public HeroEnergy(final String name, final JSONObject derivation, final JSONObject hero, final Color color) {
 		super(name, derivation, hero);
 
 		text.bind(Bindings.when(current.isEqualTo(max)).then(max.asString()).otherwise(current.asString().concat('/').concat(max)));

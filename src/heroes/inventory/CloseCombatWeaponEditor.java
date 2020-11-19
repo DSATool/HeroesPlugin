@@ -108,8 +108,9 @@ public class CloseCombatWeaponEditor {
 
 		final Stage stage = new Stage();
 		stage.setTitle("Bearbeiten");
-		stage.setScene(new Scene(root, 330, 367));
+		stage.setScene(new Scene(root, 290, 367));
 		stage.initModality(Modality.WINDOW_MODAL);
+		stage.setResizable(false);
 		stage.initOwner(window);
 
 		name.setText(weapon.getName());

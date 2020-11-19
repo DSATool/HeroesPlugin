@@ -62,8 +62,9 @@ public class PotionPurchaseDialog {
 
 		final Stage stage = new Stage();
 		stage.setTitle("Kaufen");
-		stage.setScene(new Scene(root, 330, 140));
+		stage.setScene(new Scene(root, 290, 140));
 		stage.initModality(Modality.WINDOW_MODAL);
+		stage.setResizable(false);
 		stage.initOwner(window);
 
 		name.setText(item.getStringOrDefault("Name", ""));

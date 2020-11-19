@@ -57,8 +57,9 @@ public class ItemPurchaseDialog {
 
 		final Stage stage = new Stage();
 		stage.setTitle("Kaufen");
-		stage.setScene(new Scene(root, 330, 110));
+		stage.setScene(new Scene(root, 290, 110));
 		stage.initModality(Modality.WINDOW_MODAL);
+		stage.setResizable(false);
 		stage.initOwner(window);
 
 		name.setText(item.getStringOrDefault("Name", ""));

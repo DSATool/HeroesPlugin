@@ -56,6 +56,7 @@ public class AttributeEditor {
 		stage.setTitle("Bearbeiten");
 		stage.setScene(new Scene(root, 330, 110));
 		stage.initModality(Modality.WINDOW_MODAL);
+		stage.setResizable(false);
 		stage.initOwner(window);
 
 		ses.getValueFactory().setValue(attribute.getSes());

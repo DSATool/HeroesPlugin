@@ -20,6 +20,7 @@ import dsa41basis.fight.CloseCombatWeapon;
 import dsa41basis.fight.DefensiveWeapon;
 import dsa41basis.fight.RangedWeapon;
 import dsa41basis.util.DSAUtil;
+import dsa41basis.util.HeroUtil;
 import dsatool.gui.GUIUtil;
 import dsatool.resources.ResourceManager;
 import dsatool.resources.Settings;
@@ -50,29 +51,6 @@ import jsonant.value.JSONArray;
 import jsonant.value.JSONObject;
 
 public class FightController extends HeroTabController {
-	private static final JSONObject infight = new JSONObject(null);
-
-	static {
-		infight.put("Name", "Waffenlos");
-		final JSONObject TP = new JSONObject(infight);
-		TP.put("W6", 1);
-		TP.put("Trefferpunkte", 0);
-		TP.put("Ausdauerschaden", true);
-		infight.put("Trefferpunkte", TP);
-		final JSONObject TPKK = new JSONObject(infight);
-		TPKK.put("Schwellenwert", 10);
-		TPKK.put("Schadensschritte", 3);
-		infight.put("Trefferpunkte/Körperkraft", TPKK);
-		final JSONObject weaponModifiers = new JSONObject(infight);
-		infight.put("Waffenmodifikatoren", weaponModifiers);
-		final JSONArray distanceClasses = new JSONArray(null);
-		distanceClasses.add("H");
-		infight.put("Distanzklassen", distanceClasses);
-		final JSONArray weaponTypes = new JSONArray(null);
-		weaponTypes.add("Raufen");
-		weaponTypes.add("Ringen");
-		infight.put("Waffentypen", weaponTypes);
-	}
 
 	@FXML
 	private TableColumn<Armor, Integer> armorBackColumn;
@@ -168,7 +146,7 @@ public class FightController extends HeroTabController {
 		final JSONObject inventory = hero.getObj("Besitz");
 		final JSONArray items = inventory.getArr("Ausrüstung");
 
-		closeCombatTable.getItems().add(new CloseCombatWeapon(hero, infight, infight, closeCombatTalents, actualCloseCombatTalents));
+		closeCombatTable.getItems().add(new CloseCombatWeapon(hero, HeroUtil.infight, HeroUtil.infight, closeCombatTalents, actualCloseCombatTalents));
 
 		DSAUtil.foreach(item -> item.containsKey("Kategorien"), item -> {
 			final JSONArray categories = item.getArr("Kategorien");

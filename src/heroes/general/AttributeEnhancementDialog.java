@@ -72,6 +72,7 @@ public class AttributeEnhancementDialog {
 		stage.setTitle("Eigenschaft steigern");
 		stage.setScene(new Scene(root, 200, 170));
 		stage.initModality(Modality.WINDOW_MODAL);
+		stage.setResizable(false);
 		stage.initOwner(window);
 
 		final JSONObject attributes = ResourceManager.getResource("data/Eigenschaften");
@@ -104,9 +105,7 @@ public class AttributeEnhancementDialog {
 			stage.close();
 		});
 
-		cancelButton.setOnAction(event -> {
-			stage.close();
-		});
+		cancelButton.setOnAction(e -> stage.close());
 
 		nameLabel.setText(attributes.getObj(attribute.getName()).getString("Name"));
 		startLabel.setText(Integer.toString(attribute.getValue()));

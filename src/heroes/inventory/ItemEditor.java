@@ -55,8 +55,9 @@ public class ItemEditor {
 
 		final Stage stage = new Stage();
 		stage.setTitle("Bearbeiten");
-		stage.setScene(new Scene(root, 330, 113));
+		stage.setScene(new Scene(root, 290, 113));
 		stage.initModality(Modality.WINDOW_MODAL);
+		stage.setResizable(false);
 		stage.initOwner(window);
 
 		name.setText(item.getName());

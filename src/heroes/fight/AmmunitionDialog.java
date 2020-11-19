@@ -80,6 +80,7 @@ public class AmmunitionDialog {
 		stage.setTitle("Munition für " + weapon.getName());
 		stage.setScene(new Scene(root, 330, 55 + 27 * ammunitionTypes.size()));
 		stage.initModality(Modality.WINDOW_MODAL);
+		stage.setResizable(false);
 		stage.initOwner(window);
 
 		final HBox buttonRow = new HBox(2);
@@ -92,9 +93,7 @@ public class AmmunitionDialog {
 		});
 		final Button cancelButton = new Button("Abbrechen");
 		cancelButton.setPrefWidth(75);
-		cancelButton.setOnAction(e -> {
-			stage.close();
-		});
+		cancelButton.setOnAction(e -> stage.close());
 		buttonRow.getChildren().addAll(okButton, cancelButton);
 		root.getChildren().add(buttonRow);
 

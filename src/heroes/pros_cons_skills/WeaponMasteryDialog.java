@@ -136,6 +136,7 @@ public class WeaponMasteryDialog {
 		stage.setTitle("Waffenmeister bearbeiten");
 		stage.setScene(new Scene(root, 300, 575));
 		stage.initModality(Modality.WINDOW_MODAL);
+		stage.setResizable(false);
 		stage.initOwner(window);
 
 		talent.setItems(FXCollections.observableArrayList(skill.getFirstChoiceItems(false)));
@@ -245,9 +246,7 @@ public class WeaponMasteryDialog {
 			stage.close();
 		});
 
-		cancelButton.setOnAction(event -> {
-			stage.close();
-		});
+		cancelButton.setOnAction(e -> stage.close());
 
 		talent.setValue(skill.getDescription());
 		weapon.setValue(skill.getVariant());
@@ -302,7 +301,7 @@ public class WeaponMasteryDialog {
 				@Override
 				protected void createGraphic() {
 					final TextField t = new TextField();
-					createGraphic(t, () -> t.getText(), s -> t.setText(s));
+					createGraphic(t, t::getText, t::setText);
 				}
 			};
 
@@ -371,7 +370,7 @@ public class WeaponMasteryDialog {
 			@Override
 			protected void createGraphic() {
 				final TextField t = new TextField();
-				createGraphic(t, () -> t.getText(), s -> t.setText(s));
+				createGraphic(t, t::getText, t::setText);
 			}
 		});
 		((TableColumn<ManeuverOrPro, Integer>) table.getColumns().get(1))

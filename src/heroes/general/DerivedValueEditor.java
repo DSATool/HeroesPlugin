@@ -61,6 +61,7 @@ public class DerivedValueEditor {
 		stage.setTitle("Bearbeiten");
 		stage.setScene(new Scene(root, 330, needsSEs ? 82 : 56));
 		stage.initModality(Modality.WINDOW_MODAL);
+		stage.setResizable(false);
 		stage.initOwner(window);
 
 		ses.getValueFactory().setValue(value.getSes());

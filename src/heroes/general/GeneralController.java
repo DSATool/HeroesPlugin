@@ -91,17 +91,17 @@ public class GeneralController extends HeroTabController {
 	@FXML
 	private TableView<DerivedValue> derivedValuesTable;
 	@FXML
-	private TableColumn<Energy, Integer> energiesBoughtColumn;
+	private TableColumn<HeroEnergy, Integer> energiesBoughtColumn;
 	@FXML
-	private TableColumn<Energy, Double> energiesCurrentColumn;
+	private TableColumn<HeroEnergy, Double> energiesCurrentColumn;
 	@FXML
-	private TableColumn<Energy, Integer> energiesModifierColumn;
+	private TableColumn<HeroEnergy, Integer> energiesModifierColumn;
 	@FXML
-	private TableColumn<Energy, String> energiesNameColumn;
+	private TableColumn<HeroEnergy, String> energiesNameColumn;
 	@FXML
-	private TableColumn<Energy, Integer> energiesPermanentColumn;
+	private TableColumn<HeroEnergy, Integer> energiesPermanentColumn;
 	@FXML
-	private TableView<Energy> energiesTable;
+	private TableView<HeroEnergy> energiesTable;
 	@FXML
 	private ComboBox<String> eyecolor;
 	@FXML
@@ -235,7 +235,7 @@ public class GeneralController extends HeroTabController {
 		attributesValueColumn.setOnEditCommit(t -> {
 			if (HeroTabController.isEditable.get()) {
 				t.getRowValue().setValue(t.getNewValue());
-			} else {
+			} else if (!t.getNewValue().equals(t.getOldValue())) {
 				new AttributeEnhancementDialog(pane.getScene().getWindow(), t.getRowValue(), hero,
 						t.getNewValue());
 			}
@@ -247,12 +247,14 @@ public class GeneralController extends HeroTabController {
 			final TableRow<Attribute> row = new TableRow<>();
 
 			final ContextMenu attributesContextMenu = new ContextMenu();
+
 			final MenuItem attributesEnhanceItem = new MenuItem("Steigern");
 			attributesContextMenu.getItems().add(attributesEnhanceItem);
 			attributesEnhanceItem.setOnAction(o -> {
 				final Attribute attribute = row.getItem();
 				new AttributeEnhancementDialog(pane.getScene().getWindow(), attribute, hero, attribute.getValue() + 1);
 			});
+
 			final MenuItem attributesEditItem = new MenuItem("Bearbeiten");
 			attributesContextMenu.getItems().add(attributesEditItem);
 			attributesEditItem.setOnAction(o -> {
@@ -300,7 +302,7 @@ public class GeneralController extends HeroTabController {
 			if (HeroTabController.isEditable.get()) {
 				t.getRowValue().setBought(t.getNewValue());
 			} else {
-				final Energy energy = t.getRowValue();
+				final HeroEnergy energy = t.getRowValue();
 				new EnergyEnhancementDialog(pane.getScene().getWindow(), energy, hero, energy.getMax() - energy.getBought() + t.getNewValue());
 			}
 		});
@@ -309,13 +311,13 @@ public class GeneralController extends HeroTabController {
 		energiesCurrentColumn.setCellFactory(o -> new ColoredProgressBarTableCell<>());
 
 		energiesTable.setRowFactory(t -> {
-			final TableRow<Energy> row = new TableRow<>();
+			final TableRow<HeroEnergy> row = new TableRow<>();
 
 			final ContextMenu energiesContextMenu = new ContextMenu();
 			final MenuItem energiesEnhanceItem = new MenuItem("Zukaufen");
 			energiesContextMenu.getItems().add(energiesEnhanceItem);
 			energiesEnhanceItem.setOnAction(o -> {
-				final Energy value = row.getItem();
+				final HeroEnergy value = row.getItem();
 				if ("Karmaenergie".equals(value.getName())) {
 					final Alert alert = new Alert(AlertType.WARNING);
 					alert.setTitle("Zukauf nicht möglich");
@@ -389,7 +391,7 @@ public class GeneralController extends HeroTabController {
 
 		ap.valueProperty().addListener((o, oldV, newV) -> {
 			freeAp.getValueFactory().setValue(freeAp.getValue() + newV - oldV);
-			if (!update && oldV != newV) {
+			if (!update && !oldV.equals(newV)) {
 				final JSONArray history = getHero().getArr("Historie");
 				final JSONObject lastEntry = history.size() == 0 ? null : history.getObj(history.size() - 1);
 				final LocalDate currentDate = LocalDate.now();
@@ -531,16 +533,16 @@ public class GeneralController extends HeroTabController {
 			derivedValuesTable.getItems().add(new DerivedValue(derivedValue, derivedValues.getObj(derivedValue), hero));
 		}
 
-		energiesTable.getItems().add(new Energy("Lebensenergie", derivedValues.getObj("Lebensenergie"), hero, dsa41basis.hero.Energy.COLOR_LEP));
-		energiesTable.getItems().add(new Energy("Ausdauer", derivedValues.getObj("Ausdauer"), hero, dsa41basis.hero.Energy.COLOR_AUP));
+		energiesTable.getItems().add(new HeroEnergy("Lebensenergie", derivedValues.getObj("Lebensenergie"), hero, dsa41basis.hero.Energy.COLOR_LEP));
+		energiesTable.getItems().add(new HeroEnergy("Ausdauer", derivedValues.getObj("Ausdauer"), hero, dsa41basis.hero.Energy.COLOR_AUP));
 		if (HeroUtil.isMagical(hero)) {
 			energiesTable.getItems()
-					.add(new Energy("Astralenergie", derivedValues.getObj("Astralenergie"), hero, dsa41basis.hero.Energy.COLOR_ASP));
+					.add(new HeroEnergy("Astralenergie", derivedValues.getObj("Astralenergie"), hero, dsa41basis.hero.Energy.COLOR_ASP));
 		}
 		if (HeroUtil.isClerical(hero, false)) {
-			energiesTable.getItems().add(new Energy("Karmaenergie", new JSONObject(null), hero, dsa41basis.hero.Energy.COLOR_KAP));
+			energiesTable.getItems().add(new HeroEnergy("Karmaenergie", new JSONObject(null), hero, dsa41basis.hero.Energy.COLOR_KAP));
 		}
-		energiesTable.getItems().add(new Energy("Magieresistenz", derivedValues.getObj("Magieresistenz"), hero, dsa41basis.hero.Energy.COLOR_MR));
+		energiesTable.getItems().add(new HeroEnergy("Magieresistenz", derivedValues.getObj("Magieresistenz"), hero, dsa41basis.hero.Energy.COLOR_MR));
 
 		attributesTable.setMinHeight(attributesTable.getItems().size() * 28 + 26);
 		attributesTable.setMaxHeight(attributesTable.getItems().size() * 28 + 26);

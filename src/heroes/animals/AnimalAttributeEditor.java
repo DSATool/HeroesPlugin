@@ -57,6 +57,7 @@ public class AnimalAttributeEditor {
 		stage.setTitle("Bearbeiten");
 		stage.setScene(new Scene(root, 330, needsStart ? 82 : 56));
 		stage.initModality(Modality.WINDOW_MODAL);
+		stage.setResizable(false);
 		stage.initOwner(window);
 
 		if (!needsStart) {

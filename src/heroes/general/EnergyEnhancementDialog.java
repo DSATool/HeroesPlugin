@@ -55,7 +55,7 @@ public class EnergyEnhancementDialog {
 	@FXML
 	private ReactiveSpinner<Integer> ap;
 
-	public EnergyEnhancementDialog(final Window window, final Energy energy, final JSONObject hero, final int initialTarget) {
+	public EnergyEnhancementDialog(final Window window, final HeroEnergy energy, final JSONObject hero, final int initialTarget) {
 		final FXMLLoader fxmlLoader = new FXMLLoader();
 
 		fxmlLoader.setController(this);
@@ -70,6 +70,7 @@ public class EnergyEnhancementDialog {
 		stage.setTitle("Zukauf");
 		stage.setScene(new Scene(root, 200, 170));
 		stage.initModality(Modality.WINDOW_MODAL);
+		stage.setResizable(false);
 		stage.initOwner(window);
 
 		enhanceLabel.setText(" zukaufen:");
@@ -101,9 +102,7 @@ public class EnergyEnhancementDialog {
 			stage.close();
 		});
 
-		cancelButton.setOnAction(event -> {
-			stage.close();
-		});
+		cancelButton.setOnAction(e -> stage.close());
 
 		nameLabel.setText(energy.getName());
 		startLabel.setText(Integer.toString(energy.getMax()));
@@ -116,7 +115,7 @@ public class EnergyEnhancementDialog {
 		stage.show();
 	}
 
-	private int getCalculatedAP(final Energy energy, final JSONObject hero) {
+	private int getCalculatedAP(final HeroEnergy energy, final JSONObject hero) {
 		final int SELevel = energy.getBought() + Math.min(target.getValue() - energy.getMax(), ses.getValue());
 		return DSAUtil.getEnhancementCost(energy.getEnhancementCost() - 1, energy.getBought(), SELevel)
 				+ DSAUtil.getEnhancementCost(energy.getEnhancementCost(), SELevel, target.getValue() - energy.getMax() + energy.getBought());

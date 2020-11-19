@@ -148,6 +148,7 @@ public class ArtifactEditor {
 		stage.setTitle("Bearbeiten");
 		stage.setScene(new Scene(root, 330, 390));
 		stage.initModality(Modality.WINDOW_MODAL);
+		stage.setResizable(false);
 		stage.initOwner(window);
 
 		final JSONObject triggers = ResourceManager.getResource("data/Artefakt_Ausloeser");
@@ -185,7 +186,7 @@ public class ArtifactEditor {
 				@Override
 				protected void createGraphic() {
 					final TextField t = new TextField();
-					createGraphic(t, () -> t.getText(), s -> t.setText(s));
+					createGraphic(t, t::getText, t::setText);
 				}
 			};
 			cell.itemProperty().addListener((no, ov, nv) -> {
@@ -217,7 +218,7 @@ public class ArtifactEditor {
 				@Override
 				protected void createGraphic() {
 					final TextField t = new TextField();
-					createGraphic(t, () -> t.getText(), s -> t.setText(s));
+					createGraphic(t, t::getText, t::setText);
 				}
 			};
 			cell.itemProperty().addListener((no, ov, nv) -> {

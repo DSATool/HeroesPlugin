@@ -19,9 +19,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import dsa41basis.hero.AttackTable;
+import dsa41basis.fight.AttackTable;
 import dsa41basis.hero.Attribute;
 import dsa41basis.inventory.InventoryItem;
+import dsa41basis.ui.hero.BasicValuesController;
+import dsa41basis.ui.hero.BasicValuesController.CharacterType;
 import dsa41basis.util.DSAUtil;
 import dsa41basis.util.HeroUtil;
 import dsatool.gui.GUIUtil;
@@ -33,18 +35,14 @@ import dsatool.util.ErrorLogger;
 import dsatool.util.Util;
 import heroes.ui.HeroTabController;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanBinding;
-import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -109,10 +107,6 @@ public class AnimalController {
 			actual.notifyListeners(null);
 			this.bought.set(bought);
 		}
-	}
-
-	public enum AnimalType {
-		HORSE, MAGIC, ANIMAL
 	}
 
 	public class ProConSkill {
@@ -187,118 +181,6 @@ public class AnimalController {
 	@FXML
 	private ReactiveSpinner<Integer> weight;
 	@FXML
-	private Node boughtLabel;
-	@FXML
-	private ReactiveSpinner<Integer> iniBase;
-	@FXML
-	private ReactiveSpinner<Integer> iniDiceNum;
-	@FXML
-	private ReactiveSpinner<Integer> iniDiceType;
-	@FXML
-	private ReactiveSpinner<Integer> iniMod;
-	@FXML
-	private ComboBox<String> mrChoice;
-	@FXML
-	private ReactiveSpinner<Integer> mr;
-	@FXML
-	private Node mrBox;
-	@FXML
-	private ReactiveSpinner<Integer> mrMind;
-	@FXML
-	private ReactiveSpinner<Integer> mrBody;
-	@FXML
-	private ReactiveSpinner<Integer> mrMod;
-	@FXML
-	private Node mrModBox;
-	@FXML
-	private ReactiveSpinner<Integer> mrMindMod;
-	@FXML
-	private ReactiveSpinner<Integer> mrBodyMod;
-	@FXML
-	private ReactiveSpinner<Integer> mrBought;
-	@FXML
-	private Node mrBoughtBox;
-	@FXML
-	private ReactiveSpinner<Integer> mrMindBought;
-	@FXML
-	private ReactiveSpinner<Integer> mrBodyBought;
-	@FXML
-	private ComboBox<String> speedChoice;
-	@FXML
-	private ReactiveSpinner<Double> speed;
-	@FXML
-	private Node speedBox;
-	@FXML
-	private ReactiveSpinner<Double> speedGround;
-	@FXML
-	private ReactiveSpinner<Double> speedAir;
-	@FXML
-	private ReactiveSpinner<Double> speedMod;
-	@FXML
-	private Node speedModBox;
-	@FXML
-	private ReactiveSpinner<Double> speedGroundMod;
-	@FXML
-	private ReactiveSpinner<Double> speedAirMod;
-	@FXML
-	private ReactiveSpinner<Double> speedBought;
-	@FXML
-	private Node speedBoughtBox;
-	@FXML
-	private ReactiveSpinner<Double> speedGroundBought;
-	@FXML
-	private ReactiveSpinner<Double> speedAirBought;
-	@FXML
-	private Node horseSpeedBox;
-	@FXML
-	private ReactiveSpinner<Integer> speedWalk;
-	@FXML
-	private ReactiveSpinner<Integer> speedTrot;
-	@FXML
-	private ReactiveSpinner<Integer> speedGallop;
-	@FXML
-	private Node horseSpeedModBox;
-	@FXML
-	private ReactiveSpinner<Integer> speedWalkMod;
-	@FXML
-	private ReactiveSpinner<Integer> speedTrotMod;
-	@FXML
-	private ReactiveSpinner<Integer> speedGallopMod;
-	@FXML
-	private Label staminaLabel;
-	@FXML
-	private Node staminaBox;
-	@FXML
-	private Node staminaModBox;
-	@FXML
-	private ReactiveSpinner<Integer> staminaTrot;
-	@FXML
-	private ReactiveSpinner<Integer> staminaGallop;
-	@FXML
-	private ReactiveSpinner<Integer> staminaTrotMod;
-	@FXML
-	private ReactiveSpinner<Integer> staminaGallopMod;
-	@FXML
-	private Label feedLabel;
-	@FXML
-	private Node feedBox;
-	@FXML
-	private ReactiveSpinner<Integer> feedBase;
-	@FXML
-	private ReactiveSpinner<Integer> feedLight;
-	@FXML
-	private ReactiveSpinner<Integer> feedMedium;
-	@FXML
-	private ReactiveSpinner<Integer> feedHeavy;
-	@FXML
-	private Node apBox;
-	@FXML
-	private ReactiveSpinner<Integer> ap;
-	@FXML
-	private ReactiveSpinner<Integer> freeAp;
-	@FXML
-	private ReactiveSpinner<Integer> rkw;
-	@FXML
 	private HBox attributesBox;
 	@FXML
 	private TableColumn<AnimalAttribute, Integer> attributesModifierColumn;
@@ -361,16 +243,16 @@ public class AnimalController {
 	@FXML
 	private TitledPane pane;
 	@FXML
-	private VBox statsAndAttacksBox;
+	private VBox stack;
 	@FXML
-	private GridPane grid;
+	private VBox statsAndAttacksBox;
 
 	private final JSONObject hero;
 	private final JSONObject actualAnimal;
-	private final AnimalType type;
+	private final CharacterType type;
 	private final AttackTable attacksTable;
 
-	public AnimalController(final JSONObject hero, final JSONObject animal, final AnimalType type) {
+	public AnimalController(final JSONObject hero, final JSONObject animal, final CharacterType type) {
 		final FXMLLoader fxmlLoader = new FXMLLoader();
 
 		fxmlLoader.setController(this);
@@ -381,45 +263,22 @@ public class AnimalController {
 			ErrorLogger.logError(e);
 		}
 
-		final ObservableList<Node> controls = grid.getChildren();
-		if (type == AnimalType.HORSE) {
-			((VBox) statsTable.getParent()).getChildren().remove(statsTable);
-			controls.remove(mr);
-			controls.remove(speed);
-			controls.remove(speedBox);
-			controls.remove(speedMod);
-			controls.remove(speedModBox);
-			controls.remove(speedBought);
-			controls.remove(speedBoughtBox);
-			mrChoice.setDisable(true);
-			speedChoice.setDisable(true);
+		if (type == CharacterType.MAGIC_ANIMAL) {
+			GridPane.setRowIndex(attributesBox, 7);
+			GridPane.setRowIndex(skillsBox, 8);
+			GridPane.setRowIndex(equipmentTable, 9);
 		} else {
-			controls.remove(horseSpeedBox);
-			controls.remove(horseSpeedModBox);
-			controls.remove(staminaLabel);
-			controls.remove(staminaBox);
-			controls.remove(staminaModBox);
-			controls.remove(feedLabel);
-			controls.remove(feedBox);
-			if (type == AnimalType.MAGIC) {
-				GridPane.setRowIndex(attributesBox, 7);
-				GridPane.setRowIndex(skillsBox, 8);
-				GridPane.setRowIndex(equipmentTable, 9);
-			} else {
-				GridPane.setRowIndex(attributesBox, 6);
-				GridPane.setRowIndex(skillsBox, 7);
-				GridPane.setRowIndex(equipmentTable, 8);
-				controls.remove(speedBought);
-				controls.remove(speedBoughtBox);
-			}
-		}
-		if (type != AnimalType.MAGIC) {
-			controls.remove(apBox);
+			GridPane.setRowIndex(attributesBox, 6);
+			GridPane.setRowIndex(skillsBox, 7);
+			GridPane.setRowIndex(equipmentTable, 8);
 			ritualsBox.setManaged(false);
 			ritualsBox.setVisible(false);
-			controls.remove(boughtLabel);
-		}
 
+			if (type == CharacterType.HORSE) {
+				((VBox) statsTable.getParent()).getChildren().remove(statsTable);
+			}
+
+		}
 		pane.textProperty().bindBidirectional(name.textProperty());
 
 		final ContextMenu contextMenu = new ContextMenu();
@@ -448,13 +307,18 @@ public class AnimalController {
 		actualAnimal = animal;
 		this.type = type;
 
+		final BasicValuesController basicValues = new BasicValuesController(HeroTabController.isEditable.not(), type);
+		basicValues.setCharacter(animal);
+		stack.getChildren().add(1, basicValues.getControl());
+
 		initBiography();
 		initAttributes();
 		initStats();
 		initProConSkills();
 		initEquipment();
 
-		attacksTable = new AttackTable(HeroTabController.isEditable, attributesBox.widthProperty().subtract(2).divide(1.667), type == AnimalType.MAGIC);
+		attacksTable = new AttackTable(HeroTabController.isEditable, attributesBox.widthProperty().subtract(2).divide(1.667),
+				type == CharacterType.MAGIC_ANIMAL);
 		attacksTable.setCharacter(animal);
 		statsAndAttacksBox.getChildren().add(attacksTable.getControl());
 
@@ -465,46 +329,6 @@ public class AnimalController {
 		gender.disableProperty().bind(HeroTabController.isEditable.not());
 		size.disableProperty().bind(HeroTabController.isEditable.not());
 		weight.disableProperty().bind(HeroTabController.isEditable.not());
-		iniBase.disableProperty().bind(HeroTabController.isEditable.not());
-		iniDiceNum.disableProperty().bind(HeroTabController.isEditable.not());
-		iniDiceType.disableProperty().bind(HeroTabController.isEditable.not());
-		iniMod.disableProperty().bind(HeroTabController.isEditable.not());
-		mrChoice.disableProperty().bind(HeroTabController.isEditable.not().or(new SimpleBooleanProperty(type == AnimalType.HORSE)));
-		mr.disableProperty().bind(HeroTabController.isEditable.not());
-		mrMind.disableProperty().bind(HeroTabController.isEditable.not());
-		mrBody.disableProperty().bind(HeroTabController.isEditable.not());
-		mrBought.disableProperty().bind(HeroTabController.isEditable.not());
-		mrMindBought.disableProperty().bind(HeroTabController.isEditable.not());
-		mrBodyBought.disableProperty().bind(HeroTabController.isEditable.not());
-		mrMod.disableProperty().bind(HeroTabController.isEditable.not());
-		mrMindMod.disableProperty().bind(HeroTabController.isEditable.not());
-		mrBodyMod.disableProperty().bind(HeroTabController.isEditable.not());
-		speedChoice.disableProperty().bind(HeroTabController.isEditable.not().or(new SimpleBooleanProperty(type == AnimalType.HORSE)));
-		speed.disableProperty().bind(HeroTabController.isEditable.not());
-		speedGround.disableProperty().bind(HeroTabController.isEditable.not());
-		speedAir.disableProperty().bind(HeroTabController.isEditable.not());
-		speedBought.disableProperty().bind(HeroTabController.isEditable.not());
-		speedGroundBought.disableProperty().bind(HeroTabController.isEditable.not());
-		speedAirBought.disableProperty().bind(HeroTabController.isEditable.not());
-		speedMod.disableProperty().bind(HeroTabController.isEditable.not());
-		speedGroundMod.disableProperty().bind(HeroTabController.isEditable.not());
-		speedAirMod.disableProperty().bind(HeroTabController.isEditable.not());
-		speedWalk.disableProperty().bind(HeroTabController.isEditable.not());
-		speedTrot.disableProperty().bind(HeroTabController.isEditable.not());
-		speedGallop.disableProperty().bind(HeroTabController.isEditable.not());
-		speedWalkMod.disableProperty().bind(HeroTabController.isEditable.not());
-		speedTrotMod.disableProperty().bind(HeroTabController.isEditable.not());
-		speedGallopMod.disableProperty().bind(HeroTabController.isEditable.not());
-		staminaTrot.disableProperty().bind(HeroTabController.isEditable.not());
-		staminaGallop.disableProperty().bind(HeroTabController.isEditable.not());
-		staminaTrotMod.disableProperty().bind(HeroTabController.isEditable.not());
-		staminaGallopMod.disableProperty().bind(HeroTabController.isEditable.not());
-		feedBase.disableProperty().bind(HeroTabController.isEditable.not());
-		feedLight.disableProperty().bind(HeroTabController.isEditable.not());
-		feedMedium.disableProperty().bind(HeroTabController.isEditable.not());
-		feedHeavy.disableProperty().bind(HeroTabController.isEditable.not());
-		freeAp.disableProperty().bind(HeroTabController.isEditable.not());
-		rkw.disableProperty().bind(HeroTabController.isEditable.not());
 		attributesTable.editableProperty().bind(HeroTabController.isEditable);
 		statsTable.editableProperty().bind(HeroTabController.isEditable);
 		proConsTable.editableProperty().bind(HeroTabController.isEditable);
@@ -529,7 +353,7 @@ public class AnimalController {
 	@FXML
 	public void addProCon() {
 		final String proOrConName = proConsList.getSelectionModel().getSelectedItem();
-		final JSONObject proOrCon = ResourceManager.getResource("data/Tiereigenarten").getObj(type == AnimalType.HORSE ? "Reittiere" : "Allgemein")
+		final JSONObject proOrCon = ResourceManager.getResource("data/Tiereigenarten").getObj(type == CharacterType.HORSE ? "Reittiere" : "Allgemein")
 				.getObj(proOrConName);
 		final JSONObject actualProsOrCons = actualAnimal.getObj("Eigenarten");
 		if (proOrCon.containsKey("Auswahl") || proOrCon.containsKey("Freitext")) {
@@ -552,7 +376,7 @@ public class AnimalController {
 	@FXML
 	public void addSkill() {
 		final String skillName = skillsList.getSelectionModel().getSelectedItem();
-		final JSONObject skill = ResourceManager.getResource("data/Tierfertigkeiten").getObj(type == AnimalType.HORSE ? "Reittiere" : "Allgemein")
+		final JSONObject skill = ResourceManager.getResource("data/Tierfertigkeiten").getObj(type == CharacterType.HORSE ? "Reittiere" : "Allgemein")
 				.getObj(skillName);
 		final JSONObject actualSkills = actualAnimal.getObj("Fertigkeiten");
 		if (skill.containsKey("Auswahl") || skill.containsKey("Freitext")) {
@@ -578,7 +402,7 @@ public class AnimalController {
 		attributesModifierColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99, 1, false));
 		attributesModifierColumn.setOnEditCommit(t -> t.getRowValue().setManualModifier(t.getNewValue()));
 
-		if (type == AnimalType.HORSE) {
+		if (type == CharacterType.HORSE) {
 			final JSONObject attributes = actualAnimal.getObj("Eigenschaften");
 			for (final String attribute : new String[] { "KO", "KK" }) {
 				attributesTable.getItems().add(new AnimalAttribute(attribute, attributes.getObj(attribute)));
@@ -605,7 +429,7 @@ public class AnimalController {
 			contextMenu.getItems().add(attributesContextMenuItem);
 			attributesContextMenuItem.setOnAction(o -> {
 				final Attribute attribute = row.getItem();
-				new AnimalAttributeEditor(pane.getScene().getWindow(), attribute, type == AnimalType.MAGIC);
+				new AnimalAttributeEditor(pane.getScene().getWindow(), attribute, type == CharacterType.MAGIC_ANIMAL);
 			});
 			row.setContextMenu(contextMenu);
 
@@ -630,8 +454,6 @@ public class AnimalController {
 			biography.put("Geschlecht", gender.getValue());
 			biography.put("Größe", size.getValue());
 			biography.put("Gewicht", weight.getValue());
-			biography.put("Abenteuerpunkte", ap.getValue());
-			biography.put("Abenteuerpunkte-Guthaben", freeAp.getValue());
 
 			biography.notifyListeners(null);
 		};
@@ -653,18 +475,6 @@ public class AnimalController {
 		size.valueProperty().addListener(biographyListener);
 		weight.getValueFactory().setValue(biography.getIntOrDefault("Gewicht", 0));
 		weight.valueProperty().addListener(biographyListener);
-
-		ap.getValueFactory().setValue(biography.getIntOrDefault("Abenteuerpunkte", 0));
-		ap.valueProperty().addListener((o, oldV, newV) -> freeAp.getValueFactory().setValue(freeAp.getValue() + newV - oldV));
-		freeAp.getValueFactory().setValue(biography.getIntOrDefault("Abenteuerpunkte-Guthaben", 0));
-		freeAp.valueProperty().addListener(biographyListener);
-		rkw.getValueFactory().setValue(actualAnimal.getObj("Basiswerte").getObj("Ritualkenntnis (Vertrautenmagie)").getIntOrDefault("TaW", 3));
-		rkw.valueProperty().addListener((o, oldV, newV) -> {
-			if (oldV == newV || newV == null || oldV == null) return;
-			final JSONObject ritualKnowledge = actualAnimal.getObj("Basiswerte").getObj("Ritualkenntnis (Vertrautenmagie)");
-			ritualKnowledge.put("TaW", newV);
-			ritualKnowledge.notifyListeners(null);
-		});
 	}
 
 	private void initEquipment() {
@@ -677,7 +487,7 @@ public class AnimalController {
 				@Override
 				protected void createGraphic() {
 					final TextField t = new TextField();
-					createGraphic(t, () -> t.getText(), s -> t.setText(s));
+					createGraphic(t, t::getText, t::setText);
 				}
 			};
 			return cell;
@@ -693,7 +503,7 @@ public class AnimalController {
 				@Override
 				protected void createGraphic() {
 					final TextField t = new TextField();
-					createGraphic(t, () -> t.getText(), s -> t.setText(s));
+					createGraphic(t, t::getText, t::setText);
 				}
 			};
 			return cell;
@@ -718,6 +528,7 @@ public class AnimalController {
 				final ClipboardContent content = new ClipboardContent();
 				content.put(DataFormat.PLAIN_TEXT, row.getIndex());
 				dragBoard.setContent(content);
+				e.consume();
 			});
 
 			row.setOnDragDropped(e -> {
@@ -751,7 +562,7 @@ public class AnimalController {
 					updateLocationMenu(row.getItem().getItem(), location);
 				}
 			};
-			final JSONArray[] animals = new JSONArray[] { hero.getArr("Tiere") };
+			final JSONArray[] animals = { hero.getArr("Tiere") };
 			row.itemProperty().addListener((o, oldV, newV) -> {
 				if (newV != null) {
 					updateLocationMenu(newV.getItem(), location);
@@ -806,7 +617,7 @@ public class AnimalController {
 			@Override
 			protected void createGraphic() {
 				final TextField t = new TextField();
-				createGraphic(t, () -> t.getText(), s -> t.setText(s));
+				createGraphic(t, t::getText, t::setText);
 			}
 
 			@Override
@@ -829,7 +640,7 @@ public class AnimalController {
 				final JSONObject actual = actualAnimal.getObj("Eigenarten");
 				final ProConSkill item = row.getItem();
 				final String proOrConName = item.getName();
-				final JSONObject proOrCon = ResourceManager.getResource("data/Tiereigenarten").getObj(type == AnimalType.HORSE ? "Reittiere" : "Allgemein")
+				final JSONObject proOrCon = ResourceManager.getResource("data/Tiereigenarten").getObj(type == CharacterType.HORSE ? "Reittiere" : "Allgemein")
 						.getObj(proOrConName);
 				if (proOrCon.containsKey("Auswahl") || proOrCon.containsKey("Freitext")) {
 					actual.getArr(proOrConName).remove(item.actual);
@@ -845,7 +656,7 @@ public class AnimalController {
 
 		actualAnimal.getObj("Eigenarten").addListener(o -> updateProCons());
 
-		if (type == AnimalType.MAGIC) {
+		if (type == CharacterType.MAGIC_ANIMAL) {
 			GUIUtil.autosizeTable(ritualsTable, 0, 2);
 			ritualNameColumn.setCellValueFactory(p -> new ReadOnlyObjectWrapper<>(p.getValue()));
 
@@ -889,7 +700,7 @@ public class AnimalController {
 			@Override
 			protected void createGraphic() {
 				final TextField t = new TextField();
-				createGraphic(t, () -> t.getText(), s -> t.setText(s));
+				createGraphic(t, t::getText, t::setText);
 			}
 
 			@Override
@@ -910,7 +721,7 @@ public class AnimalController {
 				final JSONObject actual = actualAnimal.getObj("Fertigkeiten");
 				final ProConSkill item = row.getItem();
 				final String skillName = item.getName();
-				final JSONObject skill = ResourceManager.getResource("data/Tierfertigkeiten").getObj(type == AnimalType.HORSE ? "Reittiere" : "Allgemein")
+				final JSONObject skill = ResourceManager.getResource("data/Tierfertigkeiten").getObj(type == CharacterType.HORSE ? "Reittiere" : "Allgemein")
 						.getObj(skillName);
 				if (skill.containsKey("Auswahl") || skill.containsKey("Freitext")) {
 					actual.getArr(skillName).remove(item.actual);
@@ -935,193 +746,46 @@ public class AnimalController {
 		statsTable.prefWidthProperty().bind(attributesBox.widthProperty().subtract(2).divide(1.667));
 		final JSONObject baseValues = actualAnimal.getObj("Basiswerte");
 
-		final JSONObject ini = baseValues.getObj("Initiative");
-		iniBase.getValueFactory().setValue(ini.getIntOrDefault("Basis", 0));
-		iniBase.valueProperty().addListener((o, oldV, newV) -> ini.put("Basis", newV));
-		iniDiceNum.getValueFactory().setValue(ini.getIntOrDefault("Würfel:Anzahl", 1));
-		iniDiceNum.valueProperty().addListener((o, oldV, newV) -> ini.put("WürfelAnzahl", newV));
-		iniDiceType.getValueFactory().setValue(ini.getIntOrDefault("Würfel:Typ", 6));
-		iniDiceType.valueProperty().addListener((o, oldV, newV) -> ini.put("Würfel:Typ", newV));
-		iniMod.getValueFactory().setValue(ini.getIntOrDefault("Modifikator", 0));
-		iniMod.valueProperty().addListener((o, oldV, newV) -> ini.put("Modifikator", newV));
+		GUIUtil.autosizeTable(statsTable, 0, 2);
+		GUIUtil.cellValueFactories(statsTable, "name", "value", "bought", "manualModifier", "current");
 
-		mrChoice.setItems(FXCollections.observableArrayList("Magieresistenz", "MR (Geist/Körper)"));
-		final JSONObject actualMr = baseValues.getObj("Magieresistenz");
+		statsValueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 999, 1, false));
+		statsValueColumn.setOnEditCommit(t -> t.getRowValue().setValue(t.getNewValue()));
+		statsModifierColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99, 1, false));
+		statsModifierColumn.setOnEditCommit(t -> t.getRowValue().setManualModifier(t.getNewValue()));
 
-		final BooleanBinding isSingleMR = mrChoice.getSelectionModel().selectedItemProperty().isEqualTo("Magieresistenz");
-		final BooleanExpression hasMRMod = new SimpleBooleanProperty(type == AnimalType.MAGIC);
-		mr.managedProperty().bind(isSingleMR);
-		mr.visibleProperty().bind(isSingleMR);
-		mrBox.managedProperty().bind(isSingleMR.not());
-		mrBox.visibleProperty().bind(isSingleMR.not());
-		mrMod.managedProperty().bind(hasMRMod.and(isSingleMR));
-		mrMod.visibleProperty().bind(hasMRMod.and(isSingleMR));
-		mrModBox.managedProperty().bind(hasMRMod.and(isSingleMR.not()));
-		mrModBox.visibleProperty().bind(hasMRMod.and(isSingleMR.not()));
-		mrBought.managedProperty().bind(hasMRMod.and(isSingleMR));
-		mrBought.visibleProperty().bind(hasMRMod.and(isSingleMR));
-		mrBoughtBox.managedProperty().bind(hasMRMod.and(isSingleMR.not()));
-		mrBoughtBox.visibleProperty().bind(hasMRMod.and(isSingleMR.not()));
-
-		isSingleMR.addListener((o, oldV, newV) -> {
-			if (newV) {
-				actualMr.removeKey("Geist");
-			} else {
-				actualMr.put("Geist", actualMr.getIntOrDefault("Wert", 0));
-			}
-		});
-
-		mrChoice.getSelectionModel().select(actualMr.containsKey("Geist") || type == AnimalType.HORSE ? 1 : 0);
-		mr.getValueFactory().setValue(actualMr.getIntOrDefault("Wert", 0));
-		mr.valueProperty().addListener((o, oldV, newV) -> actualMr.put("Wert", newV));
-		mrMind.getValueFactory().setValue(actualMr.getIntOrDefault("Geist", 0));
-		mrMind.valueProperty().addListener((o, oldV, newV) -> actualMr.put("Geist", newV));
-		mrBody.getValueFactory().setValue(actualMr.getIntOrDefault("Körper", 0));
-		mrBody.valueProperty().addListener((o, oldV, newV) -> actualMr.put("Körper", newV));
-		if (type == AnimalType.MAGIC) {
-			mrMod.getValueFactory().setValue(actualMr.getIntOrDefault("Modifikator", 0));
-			mrMod.valueProperty().addListener((o, oldV, newV) -> actualMr.put("Modifikator", newV));
-			mrMindMod.getValueFactory().setValue(actualMr.getIntOrDefault("Geist:Modifikator", 0));
-			mrMindMod.valueProperty().addListener((o, oldV, newV) -> actualMr.put("Geist:Modifikator", newV));
-			mrBodyMod.getValueFactory().setValue(actualMr.getIntOrDefault("Körper:Modifikator", 0));
-			mrBodyMod.valueProperty().addListener((o, oldV, newV) -> actualMr.put("Körper:Modifikator", newV));
-			mrBought.getValueFactory().setValue(actualMr.getIntOrDefault("Kauf", 0));
-			mrBought.valueProperty().addListener((o, oldV, newV) -> actualMr.put("Kauf", newV));
-			mrMindBought.getValueFactory().setValue(actualMr.getIntOrDefault("Geist:Kauf", 0));
-			mrMindBought.valueProperty().addListener((o, oldV, newV) -> actualMr.put("Geist:Kauf", newV));
-			mrBodyBought.getValueFactory().setValue(actualMr.getIntOrDefault("Körper:Kauf", 0));
-			mrBodyBought.valueProperty().addListener((o, oldV, newV) -> actualMr.put("Körper:Kauf", newV));
+		for (final String attribute : new String[] { "Loyalität", "Lebensenergie", "Ausdauer" }) {
+			statsTable.getItems().add(new AnimalAttribute(attribute, baseValues.getObj(attribute)));
 		}
-
-		if (type == AnimalType.HORSE) {
-			speedChoice.setItems(FXCollections.observableArrayList("GS (Schritt/Trab/Galopp)"));
-			speedChoice.getSelectionModel().select(0);
-			final JSONObject speed = baseValues.getObj("Geschwindigkeit");
-			speedWalk.getValueFactory().setValue(speed.getIntOrDefault("Schritt", 0));
-			speedWalk.valueProperty().addListener((o, oldV, newV) -> speed.put("Schritt", newV));
-			speedTrot.getValueFactory().setValue(speed.getIntOrDefault("Trab", 0));
-			speedTrot.valueProperty().addListener((o, oldV, newV) -> speed.put("Trab", newV));
-			speedGallop.getValueFactory().setValue(speed.getIntOrDefault("Galopp", 0));
-			speedGallop.valueProperty().addListener((o, oldV, newV) -> speed.put("Galopp", newV));
-			speedWalkMod.getValueFactory().setValue(speed.getIntOrDefault("Schritt:Modifikator", 0));
-			speedWalkMod.valueProperty().addListener((o, oldV, newV) -> speed.put("Schritt:Modifikator", newV));
-			speedTrotMod.getValueFactory().setValue(speed.getIntOrDefault("Trab:Modifikator", 0));
-			speedTrotMod.valueProperty().addListener((o, oldV, newV) -> speed.put("Trab:Modifikator", newV));
-			speedGallopMod.getValueFactory().setValue(speed.getIntOrDefault("Galopp:Modifikator", 0));
-			speedGallopMod.valueProperty().addListener((o, oldV, newV) -> speed.put("Galopp:Modifikator", newV));
-
-			final JSONObject stamina = baseValues.getObj("Ausdauer");
-			staminaTrot.getValueFactory().setValue(stamina.getIntOrDefault("Trab", 0));
-			staminaTrot.valueProperty().addListener((o, oldV, newV) -> stamina.put("Trab", newV));
-			staminaGallop.getValueFactory().setValue(stamina.getIntOrDefault("Galopp", 0));
-			staminaGallop.valueProperty().addListener((o, oldV, newV) -> stamina.put("Galopp", newV));
-			staminaTrotMod.getValueFactory().setValue(stamina.getIntOrDefault("Trab:Modifikator", 0));
-			staminaTrotMod.valueProperty().addListener((o, oldV, newV) -> stamina.put("Trab:Modifikator", newV));
-			staminaGallopMod.getValueFactory().setValue(stamina.getIntOrDefault("Galopp:Modifikator", 0));
-			staminaGallopMod.valueProperty().addListener((o, oldV, newV) -> stamina.put("Galopp:Modifikator", newV));
-
-			final JSONObject feed = baseValues.getObj("Futterbedarf");
-			feedBase.getValueFactory().setValue(feed.getIntOrDefault("Erhaltung", 0));
-			feedBase.valueProperty().addListener((o, oldV, newV) -> feed.put("Erhaltung", newV));
-			feedLight.getValueFactory().setValue(feed.getIntOrDefault("Leicht", 0));
-			feedLight.valueProperty().addListener((o, oldV, newV) -> feed.put("Leicht", newV));
-			feedMedium.getValueFactory().setValue(feed.getIntOrDefault("Mittel", 0));
-			feedMedium.valueProperty().addListener((o, oldV, newV) -> feed.put("Mittel", newV));
-			feedHeavy.getValueFactory().setValue(feed.getIntOrDefault("Schwer", 0));
-			feedHeavy.valueProperty().addListener((o, oldV, newV) -> feed.put("Schwer", newV));
-		} else {
-			speedChoice.setItems(FXCollections.observableArrayList("Geschwindigkeit", "GS (Boden/Luft)"));
-
-			final BooleanBinding isSingleSpeed = speedChoice.getSelectionModel().selectedItemProperty().isEqualTo("Geschwindigkeit");
-			speed.managedProperty().bind(isSingleSpeed);
-			speed.visibleProperty().bind(isSingleSpeed);
-			speedBox.managedProperty().bind(isSingleSpeed.not());
-			speedBox.visibleProperty().bind(isSingleSpeed.not());
-			speedMod.managedProperty().bind(isSingleSpeed);
-			speedMod.visibleProperty().bind(isSingleSpeed);
-			speedModBox.managedProperty().bind(isSingleSpeed.not());
-			speedModBox.visibleProperty().bind(isSingleSpeed.not());
-			speedBought.managedProperty().bind(isSingleSpeed);
-			speedBought.visibleProperty().bind(isSingleSpeed);
-			speedBoughtBox.managedProperty().bind(isSingleSpeed.not());
-			speedBoughtBox.visibleProperty().bind(isSingleSpeed.not());
-
-			final JSONObject actualSpeed = baseValues.getObj("Geschwindigkeit");
-			isSingleSpeed.addListener((o, oldV, newV) -> {
-				if (newV) {
-					actualSpeed.removeKey("Boden");
-				} else {
-					actualSpeed.put("Boden", actualSpeed.getDoubleOrDefault("Wert", 0.0));
-				}
-			});
-			speedChoice.getSelectionModel().select(actualSpeed.containsKey("Boden") ? 1 : 0);
-
-			speed.getValueFactory().setValue(actualSpeed.getDoubleOrDefault("Wert", 0.0));
-			speed.valueProperty().addListener((o, oldV, newV) -> actualSpeed.put("Wert", newV));
-			speedGround.getValueFactory().setValue(actualSpeed.getDoubleOrDefault("Boden", 0.0));
-			speedGround.valueProperty().addListener((o, oldV, newV) -> actualSpeed.put("Boden", newV));
-			speedAir.getValueFactory().setValue(actualSpeed.getDoubleOrDefault("Luft", 0.0));
-			speedAir.valueProperty().addListener((o, oldV, newV) -> actualSpeed.put("Luft", newV));
-			speedMod.getValueFactory().setValue(actualSpeed.getDoubleOrDefault("Modifikator", 0.0));
-			speedMod.valueProperty().addListener((o, oldV, newV) -> actualSpeed.put("Modifikator", newV));
-			speedGroundMod.getValueFactory().setValue(actualSpeed.getDoubleOrDefault("Boden:Modifikator", 0.0));
-			speedGroundMod.valueProperty().addListener((o, oldV, newV) -> actualSpeed.put("Boden:Modifikator", newV));
-			speedAirMod.getValueFactory().setValue(actualSpeed.getDoubleOrDefault("Luft:Modifikator", 0.0));
-			speedAirMod.valueProperty().addListener((o, oldV, newV) -> actualSpeed.put("Luft:Modifikator", newV));
-
-			if (type == AnimalType.MAGIC) {
-				speedBought.getValueFactory().setValue(actualSpeed.getDoubleOrDefault("Kauf", 0.0));
-				speedBought.valueProperty().addListener((o, oldV, newV) -> actualSpeed.put("Kauf", newV));
-				speedGroundBought.getValueFactory().setValue(actualSpeed.getDoubleOrDefault("Boden:Kauf", 0.0));
-				speedGroundBought.valueProperty().addListener((o, oldV, newV) -> actualSpeed.put("Boden:Kauf", newV));
-				speedAirBought.getValueFactory().setValue(actualSpeed.getDoubleOrDefault("Luft:Kauf", 0.0));
-				speedAirBought.valueProperty().addListener((o, oldV, newV) -> actualSpeed.put("Luft:Kauf", newV));
-			}
-
-			if (type != AnimalType.MAGIC) {
-				statsBoughtColumn.setMinWidth(0.0);
-				statsBoughtColumn.setMaxWidth(0.0);
-				statsBoughtColumn.setVisible(false);
-			}
-
-			GUIUtil.autosizeTable(statsTable, 0, 2);
-			GUIUtil.cellValueFactories(statsTable, "name", "value", "bought", "manualModifier", "current");
-
-			statsValueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 999, 1, false));
-			statsValueColumn.setOnEditCommit(t -> t.getRowValue().setValue(t.getNewValue()));
+		if (type == CharacterType.MAGIC_ANIMAL) {
 			statsBoughtColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 99, 1, false));
 			statsBoughtColumn.setOnEditCommit(t -> t.getRowValue().setBought(t.getNewValue()));
-			statsModifierColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99, 1, false));
-			statsModifierColumn.setOnEditCommit(t -> t.getRowValue().setManualModifier(t.getNewValue()));
-
-			for (final String attribute : new String[] { "Loyalität", "Rüstungsschutz", "Lebensenergie", "Ausdauer" }) {
-				statsTable.getItems().add(new AnimalAttribute(attribute, baseValues.getObj(attribute)));
-			}
-			if (type == AnimalType.MAGIC) {
-				statsTable.getItems().add(new AnimalAttribute("Astralenergie", baseValues.getObj("Astralenergie")));
-			} else {
-				statsTable.getItems().add(new AnimalAttribute("Fährtensuchen", baseValues.getObjOrDefault("Fährtensuchen", new JSONObject(baseValues))));
-			}
-
-			statsTable.setPrefHeight(statsTable.getItems().size() * 28 + 26);
-			statsTable.setMinHeight(statsTable.getItems().size() * 28 + 26);
-
-			statsTable.setRowFactory(t -> {
-				final TableRow<AnimalAttribute> row = new TableRow<>();
-
-				final ContextMenu contextMenu = new ContextMenu();
-				final MenuItem attributesContextMenuItem = new MenuItem("Bearbeiten");
-				contextMenu.getItems().add(attributesContextMenuItem);
-				attributesContextMenuItem.setOnAction(o -> {
-					final Attribute attribute = row.getItem();
-					new AnimalAttributeEditor(pane.getScene().getWindow(), attribute, false);
-				});
-
-				row.contextMenuProperty().bind(Bindings.when(row.itemProperty().isNotNull()).then(contextMenu).otherwise((ContextMenu) null));
-
-				return row;
-			});
+			statsTable.getItems().add(new AnimalAttribute("Astralenergie", baseValues.getObj("Astralenergie")));
+		} else {
+			statsBoughtColumn.setMinWidth(0.0);
+			statsBoughtColumn.setMaxWidth(0.0);
+			statsBoughtColumn.setVisible(false);
+			statsTable.getItems().add(new AnimalAttribute("Fährtensuchen", baseValues.getObjOrDefault("Fährtensuchen", new JSONObject(baseValues))));
 		}
+
+		statsTable.setPrefHeight(statsTable.getItems().size() * 28 + 26);
+		statsTable.setMinHeight(statsTable.getItems().size() * 28 + 26);
+
+		statsTable.setRowFactory(t -> {
+			final TableRow<AnimalAttribute> row = new TableRow<>();
+
+			final ContextMenu contextMenu = new ContextMenu();
+			final MenuItem attributesContextMenuItem = new MenuItem("Bearbeiten");
+			contextMenu.getItems().add(attributesContextMenuItem);
+			attributesContextMenuItem.setOnAction(o -> {
+				final Attribute attribute = row.getItem();
+				new AnimalAttributeEditor(pane.getScene().getWindow(), attribute, false);
+			});
+
+			row.contextMenuProperty().bind(Bindings.when(row.itemProperty().isNotNull()).then(contextMenu).otherwise((ContextMenu) null));
+
+			return row;
+		});
 	}
 
 	private void updateEquipment() {
@@ -1189,7 +853,7 @@ public class AnimalController {
 	private void updateProCons() {
 		proConsTable.getItems().clear();
 
-		final JSONObject prosOrCons = ResourceManager.getResource("data/Tiereigenarten").getObj(type == AnimalType.HORSE ? "Reittiere" : "Allgemein");
+		final JSONObject prosOrCons = ResourceManager.getResource("data/Tiereigenarten").getObj(type == CharacterType.HORSE ? "Reittiere" : "Allgemein");
 		final JSONObject actualProsOrCons = actualAnimal.getObj("Eigenarten");
 
 		for (final String proOrConName : actualProsOrCons.keySet()) {
@@ -1248,7 +912,7 @@ public class AnimalController {
 	private void updateSkills() {
 		skillsTable.getItems().clear();
 
-		final JSONObject skills = ResourceManager.getResource("data/Tierfertigkeiten").getObj(type == AnimalType.HORSE ? "Reittiere" : "Allgemein");
+		final JSONObject skills = ResourceManager.getResource("data/Tierfertigkeiten").getObj(type == CharacterType.HORSE ? "Reittiere" : "Allgemein");
 		final JSONObject actualSkills = actualAnimal.getObj("Fertigkeiten");
 
 		for (final String skillName : actualSkills.keySet()) {

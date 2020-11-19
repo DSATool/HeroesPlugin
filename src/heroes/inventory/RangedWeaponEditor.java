@@ -123,6 +123,7 @@ public class RangedWeaponEditor {
 		stage.setScene(new Scene(root, 440, 390));
 		stage.setHeight(390);
 		stage.initModality(Modality.WINDOW_MODAL);
+		stage.setResizable(false);
 		stage.initOwner(window);
 
 		name.setText(weapon.getName());
@@ -181,7 +182,7 @@ public class RangedWeaponEditor {
 					ammunition.removeKey(type);
 				} else {
 					final JSONObject currentType = ammunition.getObj(type);
-					if (!currentType.containsKey("Aktuell") || currentType.getInt("Aktuell") == currentType.getIntOrDefault("Gesamt", oldV)) {
+					if (!currentType.containsKey("Aktuell") || currentType.getInt("Aktuell").equals(currentType.getIntOrDefault("Gesamt", oldV))) {
 						currentType.put("Aktuell", newV);
 					}
 					currentType.put("Gesamt", newV);

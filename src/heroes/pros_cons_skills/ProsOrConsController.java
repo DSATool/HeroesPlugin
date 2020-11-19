@@ -140,15 +140,15 @@ public class ProsOrConsController {
 						if (items.size() > 0) {
 							final ComboBox<String> c = new ReactiveComboBox<>(items);
 							c.setEditable(true);
-							createGraphic(c, () -> c.getSelectionModel().getSelectedItem(), s -> c.getSelectionModel().select(s));
+							createGraphic(c, c.getSelectionModel()::getSelectedItem, c.getSelectionModel()::select);
 						} else {
 							final TextField t = new TextField();
-							createGraphic(t, () -> t.getText(), s -> t.setText(s));
+							createGraphic(t, t::getText, t::setText);
 						}
 						break;
 					case CHOICE:
 						final ComboBox<String> c = new ReactiveComboBox<>(items);
-						createGraphic(c, () -> c.getSelectionModel().getSelectedItem(), s -> c.getSelectionModel().select(s));
+						createGraphic(c, c.getSelectionModel()::getSelectedItem, c.getSelectionModel()::select);
 						break;
 					case NONE:
 						final Label l = new Label();
@@ -170,15 +170,15 @@ public class ProsOrConsController {
 						if (items.size() > 0) {
 							final ComboBox<String> c = new ReactiveComboBox<>(items);
 							c.setEditable(true);
-							createGraphic(c, () -> c.getSelectionModel().getSelectedItem(), s -> c.getSelectionModel().select(s));
+							createGraphic(c, c.getSelectionModel()::getSelectedItem, c.getSelectionModel()::select);
 						} else {
 							final TextField t = new TextField();
-							createGraphic(t, () -> t.getText(), s -> t.setText(s));
+							createGraphic(t, t::getText, t::setText);
 						}
 						break;
 					case CHOICE:
 						final ComboBox<String> c = new ReactiveComboBox<>(items);
-						createGraphic(c, () -> c.getSelectionModel().getSelectedItem(), s -> c.getSelectionModel().select(s));
+						createGraphic(c, c.getSelectionModel()::getSelectedItem, c.getSelectionModel()::select);
 						break;
 					case NONE:
 						final Label l = new Label();

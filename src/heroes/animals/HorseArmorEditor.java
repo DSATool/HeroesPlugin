@@ -86,6 +86,7 @@ public class HorseArmorEditor {
 		stage.setTitle("Bearbeiten");
 		stage.setScene(new Scene(root, 335, 170));
 		stage.initModality(Modality.WINDOW_MODAL);
+		stage.setResizable(false);
 		stage.initOwner(window);
 		stage.setHeight(170);
 

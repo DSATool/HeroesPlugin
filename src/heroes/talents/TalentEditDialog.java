@@ -58,6 +58,7 @@ public class TalentEditDialog {
 		stage.setTitle("Talent bearbeiten");
 		stage.setScene(new Scene(root, 250, 75));
 		stage.initModality(Modality.WINDOW_MODAL);
+		stage.setResizable(false);
 		stage.initOwner(window);
 
 		okButton.setOnAction(event -> {
@@ -65,9 +66,7 @@ public class TalentEditDialog {
 			stage.close();
 		});
 
-		cancelButton.setOnAction(event -> {
-			stage.close();
-		});
+		cancelButton.setOnAction(e -> stage.close());
 
 		final JSONObject talent = actualTalent.getTalent();
 

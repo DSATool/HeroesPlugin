@@ -62,8 +62,9 @@ public class PotionEditor {
 
 		final Stage stage = new Stage();
 		stage.setTitle("Bearbeiten");
-		stage.setScene(new Scene(root, 330, 190));
+		stage.setScene(new Scene(root, 290, 190));
 		stage.initModality(Modality.WINDOW_MODAL);
+		stage.setResizable(false);
 		stage.initOwner(window);
 
 		name.setText(potion.getName());

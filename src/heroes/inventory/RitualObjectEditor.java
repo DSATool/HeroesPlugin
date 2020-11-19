@@ -103,8 +103,9 @@ public class RitualObjectEditor {
 
 		final Stage stage = new Stage();
 		stage.setTitle("Bearbeiten");
-		stage.setScene(new Scene(root, 330, 485 + ("Stabzauber".equals(ritualGroupName) ? 27 : 0) + (ritualGroup.containsKey("Material") ? 25 : 0)));
+		stage.setScene(new Scene(root, 290, 485 + ("Stabzauber".equals(ritualGroupName) ? 27 : 0) + (ritualGroup.containsKey("Material") ? 25 : 0)));
 		stage.initModality(Modality.WINDOW_MODAL);
+		stage.setResizable(false);
 		stage.initOwner(window);
 
 		name.setText(ritualObject.getName());
@@ -203,10 +204,10 @@ public class RitualObjectEditor {
 				} else if (choice instanceof Integer) {
 					final ReactiveSpinner<Integer> r = new ReactiveSpinner<>(1, 99, (Integer) choice);
 					r.setEditable(true);
-					createGraphic(r, () -> r.getValue(), s -> r.getValueFactory().setValue((Integer) s));
+					createGraphic(r, r::getValue, s -> r.getValueFactory().setValue((Integer) s));
 				} else if (choice instanceof String) {
 					final TextField t = new TextField((String) choice);
-					createGraphic(t, () -> t.getText(), s -> t.setText((String) s));
+					createGraphic(t, t::getText, s -> t.setText((String) s));
 				}
 			}
 		});

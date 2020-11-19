@@ -85,6 +85,7 @@ public class TalentEnhancementDialog {
 		stage.setTitle("Talent steigern");
 		stage.setScene(new Scene(root, 250, includeCost ? 202 : 175));
 		stage.initModality(Modality.WINDOW_MODAL);
+		stage.setResizable(false);
 		stage.initOwner(window);
 
 		if (!includeCost) {
@@ -165,9 +166,7 @@ public class TalentEnhancementDialog {
 			stage.close();
 		});
 
-		cancelButton.setOnAction(event -> {
-			stage.close();
-		});
+		cancelButton.setOnAction(e -> stage.close());
 
 		startValue = talent.getValue();
 		if (startValue == Integer.MIN_VALUE) {
