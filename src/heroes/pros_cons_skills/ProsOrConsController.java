@@ -388,14 +388,14 @@ public class ProsOrConsController {
 		return actualProOrCon;
 	}
 
+	public void registerListeners() {
+		hero.addListener(listener);
+	}
+
 	public void setHero(final JSONObject hero) {
-		if (this.hero != null) {
-			this.hero.removeListener(listener);
-		}
 		this.hero = hero;
 		fillTable();
 		setVisibility();
-		this.hero.addListener(listener);
 	}
 
 	private void setVisibility() {
@@ -403,5 +403,10 @@ public class ProsOrConsController {
 		final boolean visible = showAll.get() || !table.getItems().isEmpty() || !list.getItems().isEmpty();
 		pane.setVisible(visible);
 		pane.setManaged(visible);
+	}
+
+	public void unregisterListeners() {
+		hero.removeListener(listener);
+		table.getItems().clear();
 	}
 }

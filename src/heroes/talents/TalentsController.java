@@ -90,14 +90,20 @@ public class TalentsController extends HeroTabController {
 	}
 
 	@Override
-	public void setHero(final JSONObject hero) {
-		if (this.hero != null) {
-			this.hero.getObj("Vorteile").removeListener(listener);
-			this.hero.getObj("Sonderfertigkeiten").removeListener(listener);
+	protected void registerListeners() {
+		hero.getObj("Vorteile").addListener(listener);
+		hero.getObj("Sonderfertigkeiten").addListener(listener);
+		for (final TalentGroupController controller : talentControllers) {
+			controller.registerListeners();
 		}
-		super.setHero(hero);
-		if (pane != null) {
-			updateVisibility();
+	}
+
+	@Override
+	protected void unregisterListeners() {
+		hero.getObj("Vorteile").removeListener(listener);
+		hero.getObj("Sonderfertigkeiten").removeListener(listener);
+		for (final TalentGroupController controller : talentControllers) {
+			controller.unregisterListeners();
 		}
 	}
 
@@ -106,8 +112,9 @@ public class TalentsController extends HeroTabController {
 		for (final TalentGroupController controller : talentControllers) {
 			controller.setHero(hero);
 		}
-		hero.getObj("Vorteile").addListener(listener);
-		hero.getObj("Sonderfertigkeiten").addListener(listener);
+		if (pane != null) {
+			updateVisibility();
+		}
 	}
 
 	private void updateVisibility() {

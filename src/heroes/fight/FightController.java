@@ -403,16 +403,22 @@ public class FightController extends HeroTabController {
 	}
 
 	@Override
-	public void setHero(final JSONObject hero) {
-		if (this.hero != null) {
-			this.hero.removeListener(listener);
-		}
-		super.setHero(hero);
+	protected void registerListeners() {
+		hero.addListener(listener);
+	}
+
+	@Override
+	protected void unregisterListeners() {
+		hero.removeListener(listener);
+		closeCombatTable.getItems().clear();
+		rangedCombatTable.getItems().clear();
+		shieldsTable.getItems().clear();
+		defensiveWeaponsTable.getItems().clear();
+		armorTable.getItems().clear();
 	}
 
 	@Override
 	protected void update() {
 		fillTables();
-		hero.addListener(listener);
 	}
 }

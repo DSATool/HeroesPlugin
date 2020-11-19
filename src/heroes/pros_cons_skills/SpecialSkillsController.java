@@ -96,6 +96,20 @@ public class SpecialSkillsController extends HeroTabController {
 	}
 
 	@Override
+	protected void registerListeners() {
+		for (final ProsOrConsController controller : skillControllers) {
+			controller.registerListeners();
+		}
+	}
+
+	@Override
+	protected void unregisterListeners() {
+		for (final ProsOrConsController controller : skillControllers) {
+			controller.unregisterListeners();
+		}
+	}
+
+	@Override
 	protected void update() {
 		for (final ProsOrConsController controller : skillControllers) {
 			controller.setHero(hero);

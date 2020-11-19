@@ -931,15 +931,12 @@ public class InventoryController extends HeroTabController {
 	}
 
 	@Override
-	public void setHero(final JSONObject hero) {
-		if (this.hero != null) {
-			hero.getObj("Besitz").getObj("Geld").removeListener(heroMoneyListener);
-			if (items != null) {
-				items.removeListener(heroItemListener);
-			}
-			hero.getArr("Tiere").removeListener(heroItemListener);
+	protected void registerListeners() {
+		money.addLocalListener(heroMoneyListener);
+		if (items != null) {
+			items.addListener(heroItemListener);
 		}
-		super.setHero(hero);
+		hero.getArr("Tiere").addListener(heroItemListener);
 	}
 
 	private void setState(final ComboBox<String> list, final Button button) {
@@ -952,11 +949,28 @@ public class InventoryController extends HeroTabController {
 	}
 
 	@Override
+	protected void unregisterListeners() {
+		hero.getObj("Besitz").getObj("Geld").removeListener(heroMoneyListener);
+		items.removeListener(heroItemListener);
+		hero.getArr("Tiere").removeListener(heroItemListener);
+		closeCombatTable.getItems().clear();
+		rangedTable.getItems().clear();
+		shieldsTable.getItems().clear();
+		defensiveWeaponsTable.getItems().clear();
+		armorTable.getItems().clear();
+		ritualObjectTable.getItems().clear();
+		valuablesTable.getItems().clear();
+		potionsTable.getItems().clear();
+		artifactTable.getItems().clear();
+		clothingTable.getItems().clear();
+		equipmentTable.getItems().clear();
+	}
+
+	@Override
 	protected void update() {
 		final JSONObject inventory = hero.getObj("Besitz");
 
 		money = inventory.getObj("Geld");
-		money.addLocalListener(heroMoneyListener);
 
 		refreshMoney();
 
@@ -989,9 +1003,6 @@ public class InventoryController extends HeroTabController {
 		}
 
 		refreshTables();
-
-		items.addListener(heroItemListener);
-		hero.getArr("Tiere").addListener(heroItemListener);
 	}
 
 	private void updateLists() {

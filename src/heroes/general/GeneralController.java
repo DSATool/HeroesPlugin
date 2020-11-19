@@ -28,8 +28,8 @@ import dsatool.ui.IntegerSpinnerTableCell;
 import dsatool.ui.ReactiveSpinner;
 import dsatool.util.ErrorLogger;
 import dsatool.util.Tuple;
+import dsatool.util.Util;
 import heroes.ui.HeroTabController;
-import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -148,40 +148,6 @@ public class GeneralController extends HeroTabController {
 		setAppearance();
 	};
 
-	private final ChangeListener<Object> bioListener = (observable, oldValue, newValue) -> {
-		if (update || newValue == null || oldValue == null || oldValue.equals(newValue)) return;
-		final JSONObject bio = getHero().getObj("Biografie");
-		bio.put("Vorname", name.getText());
-		bio.put("Nachname", surname.getText());
-		getHero().put("Spieler", player.getText());
-		getHero().getObj("Basiswerte").getObj("Sozialstatus").put("Wert", socialstate.getValue());
-		bio.put("Abenteuerpunkte", ap.getValue());
-		bio.put("Abenteuerpunkte-Guthaben", freeAp.getValue());
-		investedAp.setText(Integer.toString(ap.getValue() - freeAp.getValue()));
-		changeModifiedString("Rasse", race.getText());
-		changeModifiedString("Kultur", culture.getText());
-		changeModifiedProfession(profession.getText());
-		bio.put("Geburtstag", birthday.getValue());
-		bio.put("Geburtsmonat", birthmonth.getSelectionModel().getSelectedIndex() + 1);
-		bio.put("Geburtsjahr", birthyear.getValue());
-		bio.put("Geschlecht", gender.getSelectionModel().getSelectedItem());
-		bio.put("Größe", size.getValue());
-		bio.put("Gewicht", weight.getValue());
-		bio.put("Augenfarbe", eyecolor.getValue());
-		if (!haircolor.valueProperty().equals(observable) || !"".equals(newValue)) {
-			bio.put(bio.containsKey("Schuppenfarbe 1") ? "Schuppenfarbe 1" : "Haarfarbe", haircolor.getValue());
-		}
-		if (!skincolor.valueProperty().equals(observable) || !"".equals(newValue)) {
-			bio.put(bio.containsKey("Schuppenfarbe 2") ? "Schuppenfarbe 2" : "Hautfarbe", skincolor.getValue());
-		}
-		setAge(ResourceManager.getResource("data/Allgemein").getObj("Zeit"));
-		bio.notifyListeners(heroBioListener);
-		getHero().getObj("Basiswerte").notifyListeners(heroBioListener);
-		if (name.focusedProperty().equals(observable)) {
-			ResourceManager.moveResource(getHero(), "characters/" + bio.getString("Vorname"));
-		}
-	};
-
 	public GeneralController(final TabPane tabPane) {
 		super(tabPane);
 	}
@@ -200,6 +166,7 @@ public class GeneralController extends HeroTabController {
 		} else {
 			bio.removeKey("Profession:Modifikation");
 		}
+		bio.notifyListeners(heroBioListener);
 	}
 
 	private void changeModifiedString(final String base, final String input) {
@@ -215,6 +182,7 @@ public class GeneralController extends HeroTabController {
 		} else {
 			bio.removeKey(base + ":Modifikation");
 		}
+		bio.notifyListeners(heroBioListener);
 	}
 
 	@Override
@@ -369,7 +337,7 @@ public class GeneralController extends HeroTabController {
 			return row;
 		});
 
-		registerListeners();
+		registerUIListeners();
 
 		name.editableProperty().bind(HeroTabController.isEditable);
 		surname.editableProperty().bind(HeroTabController.isEditable);
@@ -391,12 +359,34 @@ public class GeneralController extends HeroTabController {
 		energiesPermanentColumn.editableProperty().bind(HeroTabController.isEditable);
 	}
 
-	private void registerListeners() {
-		name.focusedProperty().addListener(bioListener);
-		surname.focusedProperty().addListener(bioListener);
-		player.focusedProperty().addListener(bioListener);
+	@Override
+	protected void registerListeners() {
+		hero.getObj("Biografie").addListener(heroBioListener);
+	}
 
-		socialstate.valueProperty().addListener(bioListener);
+	private void registerUIListeners() {
+		name.focusedProperty().addListener(Util.changeListener(() -> update, newV -> {
+			final JSONObject bio = hero.getObj("Biografie");
+			bio.put("Vorname", name.getText());
+			ResourceManager.moveResource(getHero(), "characters/" + name.getText());
+			bio.notifyListeners(heroBioListener);
+		}));
+		surname.focusedProperty().addListener(Util.changeListener(() -> update, newV -> {
+			final JSONObject bio = hero.getObj("Biografie");
+			bio.put("Nachname", surname.getText());
+			bio.notifyListeners(heroBioListener);
+		}));
+		player.focusedProperty().addListener(Util.changeListener(() -> update, newV -> {
+			hero.put("Spieler", player.getText());
+			hero.notifyListeners(heroBioListener);
+		}));
+
+		socialstate.valueProperty().addListener(Util.changeListener(() -> update, newV -> {
+			final JSONObject so = hero.getObj("Basiswerte").getObj("Sozialstatus");
+			so.put("Wert", socialstate.getValue());
+			so.notifyListeners(heroBioListener);
+		}));
+
 		ap.valueProperty().addListener((o, oldV, newV) -> {
 			freeAp.getValueFactory().setValue(freeAp.getValue() + newV - oldV);
 			if (!update && oldV != newV) {
@@ -416,21 +406,66 @@ public class GeneralController extends HeroTabController {
 				}
 			}
 		});
-		freeAp.valueProperty().addListener(bioListener);
+		freeAp.valueProperty().addListener(Util.changeListener(() -> update, newV -> {
+			final JSONObject bio = hero.getObj("Biografie");
+			bio.put("Abenteuerpunkte-Guthaben", freeAp.getValue());
+			bio.notifyListeners(heroBioListener);
+			investedAp.setText(Integer.toString(ap.getValue() - freeAp.getValue()));
+		}));
 
-		race.focusedProperty().addListener(bioListener);
-		culture.focusedProperty().addListener(bioListener);
-		profession.focusedProperty().addListener(bioListener);
+		race.focusedProperty().addListener(Util.changeListener(() -> update, newV -> changeModifiedString("Rasse", race.getText())));
+		culture.focusedProperty().addListener(Util.changeListener(() -> update, newV -> changeModifiedString("Kultur", culture.getText())));
+		profession.focusedProperty().addListener(Util.changeListener(() -> update, newV -> changeModifiedProfession(profession.getText())));
 
-		birthday.valueProperty().addListener(bioListener);
-		birthmonth.getSelectionModel().selectedIndexProperty().addListener(bioListener);
-		birthyear.valueProperty().addListener(bioListener);
-		gender.getSelectionModel().selectedIndexProperty().addListener(bioListener);
-		size.valueProperty().addListener(bioListener);
-		weight.valueProperty().addListener(bioListener);
-		eyecolor.valueProperty().addListener(bioListener);
-		haircolor.valueProperty().addListener(bioListener);
-		skincolor.valueProperty().addListener(bioListener);
+		birthday.valueProperty().addListener(Util.changeListener(() -> update, newV -> {
+			final JSONObject bio = hero.getObj("Biografie");
+			bio.put("Geburtstag", birthday.getValue());
+			bio.notifyListeners(heroBioListener);
+			setAge(ResourceManager.getResource("data/Allgemein").getObj("Zeit"));
+		}));
+		birthmonth.getSelectionModel().selectedIndexProperty().addListener(Util.changeListener(() -> update, newV -> {
+			final JSONObject bio = hero.getObj("Biografie");
+			bio.put("Geburtsmonat", birthmonth.getSelectionModel().getSelectedIndex() + 1);
+			bio.notifyListeners(heroBioListener);
+			setAge(ResourceManager.getResource("data/Allgemein").getObj("Zeit"));
+		}));
+		birthyear.valueProperty().addListener(Util.changeListener(() -> update, newV -> {
+			final JSONObject bio = hero.getObj("Biografie");
+			bio.put("Geburtsjahr", birthyear.getValue());
+			bio.notifyListeners(heroBioListener);
+			setAge(ResourceManager.getResource("data/Allgemein").getObj("Zeit"));
+		}));
+		gender.getSelectionModel().selectedIndexProperty().addListener(Util.changeListener(() -> update, newV -> {
+			final JSONObject bio = hero.getObj("Biografie");
+			bio.put("Geschlecht", gender.getSelectionModel().getSelectedItem());
+			bio.notifyListeners(heroBioListener);
+		}));
+		size.valueProperty().addListener(Util.changeListener(() -> update, newV -> {
+			final JSONObject bio = hero.getObj("Biografie");
+			bio.put("Größe", size.getValue());
+			bio.notifyListeners(heroBioListener);
+		}));
+		weight.valueProperty().addListener(Util.changeListener(() -> update, newV -> {
+			final JSONObject bio = hero.getObj("Biografie");
+			bio.put("Gewicht", weight.getValue());
+			bio.notifyListeners(heroBioListener);
+		}));
+		eyecolor.valueProperty().addListener(Util.changeListener(() -> update, newV -> {
+			final JSONObject bio = hero.getObj("Biografie");
+			bio.put("Augenfarbe", eyecolor.getValue());
+			bio.notifyListeners(heroBioListener);
+		}));
+
+		haircolor.valueProperty().addListener(Util.changeListener(() -> update || "".equals(haircolor.getValue()), newV -> {
+			final JSONObject bio = hero.getObj("Biografie");
+			bio.put(bio.containsKey("Schuppenfarbe 1") ? "Schuppenfarbe 1" : "Haarfarbe", haircolor.getValue());
+			bio.notifyListeners(heroBioListener);
+		}));
+		skincolor.valueProperty().addListener(Util.changeListener(() -> update || "".equals(skincolor.getValue()), newV -> {
+			final JSONObject bio = hero.getObj("Biografie");
+			bio.put(bio.containsKey("Schuppenfarbe 2") ? "Schuppenfarbe 2" : "Hautfarbe", skincolor.getValue());
+			bio.notifyListeners(heroBioListener);
+		}));
 	}
 
 	private void setAge(final JSONObject currentDate) {
@@ -443,6 +478,8 @@ public class GeneralController extends HeroTabController {
 	}
 
 	private void setAppearance() {
+		update = true;
+
 		final JSONObject bio = hero.getObj("Biografie");
 
 		birthday.getValueFactory().setValue(bio.getIntOrDefault("Geburtstag", 1));
@@ -470,9 +507,13 @@ public class GeneralController extends HeroTabController {
 		skincolor.setItems(FXCollections.observableArrayList(scalecolor ? HeroUtil.scaleColors : HeroUtil.skinColors));
 		haircolor.setValue(newHairColor);
 		skincolor.setValue(newSkinColor);
+
+		update = false;
 	}
 
 	private void setAttributesAndDerivedValues() {
+		update = true;
+
 		attributesTable.getItems().clear();
 		derivedValuesTable.getItems().clear();
 		energiesTable.getItems().clear();
@@ -507,9 +548,13 @@ public class GeneralController extends HeroTabController {
 		derivedValuesTable.setMaxHeight(derivedValuesTable.getItems().size() * 28 + 26);
 		energiesTable.setMinHeight(energiesTable.getItems().size() * 28 + 24);
 		energiesTable.setMaxHeight(energiesTable.getItems().size() * 28 + 24);
+
+		update = false;
 	}
 
 	private void setBiography() {
+		update = true;
+
 		final JSONObject bio = hero.getObj("Biografie");
 
 		name.setText(bio.getStringOrDefault("Vorname", ""));
@@ -517,12 +562,9 @@ public class GeneralController extends HeroTabController {
 		player.setText(hero.getStringOrDefault("Spieler", ""));
 
 		socialstate.getValueFactory().setValue(hero.getObj("Basiswerte").getObj("Sozialstatus").getIntOrDefault("Wert", 0));
-		final boolean isUpdate = update;
 		final int apTotal = bio.getIntOrDefault("Abenteuerpunkte", 0);
 		final int apFree = bio.getIntOrDefault("Abenteuerpunkte-Guthaben", 0);
-		update = true;
 		ap.getValueFactory().setValue(apTotal);
-		update = isUpdate;
 		investedAp.setText(Integer.toString(apTotal - apFree));
 		freeAp.getValueFactory().setValue(apFree);
 
@@ -549,27 +591,24 @@ public class GeneralController extends HeroTabController {
 		profession.setText(HeroUtil.getProfessionString(hero, bio, professions, false));
 
 		professionModifier.setText(HeroUtil.getVeteranBGBString(hero, bio, professions).toString());
+
+		update = false;
 	}
 
 	@Override
-	public void setHero(final JSONObject hero) {
-		if (hero != null) {
-			hero.getObj("Biografie").removeListener(heroBioListener);
-		}
-		super.setHero(hero);
-		if (hero != null) {
-			hero.getObj("Biografie").addListener(heroBioListener);
-		}
+	protected void unregisterListeners() {
+		hero.getObj("Biografie").addListener(heroBioListener);
+		attributesTable.getItems().clear();
+		derivedValuesTable.getItems().clear();
+		energiesTable.getItems().clear();
 	}
 
 	@Override
 	protected void update() {
-		update = true;
 		if (hero != null) {
 			setBiography();
 			setAppearance();
 			setAttributesAndDerivedValues();
 		}
-		update = false;
 	}
 }

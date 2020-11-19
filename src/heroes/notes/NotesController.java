@@ -22,7 +22,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.web.HTMLEditor;
 import javafx.scene.web.HTMLEditorSkin;
 import jsonant.event.JSONListener;
-import jsonant.value.JSONObject;
 import jsonant.value.JSONValue;
 
 public class NotesController extends HeroTabController implements JSONListener {
@@ -73,9 +72,8 @@ public class NotesController extends HeroTabController implements JSONListener {
 	}
 
 	@Override
-	public void setHero(final JSONObject hero) {
-		hero.removeListener(this);
-		super.setHero(hero);
+	protected void registerListeners() {
+		hero.addLocalListener(this);
 	}
 
 	private void textChanged() {
@@ -87,9 +85,13 @@ public class NotesController extends HeroTabController implements JSONListener {
 	}
 
 	@Override
+	protected void unregisterListeners() {
+		hero.removeListener(this);
+	}
+
+	@Override
 	protected void update() {
 		notifyChanged(hero);
-		hero.addLocalListener(this);
 	}
 
 }

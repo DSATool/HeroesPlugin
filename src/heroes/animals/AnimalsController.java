@@ -92,15 +92,22 @@ public class AnimalsController extends HeroTabController {
 	}
 
 	@Override
+	protected void registerListeners() {
+		animals.addLocalListener(animalsListener);
+	}
+
+	@Override
+	protected void unregisterListeners() {
+		animals.removeListener(animalsListener);
+		controllers.clear();
+	}
+
+	@Override
 	protected void update() {
 		final ObservableList<Node> items = animalsBox.getChildren();
 		items.remove(0, items.size() - 1);
 		controllers.clear();
-		if (animals != null) {
-			animals.removeListener(animalsListener);
-		}
 		animals = hero.getArr("Tiere");
-		animals.addLocalListener(animalsListener);
 		for (int i = 0; i < animals.size(); ++i) {
 			final JSONObject animal = animals.getObj(i);
 			final AnimalController newController = switch (animal.getObj("Biografie").getStringOrDefault("Typ", "Tier")) {

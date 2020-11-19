@@ -78,12 +78,18 @@ public class SpellsController extends HeroTabController {
 	}
 
 	@Override
+	protected void registerListeners() {
+		hero.getObj("Vorteile").addListener(listener);
+		spellController.registerListeners();
+	}
+
+	@Override
 	public void setHero(final JSONObject hero) {
-		if (this.hero != null) {
-			this.hero.getObj("Vorteile").removeListener(listener);
-		}
 		super.setHero(hero);
 		setTab();
+		if (spellController != null) {
+			spellController.setHero(hero);
+		}
 	}
 
 	private void setTab() {
@@ -99,12 +105,17 @@ public class SpellsController extends HeroTabController {
 	}
 
 	@Override
+	protected void unregisterListeners() {
+		hero.getObj("Vorteile").removeListener(listener);
+		spellController.unregisterListeners();
+	}
+
+	@Override
 	protected void update() {
 		setTab();
 		if (spellController != null) {
 			spellController.setHero(hero);
 		}
-		hero.getObj("Vorteile").addListener(listener);
 	}
 
 }

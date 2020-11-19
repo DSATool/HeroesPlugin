@@ -74,6 +74,18 @@ public class ProsAndConsController extends HeroTabController {
 	}
 
 	@Override
+	protected void registerListeners() {
+		pros.registerListeners();
+		cons.registerListeners();
+	}
+
+	@Override
+	protected void unregisterListeners() {
+		pros.unregisterListeners();
+		cons.unregisterListeners();
+	}
+
+	@Override
 	protected void update() {
 		pros.setHero(hero);
 		cons.setHero(hero);

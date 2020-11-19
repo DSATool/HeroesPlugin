@@ -36,10 +36,17 @@ public abstract class HeroTabController implements HeroController {
 		tab = new Tab(getText());
 		tab.setClosable(false);
 		tab.setOnSelectionChanged(e -> {
-			if (tab.isSelected() && getControl() == null && !stopInit) {
-				init();
-				update();
-				tab.setContent(getControl());
+			if (tab.isSelected()) {
+				if (getControl() == null && !stopInit) {
+					init();
+					update();
+					tab.setContent(getControl());
+				} else if (hero != null) {
+					update();
+					registerListeners();
+				}
+			} else if (hero != null) {
+				unregisterListeners();
 			}
 		});
 		pane.getTabs().add(tab);
@@ -52,13 +59,23 @@ public abstract class HeroTabController implements HeroController {
 
 	protected void init() {}
 
+	protected abstract void registerListeners();
+
 	@Override
 	public void setHero(final JSONObject hero) {
+		if (this.hero != null && getControl() != null) {
+			unregisterListeners();
+		}
 		this.hero = hero;
 		if (getControl() != null) {
 			update();
+			if (hero != null && tab.isSelected()) {
+				registerListeners();
+			}
 		}
 	}
+
+	protected abstract void unregisterListeners();
 
 	protected abstract void update();
 }
