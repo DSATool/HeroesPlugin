@@ -25,6 +25,7 @@ import dsatool.ui.ReactiveSpinner;
 import dsatool.util.ErrorLogger;
 import dsatool.util.Tuple;
 import dsatool.util.Tuple3;
+import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -62,7 +63,7 @@ public class TalentRollDialog {
 	private final Map<JSONObject, HBox> heroBoxes = new HashMap<>();
 
 	@SuppressWarnings("unchecked")
-	public TalentRollDialog(final Window window, String talentName, String representation, JSONObject[] heroes) {
+	public TalentRollDialog(final Window window, final String talentName, final String representation, final JSONObject[] heroes) {
 		this.talentName = talentName;
 		this.representation = representation;
 
@@ -77,14 +78,14 @@ public class TalentRollDialog {
 		}
 
 		final Stage stage = new Stage();
-		stage.setTitle("Talentprobe");
+		stage.setTitle("Talentprobe: " + talentName);
 		stage.setScene(new Scene(root, 400, 85 + heroes.length * 27));
 		stage.initModality(Modality.WINDOW_MODAL);
+		stage.setResizable(false);
 		stage.initOwner(window);
 
-		okButton.setOnAction(event -> {
-			stage.close();
-		});
+		okButton.setOnAction(e -> stage.close());
+		okButton.setDefaultButton(true);
 
 		final Tuple<JSONObject, JSONObject> talent;
 		if (representation != null) {
@@ -92,7 +93,11 @@ public class TalentRollDialog {
 			talent = new Tuple<>(spells.getObj(talentName), spells);
 		} else {
 			final Tuple<JSONObject, String> talentAndGroup = HeroUtil.findTalent(talentName);
-			talent = new Tuple<>(talentAndGroup._1, ResourceManager.getResource("data/Talentgruppen").getObj(talentAndGroup._2));
+			JSONObject talentGroup = ResourceManager.getResource("data/Talentgruppen").getObj(talentAndGroup._2);
+			if ("Sprachen und Schriften".equals(talentAndGroup._2)) {
+				talentGroup = talentGroup.getObj(talentAndGroup._1.getBoolOrDefault("Schrift", false) ? "Schriften" : "Sprachen");
+			}
+			talent = new Tuple<>(talentAndGroup._1, talentGroup);
 		}
 
 		final JSONObject attributes = ResourceManager.getResource("data/Eigenschaften");
@@ -139,38 +144,24 @@ public class TalentRollDialog {
 			}
 		}
 
-		attribute1.valueProperty().addListener((o, oldVal, newVal) -> {
+		final ChangeListener<? super Object> updateListener = (o, oldVal, newVal) -> {
 			for (final JSONObject hero : heroes) {
 				updateInterpretation(hero);
 			}
-		});
-		attribute2.valueProperty().addListener((o, oldVal, newVal) -> {
-			for (final JSONObject hero : heroes) {
-				updateInterpretation(hero);
-			}
-		});
-		attribute3.valueProperty().addListener((o, oldVal, newVal) -> {
-			for (final JSONObject hero : heroes) {
-				updateInterpretation(hero);
-			}
-		});
+		};
 
-		modification.valueProperty().addListener((o, oldVal, newVal) -> {
-			for (final JSONObject hero : heroes) {
-				updateInterpretation(hero);
-			}
-		});
+		attribute1.valueProperty().addListener(updateListener);
+		attribute2.valueProperty().addListener(updateListener);
+		attribute3.valueProperty().addListener(updateListener);
 
-		specialization.getSelectionModel().selectedIndexProperty().addListener((o, oldVal, newVal) -> {
-			for (final JSONObject hero : heroes) {
-				updateInterpretation(hero);
-			}
-		});
+		modification.valueProperty().addListener(updateListener);
+
+		specialization.getSelectionModel().selectedIndexProperty().addListener(updateListener);
 
 		stage.show();
 	}
 
-	private void updateInterpretation(JSONObject hero) {
+	private void updateInterpretation(final JSONObject hero) {
 		final HBox heroBox = heroBoxes.get(hero);
 		final Label interpretationLabel = (Label) heroBox.getChildren().get(4);
 		final int[] roll = new int[3];
@@ -193,24 +184,27 @@ public class TalentRollDialog {
 			interpretation = HeroUtil.interpretSpellRoll(hero, talentName, representation,
 					selection.getSelectedIndex() == 0 ? null : selection.getSelectedItem(),
 					new String[] { attribute1.getValue(), attribute2.getValue(), attribute3.getValue() }, new Tuple3<>(roll[0], roll[1], roll[2]),
-					modification.getValue());
+					-modification.getValue());
 		} else {
 			interpretation = HeroUtil.interpretTalentRoll(hero, talentName, selection.getSelectedIndex() == 0 ? null : selection.getSelectedItem(),
 					new String[] { attribute1.getValue(), attribute2.getValue(), attribute3.getValue() }, new Tuple3<>(roll[0], roll[1], roll[2]),
-					modification.getValue());
+					-modification.getValue());
 		}
+		interpretationLabel.setStyle("");
 		if (interpretation == null) {
 			interpretationLabel.setText("—");
 			interpretationLabel.setTextFill(Color.RED);
 		} else if (ones >= 2) {
-			interpretationLabel.setText("*" + Integer.toString(interpretation));
+			interpretationLabel.setText("*" + Integer.toString(interpretation) + "*");
 			interpretationLabel.setTextFill(Color.GREEN);
+			interpretationLabel.setStyle("-fx-font-weight: bold");
 		} else if (twenties >= 2) {
-			interpretationLabel.setText("P");
+			interpretationLabel.setText("Patzer");
 			interpretationLabel.setTextFill(Color.RED);
+			interpretationLabel.setStyle("-fx-font-weight: bold");
 		} else if (interpretation == 0) {
 			interpretationLabel.setText("1");
-			interpretationLabel.setTextFill(Color.ORANGE);
+			interpretationLabel.setTextFill(Color.DARKORANGE);
 		} else if (interpretation < 0) {
 			interpretationLabel.setText(Integer.toString(interpretation));
 			interpretationLabel.setTextFill(Color.RED);
