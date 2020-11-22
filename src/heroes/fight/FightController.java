@@ -19,6 +19,7 @@ import dsa41basis.fight.Armor;
 import dsa41basis.fight.CloseCombatWeapon;
 import dsa41basis.fight.DefensiveWeapon;
 import dsa41basis.fight.RangedWeapon;
+import dsa41basis.ui.hero.SingleRollDialog;
 import dsa41basis.util.DSAUtil;
 import dsa41basis.util.HeroUtil;
 import dsatool.gui.GUIUtil;
@@ -38,11 +39,14 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TablePosition;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.cell.ComboBoxTableCell;
@@ -232,6 +236,29 @@ public class FightController extends HeroTabController {
 		GUIUtil.autosizeTable(closeCombatTable, 0, 0);
 		GUIUtil.cellValueFactories(closeCombatTable, "name", "type", "ebe", "tp", "at", "pa", "ini", "dk", "bf");
 
+		closeCombatTable.setRowFactory(table -> {
+			final TableRow<CloseCombatWeapon> row = new TableRow<>();
+
+			final ContextMenu rowMenu = new ContextMenu();
+
+			final MenuItem atItem = new MenuItem("Attacke");
+			atItem.setOnAction(e -> {
+				final CloseCombatWeapon item = row.getItem();
+				new SingleRollDialog(pane.getScene().getWindow(), SingleRollDialog.Type.ATTACK, null, item);
+			});
+
+			final MenuItem paItem = new MenuItem("Parade");
+			paItem.setOnAction(e -> {
+				final CloseCombatWeapon item = row.getItem();
+				new SingleRollDialog(pane.getScene().getWindow(), SingleRollDialog.Type.DEFENSE, hero, item);
+			});
+
+			rowMenu.getItems().addAll(atItem, paItem);
+			row.setContextMenu(rowMenu);
+
+			return row;
+		});
+
 		closeCombatTypeColumn.setCellFactory(p -> {
 			final ComboBoxTableCell<CloseCombatWeapon, String> cell = new ComboBoxTableCell<>() {
 				@Override
@@ -265,6 +292,23 @@ public class FightController extends HeroTabController {
 
 		GUIUtil.autosizeTable(rangedCombatTable, 0, 0);
 		GUIUtil.cellValueFactories(rangedCombatTable, "name", "type", "ebe", "tp", "at", "load", "distance", "distancetp", "ammunition");
+
+		rangedCombatTable.setRowFactory(table -> {
+			final TableRow<RangedWeapon> row = new TableRow<>();
+
+			final ContextMenu rowMenu = new ContextMenu();
+
+			final MenuItem atItem = new MenuItem("Attacke");
+			atItem.setOnAction(e -> {
+				final RangedWeapon item = row.getItem();
+				new SingleRollDialog(pane.getScene().getWindow(), SingleRollDialog.Type.ATTACK, null, item);
+			});
+
+			rowMenu.getItems().add(atItem);
+			row.setContextMenu(rowMenu);
+
+			return row;
+		});
 
 		rangedCombatTypeColumn.setCellFactory(p -> {
 			final ComboBoxTableCell<RangedWeapon, String> cell = new ComboBoxTableCell<>() {

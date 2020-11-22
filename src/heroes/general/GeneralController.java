@@ -19,6 +19,7 @@ import java.time.LocalDate;
 
 import dsa41basis.hero.Attribute;
 import dsa41basis.hero.DerivedValue;
+import dsa41basis.ui.hero.SingleRollDialog;
 import dsa41basis.util.DSAUtil;
 import dsa41basis.util.HeroUtil;
 import dsatool.gui.GUIUtil;
@@ -260,6 +261,13 @@ public class GeneralController extends HeroTabController {
 			attributesEditItem.setOnAction(o -> {
 				final Attribute attribute = row.getItem();
 				new AttributeEditor(pane.getScene().getWindow(), attribute);
+			});
+
+			final MenuItem rollItem = new MenuItem("Eigenschaftsprobe");
+			attributesContextMenu.getItems().add(rollItem);
+			rollItem.setOnAction(e -> {
+				final Attribute item = row.getItem();
+				new SingleRollDialog(pane.getScene().getWindow(), SingleRollDialog.Type.ATTRIBUTE, hero, item);
 			});
 
 			row.setContextMenu(attributesContextMenu);
