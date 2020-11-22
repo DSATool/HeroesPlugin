@@ -397,7 +397,11 @@ public class GeneralController extends HeroTabController {
 				final LocalDate currentDate = LocalDate.now();
 				if (lastEntry != null && "Abenteuerpunkte".equals(lastEntry.getString("Typ"))
 						&& currentDate.equals(LocalDate.parse(lastEntry.getString("Datum")))) {
-					lastEntry.put("Auf", newV);
+					if (lastEntry.getInt("Von").equals(newV)) {
+						history.removeAt(history.size() - 1);
+					} else {
+						lastEntry.put("Auf", newV);
+					}
 				} else {
 					final JSONObject historyEntry = new JSONObject(history);
 					historyEntry.put("Typ", "Abenteuerpunkte");
@@ -406,6 +410,9 @@ public class GeneralController extends HeroTabController {
 					historyEntry.put("Datum", currentDate.toString());
 					history.add(historyEntry);
 				}
+				final JSONObject bio = hero.getObj("Biografie");
+				bio.put("Abenteuerpunkte", ap.getValue());
+				bio.notifyListeners(heroBioListener);
 			}
 		});
 		freeAp.valueProperty().addListener(Util.changeListener(() -> update, newV -> {
