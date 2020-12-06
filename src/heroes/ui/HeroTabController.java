@@ -39,9 +39,10 @@ public abstract class HeroTabController implements HeroController {
 			if (tab.isSelected()) {
 				if (getControl() == null && !stopInit) {
 					init();
-					update();
 					tab.setContent(getControl());
-				} else if (hero != null) {
+					update();
+				}
+				if (hero != null) {
 					update();
 					registerListeners();
 				}
