@@ -258,6 +258,7 @@ public class InventoryController extends HeroTabController {
 	private JSONObject money;
 
 	private final JSONObject ritualGroups = ResourceManager.getResource("data/Ritualgruppen");
+	private final JSONListener equipmentListener = o -> updateLists();
 
 	public InventoryController(final TabPane tabPane) {
 		super(tabPane);
@@ -462,21 +463,7 @@ public class InventoryController extends HeroTabController {
 			});
 
 			final Menu location = new Menu("Ort");
-
-			final JSONListener animalListener = o -> {
-				if (row.getItem() != null) {
-					updateLocationMenu(row.getItem().getItem(), location);
-				}
-			};
-			final JSONArray[] animals = { hero.getArr("Tiere") };
-			row.itemProperty().addListener((o, oldV, newV) -> {
-				if (newV != null) {
-					updateLocationMenu(newV.getItem(), location);
-					animals[0].removeListener(animalListener);
-					animals[0] = hero.getArr("Tiere");
-					animals[0].addListener(animalListener);
-				}
-			});
+			rowMenu.setOnShowing(e -> updateLocationMenu(row.getItem().getItem(), location));
 
 			final MenuItem deleteItem = new MenuItem("Löschen");
 			deleteItem.setOnAction(event -> {
@@ -574,7 +561,7 @@ public class InventoryController extends HeroTabController {
 			});
 		}
 
-		equipment.addListener(o -> updateLists());
+		equipment.addListener(equipmentListener);
 
 		updateLists();
 	}
@@ -1066,7 +1053,6 @@ public class InventoryController extends HeroTabController {
 		location.getItems().clear();
 		final ToggleGroup locationGroup = new ToggleGroup();
 		final RadioMenuItem heroLocationItem = new RadioMenuItem(hero.getObj("Biografie").getString("Vorname"));
-		hero.getObj("Biografie").addLocalListener(o -> heroLocationItem.setText(hero.getObj("Biografie").getString("Vorname")));
 		heroLocationItem.setToggleGroup(locationGroup);
 		location.getItems().add(heroLocationItem);
 		final JSONArray animals = hero.getArr("Tiere");

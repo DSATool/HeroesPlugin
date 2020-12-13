@@ -149,6 +149,8 @@ public class GeneralController extends HeroTabController {
 		setAppearance();
 	};
 
+	private final JSONListener timeListener = o -> setAge((JSONObject) o);
+
 	public GeneralController(final TabPane tabPane) {
 		super(tabPane);
 	}
@@ -215,9 +217,7 @@ public class GeneralController extends HeroTabController {
 		final JSONObject general = ResourceManager.getResource("data/Allgemein");
 		if (general.containsKey("Zeit")) {
 			final JSONObject time = general.getObj("Zeit");
-			time.addLocalListener(o -> {
-				setAge((JSONObject) o);
-			});
+			time.addLocalListener(timeListener);
 		}
 
 		super.init();
@@ -614,7 +614,7 @@ public class GeneralController extends HeroTabController {
 
 	@Override
 	protected void unregisterListeners() {
-		hero.getObj("Biografie").addListener(heroBioListener);
+		hero.getObj("Biografie").removeListener(heroBioListener);
 		attributesTable.getItems().clear();
 		derivedValuesTable.getItems().clear();
 		energiesTable.getItems().clear();

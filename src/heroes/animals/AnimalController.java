@@ -252,6 +252,8 @@ public class AnimalController {
 	private final CharacterType type;
 	private final AttackTable attacksTable;
 
+	private final JSONListener animalListener;
+
 	public AnimalController(final JSONObject hero, final JSONObject animal, final CharacterType type) {
 		final FXMLLoader fxmlLoader = new FXMLLoader();
 
@@ -316,6 +318,17 @@ public class AnimalController {
 		initStats();
 		initProConSkills();
 		initEquipment();
+
+		animalListener = o -> {
+			updateProCons();
+			updateSkills();
+			updateEquipment();
+			if (type == CharacterType.MAGIC_ANIMAL) {
+				updateRituals();
+			}
+		};
+
+		actualAnimal.addListener(animalListener);
 
 		attacksTable = new AttackTable(HeroTabController.isEditable, attributesBox.widthProperty().subtract(2).divide(1.667),
 				type == CharacterType.MAGIC_ANIMAL);
@@ -556,21 +569,7 @@ public class AnimalController {
 			editItem.setOnAction(event -> new HorseArmorEditor(pane.getScene().getWindow(), equipmentTable.getSelectionModel().getSelectedItem()));
 
 			final Menu location = new Menu("Ort");
-
-			final JSONListener animalListener = o -> {
-				if (row.getItem() != null) {
-					updateLocationMenu(row.getItem().getItem(), location);
-				}
-			};
-			final JSONArray[] animals = { hero.getArr("Tiere") };
-			row.itemProperty().addListener((o, oldV, newV) -> {
-				if (newV != null) {
-					updateLocationMenu(newV.getItem(), location);
-					animals[0].removeListener(animalListener);
-					animals[0] = hero.getArr("Tiere");
-					animals[0].addListener(animalListener);
-				}
-			});
+			contextMenu.setOnShowing(e -> updateLocationMenu(row.getItem().getItem(), location));
 
 			final MenuItem deleteItem = new MenuItem("Löschen");
 			deleteItem.setOnAction(event -> {
@@ -586,8 +585,6 @@ public class AnimalController {
 
 			return row;
 		});
-
-		actualAnimal.getArr("Ausrüstung").addListener(o -> updateEquipment());
 
 		updateEquipment();
 
@@ -654,8 +651,6 @@ public class AnimalController {
 			return row;
 		});
 
-		actualAnimal.getObj("Eigenarten").addListener(o -> updateProCons());
-
 		if (type == CharacterType.MAGIC_ANIMAL) {
 			GUIUtil.autosizeTable(ritualsTable, 0, 2);
 			ritualNameColumn.setCellValueFactory(p -> new ReadOnlyObjectWrapper<>(p.getValue()));
@@ -676,8 +671,6 @@ public class AnimalController {
 
 				return row;
 			});
-
-			actualAnimal.getObj("Fertigkeiten").addListener(o -> updateRituals());
 
 			updateRituals();
 		}
@@ -735,8 +728,6 @@ public class AnimalController {
 
 			return row;
 		});
-
-		actualAnimal.getObj("Fertigkeiten").addListener(o -> updateSkills());
 
 		updateProCons();
 		updateSkills();
@@ -807,7 +798,6 @@ public class AnimalController {
 		final ToggleGroup locationGroup = new ToggleGroup();
 
 		final RadioMenuItem heroLocationItem = new RadioMenuItem(hero.getObj("Biografie").getString("Vorname"));
-		hero.getObj("Biografie").addLocalListener(o -> heroLocationItem.setText(hero.getObj("Biografie").getString("Vorname")));
 		heroLocationItem.setToggleGroup(locationGroup);
 		location.getItems().add(heroLocationItem);
 
