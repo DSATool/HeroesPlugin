@@ -28,6 +28,7 @@ import dsatool.resources.ResourceManager;
 import dsatool.ui.GraphicTableCell;
 import dsatool.ui.ReactiveSpinner;
 import dsatool.util.ErrorLogger;
+import heroes.ui.HeroTabController;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -82,10 +83,11 @@ public class RitualObjectEditor {
 	@FXML
 	private ComboBox<String> ritualList;
 
+	private final JSONObject hero;
 	private final Map<String, CheckBox> types = new HashMap<>();
 	private final String ritualGroupName;
 
-	public RitualObjectEditor(final Window window, final RitualObject ritualObject) {
+	public RitualObjectEditor(final Window window, final JSONObject hero, final RitualObject ritualObject) {
 		final FXMLLoader fxmlLoader = new FXMLLoader();
 
 		fxmlLoader.setController(this);
@@ -96,6 +98,7 @@ public class RitualObjectEditor {
 			ErrorLogger.logError(e);
 		}
 
+		this.hero = hero;
 		ritualGroupName = ritualObject.getRitualGroupName();
 
 		final JSONObject ritualGroups = ResourceManager.getResource("data/Ritualgruppen");
@@ -238,9 +241,14 @@ public class RitualObjectEditor {
 	private void updateList() {
 		ritualList.getItems().clear();
 
+		final boolean editing = HeroTabController.isEditable.get();
+		final JSONObject skills = hero.getObj("Sonderfertigkeiten");
+
 		final JSONObject ritualGroup = ResourceManager.getResource("data/Rituale").getObj(ritualGroupName);
 		DSAUtil.foreach(ritual -> true, (name, ritual) -> {
-			ritualList.getItems().add(name);
+			if (editing || skills.containsKey(name)) {
+				ritualList.getItems().add(name);
+			}
 		}, ritualGroup);
 
 		if ("Bannschwert".equals(ritualGroupName)) {

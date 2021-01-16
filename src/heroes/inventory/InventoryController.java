@@ -380,7 +380,7 @@ public class InventoryController extends HeroTabController {
 					case "Fernkampfwaffe" -> new RangedWeaponEditor(window, (RangedWeapon) item);
 					case "Schild", "Parierwaffe" -> new DefensiveWeaponEditor(window, (DefensiveWeapon) item);
 					case "Rüstung" -> new ArmorEditor(window, (Armor) item);
-					case "Ritualobjekt" -> new RitualObjectEditor(window, (RitualObject) item);
+					case "Ritualobjekt" -> new RitualObjectEditor(window, hero, (RitualObject) item);
 					case "Wertgegenstand" -> new ValuableEditor(window, (Valuable) item);
 					case "Alchemikum" -> new PotionEditor(window, (Potion) item);
 					case "Artefakt" -> new ArtifactEditor(window, (Artifact) item);
