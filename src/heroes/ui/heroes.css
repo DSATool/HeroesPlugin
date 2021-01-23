@@ -1,8 +1,4 @@
-.heroesController .tab-header-area .control-buttons-tab {
-	-fx-padding: 0 -73 0 0;
-	-fx-pref-width: 88;
-}
-
-.editButton {
-	-fx-translate-y: 2;
+.buttonedTabPane .tab-header-area .control-buttons-tab {
+	-fx-padding: 0 -76 0 0;
+	-fx-pref-width: 90;
 }
