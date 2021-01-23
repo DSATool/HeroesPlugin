@@ -19,6 +19,7 @@ import dsa41basis.hero.ProOrCon;
 import dsa41basis.util.DSAUtil;
 import dsa41basis.util.HeroUtil;
 import dsa41basis.util.RequirementsUtil;
+import dsatool.gui.GUIUtil;
 import dsatool.ui.GraphicTableCell;
 import dsatool.ui.IntegerSpinnerTableCell;
 import dsatool.ui.ReactiveComboBox;
@@ -26,7 +27,6 @@ import dsatool.util.ErrorLogger;
 import dsatool.util.Util;
 import heroes.ui.HeroTabController;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -104,25 +104,20 @@ public class ProsOrConsController {
 		table.prefWidthProperty().bind(parent.widthProperty().subtract(17));
 		table.getSortOrder().add(nameColumn);
 
-		DoubleBinding width = table.widthProperty().subtract(2);
-		width = width.subtract(nameColumn.widthProperty());
+		GUIUtil.autosizeTable(table);
 
-		if (needsVariant) {
-			width = width.subtract(variantColumn.widthProperty());
-		} else {
+		if (!needsVariant) {
+			descColumn.setResizable(false);
 			variantColumn.setVisible(false);
 		}
-
-		width = width.subtract(valueColumn.widthProperty());
-
-		descColumn.prefWidthProperty().bind(width);
 
 		nameColumn.setCellValueFactory(new PropertyValueFactory<ProOrCon, String>("displayName"));
 		nameColumn.setCellFactory(c -> new TextFieldTableCell<>() {
 			@Override
 			public void updateItem(final String item, final boolean empty) {
 				super.updateItem(item, empty);
-				final ProOrCon proOrCon = getTableRow().getItem();
+				final TableRow<ProOrCon> row = getTableRow();
+				final ProOrCon proOrCon = row != null ? row.getItem() : null;
 				if (proOrCon != null) {
 					Util.addReference(this, proOrCon.getProOrCon(), 15, nameColumn.widthProperty());
 				}
@@ -190,7 +185,7 @@ public class ProsOrConsController {
 		variantColumn.setOnEditCommit(t -> t.getRowValue().setVariant(t.getNewValue(), true));
 
 		valueColumn.setCellValueFactory(new PropertyValueFactory<ProOrCon, Integer>("value"));
-		valueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 9999, 1, false) {
+		valueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 9999) {
 			@Override
 			public void startEdit() {
 				if (!HeroTabController.isEditable.get()) {
@@ -362,8 +357,6 @@ public class ProsOrConsController {
 			}
 		}
 
-		table.setPrefHeight(table.getItems().size() * 28 + 26);
-		table.setMinHeight(table.getItems().size() * 28 + 26);
 		table.sort();
 	}
 

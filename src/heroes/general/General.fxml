@@ -122,22 +122,28 @@
          <HBox spacing="2" style="-fx-padding: 2, 2, 2, 2;" >
             <VBox spacing="2" >
                <TableView fx:id="attributesTable" editable="true" fixedCellSize="28" >
-                  <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+                  <styleClass>
+                     <String fx:value="remove-vertical-scrollbar" />
+                     <String fx:value="remove-horizontal-scrollbar" />
+                  </styleClass>
                   <columns>
                      <TableColumn fx:id="attributesNameColumn" text="Eigenschaft" minWidth="100" resizable="false" sortable="false" />
-                     <TableColumn fx:id="attributesValueColumn" text="Wert" prefWidth="60" resizable="false" sortable="false" editable="true" />
-                     <TableColumn fx:id="attributesModifierColumn" text="Mod." prefWidth="60" resizable="false" sortable="false" editable="true" />
-                     <TableColumn fx:id="attributesCurrentColumn" text="Akt." prefWidth="50" resizable="false" sortable="false" />               
+                     <TableColumn fx:id="attributesValueColumn" text="Wert" minWidth="60" maxWidth="60" resizable="false" sortable="false" editable="true" />
+                     <TableColumn fx:id="attributesModifierColumn" text="Mod." minWidth="60" maxWidth="60" resizable="false" sortable="false" editable="true" />
+                     <TableColumn fx:id="attributesCurrentColumn" text="Akt." minWidth="50" maxWidth="50" resizable="false" sortable="false" />               
                   </columns>
                </TableView>
             </VBox>
             <VBox spacing="2" >
                <TableView fx:id="derivedValuesTable" editable="true" fixedCellSize="28" >
-                  <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+                  <styleClass>
+                     <String fx:value="remove-vertical-scrollbar" />
+                     <String fx:value="remove-horizontal-scrollbar" />
+                  </styleClass>
                   <columns>
                      <TableColumn fx:id="derivedNameColumn" text="Basiswert" minWidth="100" resizable="false" sortable="false" />
-                     <TableColumn fx:id="derivedModifierColumn" text="Mod." prefWidth="60" resizable="false" sortable="false" editable="true" />
-                     <TableColumn fx:id="derivedCurrentColumn" text="Akt." prefWidth="50" resizable="false" sortable="false" />               
+                     <TableColumn fx:id="derivedModifierColumn" text="Mod." minWidth="60" maxWidth="60" resizable="false" sortable="false" editable="true" />
+                     <TableColumn fx:id="derivedCurrentColumn" text="Akt." minWidth="50" maxWidth="50" resizable="false" sortable="false" />               
                   </columns>
                </TableView>
             </VBox>
@@ -149,13 +155,12 @@
                <String fx:value="remove-vertical-scrollbar" />
                <String fx:value="remove-horizontal-scrollbar" />
             </styleClass>
-            <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
             <columns>
-               <TableColumn fx:id="energiesNameColumn" text="Energie" minWidth="100" resizable="false" sortable="false" />
-               <TableColumn fx:id="energiesPermanentColumn" text="Perm." prefWidth="60" resizable="false" sortable="false" editable="true" />
-               <TableColumn fx:id="energiesBoughtColumn" text="Kauf" prefWidth="60" resizable="false" sortable="false" editable="true" />
-               <TableColumn fx:id="energiesModifierColumn" text="Mod." prefWidth="60" resizable="false" sortable="false" editable="true" />
-               <TableColumn fx:id="energiesCurrentColumn" text="Aktuell" prefWidth="100" resizable="false" sortable="false" />              
+               <TableColumn fx:id="energiesNameColumn" text="Energie" minWidth="100" maxWidth="100" resizable="false" sortable="false" />
+               <TableColumn fx:id="energiesPermanentColumn" text="Perm." minWidth="60" maxWidth="60" resizable="false" sortable="false" editable="true" />
+               <TableColumn fx:id="energiesBoughtColumn" text="Kauf" minWidth="60" maxWidth="60" resizable="false" sortable="false" editable="true" />
+               <TableColumn fx:id="energiesModifierColumn" text="Mod." minWidth="60" maxWidth="60" resizable="false" sortable="false" editable="true" />
+               <TableColumn fx:id="energiesCurrentColumn" text="Aktuell" minWidth="100" resizable="false" sortable="false" />              
             </columns>
          </TableView>
       </TitledPane>

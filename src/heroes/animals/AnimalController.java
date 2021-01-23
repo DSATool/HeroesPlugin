@@ -407,12 +407,12 @@ public class AnimalController {
 
 	private void initAttributes() {
 		attributesTable.prefWidthProperty().bind(attributesBox.widthProperty().subtract(2).divide(2.5));
-		GUIUtil.autosizeTable(attributesTable, 0, 2);
+		GUIUtil.autosizeTable(attributesTable);
 		GUIUtil.cellValueFactories(attributesTable, "name", "value", "manualModifier", "current");
 
-		attributesValueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 999, 1, false));
+		attributesValueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 999));
 		attributesValueColumn.setOnEditCommit(t -> t.getRowValue().setValue(t.getNewValue()));
-		attributesModifierColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99, 1, false));
+		attributesModifierColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99));
 		attributesModifierColumn.setOnEditCommit(t -> t.getRowValue().setManualModifier(t.getNewValue()));
 
 		if (type == CharacterType.HORSE) {
@@ -430,9 +430,6 @@ public class AnimalController {
 				attributesTable.getItems().add(new AnimalAttribute(attribute, attributes.getObj(attribute)));
 			}
 		}
-
-		attributesTable.setMinHeight(attributesTable.getItems().size() * 28 + 26);
-		attributesTable.setMaxHeight(attributesTable.getItems().size() * 28 + 26);
 
 		attributesTable.setRowFactory(t -> {
 			final TableRow<AnimalAttribute> row = new TableRow<>();
@@ -491,6 +488,7 @@ public class AnimalController {
 	}
 
 	private void initEquipment() {
+		GUIUtil.autosizeTable(equipmentTable);
 		GUIUtil.cellValueFactories(equipmentTable, "name", "notes");
 
 		final JSONArray items = actualAnimal.getArr("Ausrüstung");
@@ -596,7 +594,7 @@ public class AnimalController {
 	}
 
 	private void initProConSkills() {
-		GUIUtil.autosizeTable(proConsTable, 0, 2);
+		GUIUtil.autosizeTable(proConsTable);
 		GUIUtil.cellValueFactories(proConsTable, "name", "description", "value");
 
 		proConNameColumn.setCellFactory(c -> new TextFieldTableCell<>() {
@@ -624,7 +622,7 @@ public class AnimalController {
 			}
 		});
 		proConDescColumn.setOnEditCommit(t -> t.getRowValue().setDescription(t.getNewValue()));
-		proConValueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 9999, 1, false));
+		proConValueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 9999));
 		proConValueColumn.setOnEditCommit(t -> t.getRowValue().setValue(t.getNewValue()));
 
 		proConsTable.setRowFactory(t -> {
@@ -652,7 +650,7 @@ public class AnimalController {
 		});
 
 		if (type == CharacterType.MAGIC_ANIMAL) {
-			GUIUtil.autosizeTable(ritualsTable, 0, 2);
+			GUIUtil.autosizeTable(ritualsTable);
 			ritualNameColumn.setCellValueFactory(p -> new ReadOnlyObjectWrapper<>(p.getValue()));
 
 			ritualsTable.setRowFactory(t -> {
@@ -675,7 +673,7 @@ public class AnimalController {
 			updateRituals();
 		}
 
-		GUIUtil.autosizeTable(skillsTable, 0, 2);
+		GUIUtil.autosizeTable(skillsTable);
 		GUIUtil.cellValueFactories(skillsTable, "name", "description");
 
 		skillNameColumn.setCellFactory(c -> new TextFieldTableCell<>() {
@@ -737,19 +735,19 @@ public class AnimalController {
 		statsTable.prefWidthProperty().bind(attributesBox.widthProperty().subtract(2).divide(1.667));
 		final JSONObject baseValues = actualAnimal.getObj("Basiswerte");
 
-		GUIUtil.autosizeTable(statsTable, 0, 2);
+		GUIUtil.autosizeTable(statsTable);
 		GUIUtil.cellValueFactories(statsTable, "name", "value", "bought", "manualModifier", "current");
 
-		statsValueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 999, 1, false));
+		statsValueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 999));
 		statsValueColumn.setOnEditCommit(t -> t.getRowValue().setValue(t.getNewValue()));
-		statsModifierColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99, 1, false));
+		statsModifierColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99));
 		statsModifierColumn.setOnEditCommit(t -> t.getRowValue().setManualModifier(t.getNewValue()));
 
 		for (final String attribute : new String[] { "Loyalität", "Lebensenergie", "Ausdauer" }) {
 			statsTable.getItems().add(new AnimalAttribute(attribute, baseValues.getObj(attribute)));
 		}
 		if (type == CharacterType.MAGIC_ANIMAL) {
-			statsBoughtColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 99, 1, false));
+			statsBoughtColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 99));
 			statsBoughtColumn.setOnEditCommit(t -> t.getRowValue().setBought(t.getNewValue()));
 			statsTable.getItems().add(new AnimalAttribute("Astralenergie", baseValues.getObj("Astralenergie")));
 		} else {
@@ -758,9 +756,6 @@ public class AnimalController {
 			statsBoughtColumn.setVisible(false);
 			statsTable.getItems().add(new AnimalAttribute("Fährtensuchen", baseValues.getObjOrDefault("Fährtensuchen", new JSONObject(baseValues))));
 		}
-
-		statsTable.setPrefHeight(statsTable.getItems().size() * 28 + 26);
-		statsTable.setMinHeight(statsTable.getItems().size() * 28 + 26);
 
 		statsTable.setRowFactory(t -> {
 			final TableRow<AnimalAttribute> row = new TableRow<>();
@@ -787,9 +782,6 @@ public class AnimalController {
 			newItem.recompute();
 			equipmentTable.getItems().add(newItem);
 		}, actualAnimal);
-
-		equipmentTable.setMinHeight((equipmentTable.getItems().size() + 1) * 26 + 1);
-		equipmentTable.setMaxHeight((equipmentTable.getItems().size() + 1) * 26 + 1);
 	}
 
 	private void updateLocationMenu(final JSONObject item, final Menu location) {
@@ -860,9 +852,6 @@ public class AnimalController {
 			}
 		}
 
-		proConsTable.setMinHeight(proConsTable.getItems().size() * 28 + 26);
-		proConsTable.setMaxHeight(proConsTable.getItems().size() * 28 + 26);
-
 		proConsList.getItems().clear();
 		for (final String proOrConName : prosOrCons.keySet()) {
 			final JSONObject proOrCon = prosOrCons.getObj(proOrConName);
@@ -885,9 +874,6 @@ public class AnimalController {
 				ritualsTable.getItems().add(skillName);
 			}
 		}
-
-		ritualsTable.setMinHeight(ritualsTable.getItems().size() * 28 + 26);
-		ritualsTable.setMaxHeight(ritualsTable.getItems().size() * 28 + 26);
 
 		ritualsList.getItems().clear();
 		for (final String ritualName : rituals.keySet()) {
@@ -918,9 +904,6 @@ public class AnimalController {
 				}
 			}
 		}
-
-		skillsTable.setMinHeight(skillsTable.getItems().size() * 28 + 26);
-		skillsTable.setMaxHeight(skillsTable.getItems().size() * 28 + 26);
 
 		skillsList.getItems().clear();
 		for (final String skillName : skills.keySet()) {

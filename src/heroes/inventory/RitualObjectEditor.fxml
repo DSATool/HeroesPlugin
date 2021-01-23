@@ -26,20 +26,19 @@
       <Label text="Volumen: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
       <ReactiveSpinner fx:id="volume" imin="1" imax="99" editable="true" prefWidth="55" />
    </HBox>
-   <HBox spacing="2" alignment="CENTER_LEFT" >
+   <HBox spacing="2" alignment="TOP_LEFT" >
       <Label text="Typ: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
       <VBox fx:id="typeBox" >
       </VBox>
    </HBox>
    <Label text="Rituale: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
    <TableView fx:id="ritualTable" editable="true" fixedCellSize="25" >
-      <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
       <placeholder>
          <Label minHeight="0" />
       </placeholder>
       <columns>
-         <TableColumn text="Ritual" minWidth="100" />
-         <TableColumn fx:id="choiceColumn" text="Anzahl/Auswahl" minWidth="200" editable="true" />
+         <TableColumn text="Ritual" resizable="false" minWidth="100" />
+         <TableColumn fx:id="choiceColumn" text="Anzahl/Auswahl" resizable="false" minWidth="171" editable="true" />
       </columns>
    </TableView>
    <HBox spacing="2" alignment="CENTER_LEFT" >

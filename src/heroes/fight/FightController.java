@@ -31,7 +31,6 @@ import dsatool.ui.ReactiveSpinner;
 import dsatool.util.ErrorLogger;
 import heroes.ui.HeroTabController;
 import heroes.util.UiUtil;
-import javafx.beans.binding.DoubleBinding;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -193,17 +192,6 @@ public class FightController extends HeroTabController {
 				}
 			}
 		}, items);
-
-		closeCombatTable.setPrefHeight(closeCombatTable.getItems().size() * 28 + 25);
-		closeCombatTable.setMinHeight(closeCombatTable.getItems().size() * 28 + 25);
-		rangedCombatTable.setPrefHeight(rangedCombatTable.getItems().size() * 28 + 25);
-		rangedCombatTable.setMinHeight(rangedCombatTable.getItems().size() * 28 + 25);
-		shieldsTable.setPrefHeight(shieldsTable.getItems().size() * 28 + 25);
-		shieldsTable.setMinHeight(shieldsTable.getItems().size() * 28 + 25);
-		defensiveWeaponsTable.setPrefHeight(defensiveWeaponsTable.getItems().size() * 28 + 25);
-		defensiveWeaponsTable.setMinHeight(defensiveWeaponsTable.getItems().size() * 28 + 25);
-		armorTable.setPrefHeight(armorTable.getItems().size() * 28 + 25);
-		armorTable.setMinHeight(armorTable.getItems().size() * 28 + 25);
 	}
 
 	@Override
@@ -233,7 +221,7 @@ public class FightController extends HeroTabController {
 
 		closeCombatTable.prefWidthProperty().bind(pane.widthProperty().subtract(17));
 
-		GUIUtil.autosizeTable(closeCombatTable, 0, 0);
+		GUIUtil.autosizeTable(closeCombatTable);
 		GUIUtil.cellValueFactories(closeCombatTable, "name", "type", "ebe", "tp", "at", "pa", "ini", "dk", "bf");
 
 		closeCombatTable.setRowFactory(table -> {
@@ -285,12 +273,12 @@ public class FightController extends HeroTabController {
 		closeCombatEBEColumn.setCellFactory(UiUtil.signedIntegerCellFactory);
 		closeCombatPAColumn.setCellFactory(UiUtil.integerCellFactory);
 		closeCombatIniColumn.setCellFactory(UiUtil.signedIntegerCellFactory);
-		closeCombatBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12, 1, false));
+		closeCombatBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12));
 		closeCombatBFColumn.setOnEditCommit(t -> t.getRowValue().setBf(t.getNewValue()));
 
 		rangedCombatTable.prefWidthProperty().bind(pane.widthProperty().subtract(17));
 
-		GUIUtil.autosizeTable(rangedCombatTable, 0, 0);
+		GUIUtil.autosizeTable(rangedCombatTable);
 		GUIUtil.cellValueFactories(rangedCombatTable, "name", "type", "ebe", "tp", "at", "load", "distance", "distancetp", "ammunition");
 
 		rangedCombatTable.setRowFactory(table -> {
@@ -371,40 +359,30 @@ public class FightController extends HeroTabController {
 
 		shieldsTable.prefWidthProperty().bind(pane.widthProperty().subtract(17));
 
-		GUIUtil.autosizeTable(shieldsTable, 0, 0);
+		GUIUtil.autosizeTable(shieldsTable);
 		GUIUtil.cellValueFactories(shieldsTable, "name", "at", "pa", "ini", "bf");
 
 		shieldsIniColumn.setCellFactory(UiUtil.signedIntegerCellFactory);
-		shieldsBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12, 1, false));
+		shieldsBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12));
 		shieldsBFColumn.setOnEditCommit(t -> t.getRowValue().setBf(t.getNewValue()));
 
 		defensiveWeaponsTable.prefWidthProperty().bind(pane.widthProperty().subtract(17));
 
-		GUIUtil.autosizeTable(defensiveWeaponsTable, 0, 0);
+		GUIUtil.autosizeTable(defensiveWeaponsTable);
 		GUIUtil.cellValueFactories(defensiveWeaponsTable, "name", "at", "pa", "ini", "bf");
 
 		defensiveWeaponsPAColumn.setCellFactory(UiUtil.signedIntegerCellFactory);
 		defensiveWeaponsIniColumn.setCellFactory(UiUtil.signedIntegerCellFactory);
-		defensiveWeaponsBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12, 1, false));
+		defensiveWeaponsBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12));
 		defensiveWeaponsBFColumn.setOnEditCommit(t -> t.getRowValue().setBf(t.getNewValue()));
 
 		final String armorSetting = Settings.getSettingStringOrDefault("Zonenrüstung", "Kampf", "Rüstungsart");
 
 		armorTable.prefWidthProperty().bind(pane.widthProperty().subtract(17));
 
-		DoubleBinding armorWidth = armorTable.widthProperty().subtract(0);
 		if ("Zonenrüstung".equals(armorSetting)) {
-			armorWidth = armorWidth.subtract(armorHeadColumn.widthProperty());
-			armorWidth = armorWidth.subtract(armorBreastColumn.widthProperty());
-			armorWidth = armorWidth.subtract(armorBackColumn.widthProperty());
-			armorWidth = armorWidth.subtract(armorBellyColumn.widthProperty());
-			armorWidth = armorWidth.subtract(armorLarmColumn.widthProperty());
-			armorWidth = armorWidth.subtract(armorRarmColumn.widthProperty());
-			armorWidth = armorWidth.subtract(armorLlegColumn.widthProperty());
-			armorWidth = armorWidth.subtract(armorRlegColumn.widthProperty());
 			armorRsColumn.setVisible(false);
 		} else {
-			armorWidth = armorWidth.subtract(armorRsColumn.widthProperty());
 			armorHeadColumn.setVisible(false);
 			armorBreastColumn.setVisible(false);
 			armorBackColumn.setVisible(false);
@@ -414,9 +392,8 @@ public class FightController extends HeroTabController {
 			armorLlegColumn.setVisible(false);
 			armorRlegColumn.setVisible(false);
 		}
-		armorWidth = armorWidth.subtract(armorBeColumn.widthProperty());
 
-		armorNameColumn.prefWidthProperty().bind(armorWidth);
+		GUIUtil.autosizeTable(armorTable);
 		if ("Gesamtrüstung".equals(armorSetting)) {
 			GUIUtil.cellValueFactories(armorTable, "name", "head", "breast", "back", "belly", "larm", "rarm", "lleg", "rleg", "totalrs", "totalbe");
 		} else {

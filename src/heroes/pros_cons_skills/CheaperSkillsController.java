@@ -38,7 +38,7 @@ public class CheaperSkillsController extends ProsOrConsController {
 		valueColumn.setText("Verbilligungen");
 		valueColumn.setPrefWidth(100);
 		valueColumn.setCellValueFactory(new PropertyValueFactory<ProOrCon, Integer>("numCheaper"));
-		valueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(1, 9, 1, false));
+		valueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(1, 9));
 		valueColumn.setOnEditCommit(t -> t.getRowValue().setNumCheaper(t.getNewValue()));
 	}
 
@@ -131,8 +131,5 @@ public class CheaperSkillsController extends ProsOrConsController {
 				table.getItems().add(new ProOrCon(skillName, hero, skill, actual.getObj(skillName)));
 			}
 		}
-
-		table.setPrefHeight(table.getItems().size() * 28 + 26);
-		table.setMinHeight(table.getItems().size() * 28 + 26);
 	}
 }

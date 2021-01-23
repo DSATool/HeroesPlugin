@@ -194,7 +194,6 @@ public class RitualObjectEditor {
 	}
 
 	private void initializeRitualTable() {
-		GUIUtil.autosizeTable(ritualTable, 0, 2);
 		GUIUtil.cellValueFactories(ritualTable, "name", "choice");
 
 		choiceColumn.setCellFactory(c -> new GraphicTableCell<>(false) {

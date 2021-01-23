@@ -21,6 +21,7 @@ import dsatool.resources.ResourceManager;
 import dsatool.ui.GraphicTableCell;
 import dsatool.ui.ReactiveSpinner;
 import dsatool.util.ErrorLogger;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -32,7 +33,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
@@ -131,7 +131,7 @@ public class ArtifactEditor {
 	@FXML
 	private Button cancelButton;
 
-	private Artifact artifact;
+	private JSONArray spells;
 
 	public ArtifactEditor(final Window window, final Artifact artifact) {
 		final FXMLLoader fxmlLoader = new FXMLLoader();
@@ -146,7 +146,7 @@ public class ArtifactEditor {
 
 		final Stage stage = new Stage();
 		stage.setTitle("Bearbeiten");
-		stage.setScene(new Scene(root, 330, 390));
+		stage.setScene(new Scene(root, 330, 340));
 		stage.initModality(Modality.WINDOW_MODAL);
 		stage.setResizable(false);
 		stage.initOwner(window);
@@ -159,10 +159,11 @@ public class ArtifactEditor {
 		triggerType.setItems(FXCollections.observableArrayList(triggers.keySet()));
 		triggerType.getItems().add("anderer");
 
-		this.artifact = artifact;
+		spells = artifact.getSpells().clone(null);
 
-		final JSONArray spells = artifact.getSpells();
+		spellTable.heightProperty().addListener((o, oldV, newV) -> stage.setHeight(stage.getHeight() + newV.doubleValue() - oldV.doubleValue()));
 
+		GUIUtil.autosizeTable(spellTable);
 		GUIUtil.cellValueFactories(spellTable, "name", "variant");
 
 		spellTable.setRowFactory(table -> {
@@ -177,28 +178,18 @@ public class ArtifactEditor {
 				updateSpellTable();
 			});
 			contextMenu.getItems().add(deleteItem);
-			row.setContextMenu(contextMenu);
+			row.contextMenuProperty().bind(Bindings.when(row.indexProperty().isNotEqualTo(Bindings.size(spellTable.getItems()).subtract(1))).then(contextMenu)
+					.otherwise((ContextMenu) null));
 			return row;
 		});
 
-		spellNameColumn.setCellFactory(o -> {
-			final TableCell<Spell, String> cell = new GraphicTableCell<>(false) {
-				@Override
-				protected void createGraphic() {
-					final TextField t = new TextField();
-					createGraphic(t, t::getText, t::setText);
-				}
-			};
-			cell.itemProperty().addListener((no, ov, nv) -> {
-				if (cell.getTableRow().getIndex() < spellTable.getItems().size() - 1) {
-					cell.setContextMenu(cell.getTableRow().getContextMenu());
-				} else {
-					cell.setContextMenu(null);
-				}
-			});
-			return cell;
+		spellNameColumn.setCellFactory(o -> new GraphicTableCell<>(false) {
+			@Override
+			protected void createGraphic() {
+				final TextField t = new TextField();
+				createGraphic(t, t::getText, t::setText);
+			}
 		});
-
 		spellNameColumn.setOnEditCommit(event -> {
 			if (event.getTablePosition().getRow() == spellTable.getItems().size() - 1) {
 				if (event.getNewValue() != null && !"".equals(event.getNewValue())) {
@@ -208,34 +199,32 @@ public class ArtifactEditor {
 					spells.notifyListeners(null);
 					updateSpellTable();
 				}
+			} else if ("".equals(event.getNewValue())) {
+				final JSONObject item = event.getRowValue().actual;
+				final JSONValue parent = item.getParent();
+				parent.remove(item);
+				parent.notifyListeners(null);
+				updateSpellTable();
 			} else {
 				event.getRowValue().setName(event.getNewValue());
 			}
 		});
 
-		spellVariantColumn.setCellFactory(o -> {
-			final TableCell<Spell, String> cell = new GraphicTableCell<>(false) {
-				@Override
-				protected void createGraphic() {
-					final TextField t = new TextField();
-					createGraphic(t, t::getText, t::setText);
+		spellVariantColumn.setCellFactory(o -> new GraphicTableCell<>(false) {
+			@Override
+			protected void createGraphic() {
+				final TextField t = new TextField();
+				createGraphic(t, t::getText, t::setText);
+			}
+
+			@Override
+			public void startEdit() {
+				if (getTableRow().getIndex() < spellTable.getItems().size() - 1) {
+					super.startEdit();
 				}
-			};
-			cell.itemProperty().addListener((no, ov, nv) -> {
-				if (cell.getTableRow().getIndex() < spellTable.getItems().size() - 1) {
-					cell.setContextMenu(cell.getTableRow().getContextMenu());
-				} else {
-					cell.setContextMenu(null);
-				}
-			});
-			return cell;
-		});
-		spellVariantColumn.setOnEditCommit(event -> {
-			if (event.getTablePosition().getRow() < spellTable.getItems().size() - 1) {
-				final String variant = event.getNewValue();
-				event.getRowValue().setVariant(variant);
 			}
 		});
+		spellVariantColumn.setOnEditCommit(event -> event.getRowValue().setVariant(event.getNewValue()));
 
 		type.valueProperty().addListener((o, oldV, newV) -> {
 			loadNum.setDisable(true);
@@ -312,6 +301,7 @@ public class ArtifactEditor {
 			}
 			artifact.setAsp(asp.getValue(), pasp.getValue());
 			artifact.setTrigger(triggerType.getValue(), triggerActions.getValue(), triggerDesc.getText());
+			artifact.setSpells(spells);
 			artifact.setWeight(weight.getValue());
 			artifact.setNotes(notes.getText());
 			stage.close();
@@ -322,19 +312,16 @@ public class ArtifactEditor {
 		okButton.setDefaultButton(true);
 		cancelButton.setCancelButton(true);
 
-		updateSpellTable();
-
 		stage.show();
+
+		updateSpellTable();
 	}
 
 	private void updateSpellTable() {
 		spellTable.getItems().clear();
-		final JSONArray spells = artifact.getSpells();
 		for (int i = 0; i < spells.size(); ++i) {
 			spellTable.getItems().add(new Spell(spells.getObj(i)));
 		}
 		spellTable.getItems().add(new Spell(new JSONObject(null)));
-		spellTable.setPrefHeight((spellTable.getItems().size() + 1) * 25 + 1);
-		spellTable.setMinHeight((spellTable.getItems().size() + 1) * 25 + 1);
 	}
 }

@@ -569,19 +569,9 @@ public class InventoryController extends HeroTabController {
 	private void initializeArmorTable() {
 		final String armorSetting = Settings.getSettingStringOrDefault("Zonenrüstung", "Kampf", "Rüstungsart");
 
-		DoubleBinding armorWidth = armorTable.widthProperty().subtract(2);
 		if ("Zonenrüstung".equals(armorSetting)) {
-			armorWidth = armorWidth.subtract(armorHeadColumn.widthProperty());
-			armorWidth = armorWidth.subtract(armorBreastColumn.widthProperty());
-			armorWidth = armorWidth.subtract(armorBackColumn.widthProperty());
-			armorWidth = armorWidth.subtract(armorBellyColumn.widthProperty());
-			armorWidth = armorWidth.subtract(armorLarmColumn.widthProperty());
-			armorWidth = armorWidth.subtract(armorRarmColumn.widthProperty());
-			armorWidth = armorWidth.subtract(armorLlegColumn.widthProperty());
-			armorWidth = armorWidth.subtract(armorRlegColumn.widthProperty());
 			armorRsColumn.setVisible(false);
 		} else {
-			armorWidth = armorWidth.subtract(armorRsColumn.widthProperty());
 			armorHeadColumn.setVisible(false);
 			armorBreastColumn.setVisible(false);
 			armorBackColumn.setVisible(false);
@@ -591,10 +581,8 @@ public class InventoryController extends HeroTabController {
 			armorLlegColumn.setVisible(false);
 			armorRlegColumn.setVisible(false);
 		}
-		armorWidth = armorWidth.subtract(armorBeColumn.widthProperty());
-		armorWidth = armorWidth.subtract(armorWeightColumn.widthProperty());
 
-		armorNameColumn.prefWidthProperty().bind(armorWidth);
+		GUIUtil.autosizeTable(armorTable);
 		if ("Gesamtrüstung".equals(armorSetting)) {
 			GUIUtil.cellValueFactories(armorTable, "name", "head", "breast", "back", "belly", "larm", "rarm", "lleg", "rleg", "totalrs", "totalbe", "weight");
 		} else {
@@ -605,22 +593,24 @@ public class InventoryController extends HeroTabController {
 	}
 
 	private void initializeArtifactTable() {
+		GUIUtil.autosizeTable(artifactTable);
 		GUIUtil.cellValueFactories(artifactTable, "name", "notes");
 
 		artifactTable.setRowFactory(contextMenu("Artefakte", "Artefakt"));
 	}
 
 	private void initializeCloseCombatTable() {
-		GUIUtil.autosizeTable(closeCombatTable, 0, 2);
+		GUIUtil.autosizeTable(closeCombatTable);
 		GUIUtil.cellValueFactories(closeCombatTable, "name", "tp", "tpkk", "weight", "length", "bf", "ini", "wm", "special", "dk");
 
-		closeCombatBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12, 1, false));
+		closeCombatBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12));
 		closeCombatBFColumn.setOnEditCommit(t -> t.getRowValue().setBf(t.getNewValue()));
 
 		closeCombatTable.setRowFactory(contextMenu("Nahkampfwaffen", "Nahkampfwaffe"));
 	}
 
 	private void initializeClothingTable() {
+		GUIUtil.autosizeTable(clothingTable);
 		GUIUtil.cellValueFactories(clothingTable, "name", "notes");
 
 		clothingTable.setRowFactory(contextMenu("Kleidung", "Kleidung"));
@@ -664,16 +654,17 @@ public class InventoryController extends HeroTabController {
 	}
 
 	private void initializeDefensiveWeaponsTable() {
-		GUIUtil.autosizeTable(defensiveWeaponsTable, 0, 2);
+		GUIUtil.autosizeTable(defensiveWeaponsTable);
 		GUIUtil.cellValueFactories(defensiveWeaponsTable, "name", "wm", "ini", "bf", "weight");
 
-		defensiveWeaponsBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12, 1, false));
+		defensiveWeaponsBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12));
 		defensiveWeaponsBFColumn.setOnEditCommit(t -> t.getRowValue().setBf(t.getNewValue()));
 
 		defensiveWeaponsTable.setRowFactory(contextMenu("Parierwaffen", "Parierwaffe"));
 	}
 
 	private void initializeEquipmentTable() {
+		GUIUtil.autosizeTable(equipmentTable);
 		GUIUtil.cellValueFactories(equipmentTable, "name", "notes");
 
 		equipmentTable.setRowFactory(contextMenu("Ausrüstung", ""));
@@ -717,6 +708,7 @@ public class InventoryController extends HeroTabController {
 	}
 
 	private void initializePotionsTable() {
+		GUIUtil.autosizeTable(potionsTable);
 		GUIUtil.cellValueFactories(potionsTable, "name", "notes", "quality", "amount");
 
 		DoubleBinding potionsWidth = potionsTable.widthProperty().subtract(2);
@@ -727,37 +719,38 @@ public class InventoryController extends HeroTabController {
 		potionsNameColumn.prefWidthProperty().bind(potionsWidth);
 		potionsNotesColumn.prefWidthProperty().bind(potionsWidth);
 
-		potionsAmountColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 99, 1, false));
+		potionsAmountColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 99));
 		potionsAmountColumn.setOnEditCommit(t -> t.getRowValue().setAmount(t.getNewValue()));
 
 		potionsTable.setRowFactory(contextMenu("Alchemika", "Alchemikum"));
 	}
 
 	private void initializeRangedTable() {
-		GUIUtil.autosizeTable(rangedTable, 0, 2);
+		GUIUtil.autosizeTable(rangedTable);
 		GUIUtil.cellValueFactories(rangedTable, "name", "tp", "distance", "distancetp", "weight", "load");
 
 		rangedTable.setRowFactory(contextMenu("Fernkampfwaffen", "Fernkampfwaffe"));
 	}
 
 	private void initializeRitualObjectTable() {
-		GUIUtil.autosizeTable(ritualObjectTable, 0, 2);
+		GUIUtil.autosizeTable(ritualObjectTable);
 		GUIUtil.cellValueFactories(ritualObjectTable, "name", "type");
 
 		ritualObjectTable.setRowFactory(contextMenu("Ritualobjekte", "Ritualobjekt"));
 	}
 
 	private void initializeShieldsTable() {
-		GUIUtil.autosizeTable(shieldsTable, 0, 2);
+		GUIUtil.autosizeTable(shieldsTable);
 		GUIUtil.cellValueFactories(shieldsTable, "name", "wm", "ini", "bf", "weight");
 
-		shieldsBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12, 1, false));
+		shieldsBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12));
 		shieldsBFColumn.setOnEditCommit(t -> t.getRowValue().setBf(t.getNewValue()));
 
 		shieldsTable.setRowFactory(contextMenu("Schilde", "Schild"));
 	}
 
 	private void initializeValuablesTable() {
+		GUIUtil.autosizeTable(valuablesTable);
 		GUIUtil.cellValueFactories(valuablesTable, "name", "notes");
 
 		valuablesNameColumn.setCellFactory(o -> {
@@ -895,28 +888,6 @@ public class InventoryController extends HeroTabController {
 			}
 		});
 
-		closeCombatTable.setPrefHeight((closeCombatTable.getItems().size() + 1) * 25 + 1);
-		closeCombatTable.setMinHeight((closeCombatTable.getItems().size() + 1) * 25 + 1);
-		rangedTable.setPrefHeight((rangedTable.getItems().size() + 1) * 25 + 1);
-		rangedTable.setMinHeight((rangedTable.getItems().size() + 1) * 25 + 1);
-		shieldsTable.setPrefHeight((shieldsTable.getItems().size() + 1) * 25 + 1);
-		shieldsTable.setMinHeight((shieldsTable.getItems().size() + 1) * 25 + 1);
-		defensiveWeaponsTable.setPrefHeight((defensiveWeaponsTable.getItems().size() + 1) * 25 + 1);
-		defensiveWeaponsTable.setMinHeight((defensiveWeaponsTable.getItems().size() + 1) * 25 + 1);
-		armorTable.setPrefHeight((armorTable.getItems().size() + 1) * 25 + 1);
-		armorTable.setMinHeight((armorTable.getItems().size() + 1) * 25 + 1);
-		ritualObjectTable.setPrefHeight((ritualObjectTable.getItems().size() + 1) * 25 + 1);
-		ritualObjectTable.setMinHeight((ritualObjectTable.getItems().size() + 1) * 25 + 1);
-		valuablesTable.setPrefHeight((valuablesTable.getItems().size() + 1) * 25 + 1);
-		valuablesTable.setMinHeight((valuablesTable.getItems().size() + 1) * 25 + 1);
-		potionsTable.setPrefHeight((potionsTable.getItems().size() + 1) * 25 + 1);
-		potionsTable.setMinHeight((potionsTable.getItems().size() + 1) * 25 + 1);
-		artifactTable.setPrefHeight((artifactTable.getItems().size() + 1) * 25 + 1);
-		artifactTable.setMinHeight((artifactTable.getItems().size() + 1) * 25 + 1);
-		clothingTable.setPrefHeight((clothingTable.getItems().size() + 1) * 26 + 1);
-		clothingTable.setMinHeight((clothingTable.getItems().size() + 1) * 26 + 1);
-		equipmentTable.setPrefHeight((equipmentTable.getItems().size() + 1) * 26 + 1);
-		equipmentTable.setMinHeight((equipmentTable.getItems().size() + 1) * 26 + 1);
 	}
 
 	@Override

@@ -20,23 +20,22 @@
             <String fx:value="remove-vertical-scrollbar" />
             <String fx:value="remove-horizontal-scrollbar" />
          </styleClass>
-         <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
          <placeholder>
             <Label minHeight="0" />
          </placeholder>
          <columns>
-            <TableColumn fx:id="nameColumn" text="Talent" minWidth="100" editable="true" resizable="false" />
-            <TableColumn text="AT" prefWidth="70" resizable="false" editable="true" style="-fx-alignment: CENTER;" />
-            <TableColumn text="PA" prefWidth="70" resizable="false" editable="true" visible="false" style="-fx-alignment: CENTER;" />
-            <TableColumn text="BE" prefWidth="50" resizable="false" style="-fx-alignment: CENTER;" />
-            <TableColumn text="Leit" prefWidth="60" resizable="false" editable="true" style="-fx-alignment: CENTER;" />
-            <TableColumn text="SEs" prefWidth="50" resizable="false" editable="true" style="-fx-alignment: CENTER;" />
-            <TableColumn text="TaW" prefWidth="70" resizable="false" editable="true" style="-fx-alignment: CENTER;" />
+            <TableColumn fx:id="nameColumn" text="Talent" minWidth="100" resizable="false" editable="true" />
+            <TableColumn text="AT" minWidth="70" maxWidth="70" resizable="false" editable="true" style="-fx-alignment: CENTER;" />
+            <TableColumn text="PA" minWidth="70" maxWidth="70" resizable="false" editable="true" visible="false" style="-fx-alignment: CENTER;" />
+            <TableColumn text="BE" minWidth="50" maxWidth="50" resizable="false" style="-fx-alignment: CENTER;" />
+            <TableColumn text="Leit" minWidth="60" maxWidth="60" resizable="false" editable="true" style="-fx-alignment: CENTER;" />
+            <TableColumn text="SEs" minWidth="50" maxWidth="50" resizable="false" editable="true" style="-fx-alignment: CENTER;" />
+            <TableColumn text="TaW" minWidth="70" maxWidth="70" resizable="false" editable="true" style="-fx-alignment: CENTER;" />
          </columns>
       </TableView>
       <HBox spacing="2" >
          <ReactiveComboBox fx:id="talentsList" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-         <Button fx:id="addButton" onAction="#addTalent" prefHeight="25" prefWidth="25" text="&#xE145;" >
+         <Button fx:id="addButton" onAction="#addTalent" minWidth="25" prefHeight="25" prefWidth="25" text="&#xE145;" >
             <padding><Insets top="0" right="0" bottom="0" left="0"/></padding>
             <font>
                <Font name="Material Icons" size="20.0" />

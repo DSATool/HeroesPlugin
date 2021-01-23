@@ -110,7 +110,7 @@ public class TalentGroupController {
 
 		table.prefWidthProperty().bind(parent.widthProperty().subtract(17));
 
-		GUIUtil.autosizeTable(table, 0, 2 + ("Fernkampftalente".equals(name) ? table.getColumns().get(2).getWidth() * -1 : 0));
+		GUIUtil.autosizeTable(table);
 
 		nameColumn.setCellValueFactory(new PropertyValueFactory<Talent, String>("displayName"));
 		nameColumn.setCellFactory(c -> new GraphicTableCell<>(false) {
@@ -324,7 +324,7 @@ public class TalentGroupController {
 
 		final TableColumn<Talent, Integer> sesColumn = (TableColumn<Talent, Integer>) table.getColumns().get(i);
 		sesColumn.setCellValueFactory(new PropertyValueFactory<Talent, Integer>("ses"));
-		sesColumn.setCellFactory(o -> new IntegerSpinnerTableCell(0, 9, 1, false));
+		sesColumn.setCellFactory(o -> new IntegerSpinnerTableCell(0, 9));
 		sesColumn.setOnEditCommit((final CellEditEvent<Talent, Integer> t) -> {
 			t.getRowValue().setSes(t.getNewValue());
 		});
@@ -332,7 +332,7 @@ public class TalentGroupController {
 
 		final TableColumn<Talent, Integer> valueColumn = (TableColumn<Talent, Integer>) table.getColumns().get(i);
 		valueColumn.setCellValueFactory(new PropertyValueFactory<Talent, Integer>("value"));
-		valueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99, 1, false) {
+		valueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99) {
 			@Override
 			public void updateItem(final Integer item, final boolean empty) {
 				if (empty || item.equals(Integer.MIN_VALUE)) {
@@ -491,9 +491,6 @@ public class TalentGroupController {
 			talentsList.setDisable(true);
 			addButton.setDisable(true);
 		}
-
-		table.setPrefHeight(table.getItems().size() * 28 + 26);
-		table.setMinHeight(table.getItems().size() * 28 + 26);
 	}
 
 	public void registerListeners() {
@@ -516,8 +513,7 @@ public class TalentGroupController {
 		final TableColumn<Talent, Boolean> primaryColumn = (TableColumn<Talent, Boolean>) table.getColumns().get(table.getColumns().size() - 3);
 		final boolean needsPrimary = hero.getObj("Nachteile").containsKey("Elfische Weltsicht");
 		primaryColumn.setVisible(needsPrimary);
-		GUIUtil.autosizeTable(table, 0,
-				2 - ("Fernkampftalente".equals(name) ? table.getColumns().get(2).getWidth() : 0) - (needsPrimary ? 0 : primaryColumn.getWidth()));
+		GUIUtil.autosizeTable(table);
 
 		refreshTable();
 	}

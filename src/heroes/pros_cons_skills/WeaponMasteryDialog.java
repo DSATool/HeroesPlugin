@@ -23,11 +23,13 @@ import dsatool.ui.GraphicTableCell;
 import dsatool.ui.IntegerSpinnerTableCell;
 import dsatool.ui.ReactiveSpinner;
 import dsatool.util.ErrorLogger;
-import dsatool.util.Tuple;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -134,20 +136,30 @@ public class WeaponMasteryDialog {
 
 		final Stage stage = new Stage();
 		stage.setTitle("Waffenmeister bearbeiten");
-		stage.setScene(new Scene(root, 300, 575));
+		stage.setScene(new Scene(root, 300, 390));
 		stage.initModality(Modality.WINDOW_MODAL);
 		stage.setResizable(false);
 		stage.initOwner(window);
 
+		stage.setHeight(390);
+
 		talent.setItems(FXCollections.observableArrayList(skill.getFirstChoiceItems(false)));
 
 		talent.getSelectionModel().selectedItemProperty().addListener((o, oldV, newV) -> {
-			if (rangedCombatTalents.containsKey(talent.getValue())) {
-				initRangedCombat(actual);
-				stage.setHeight(510);
+			if (rangedCombatTalents.containsKey(newV)) {
+				if (!rangedCombatTalents.containsKey(oldV)) {
+					initRangedCombat(actual);
+					if (oldV != null) {
+						stage.setHeight(stage.getHeight() - 27);
+					}
+				}
 			} else {
-				initCloseCombat(actual);
-				stage.setHeight(613);
+				if (oldV == null || rangedCombatTalents.containsKey(oldV)) {
+					initCloseCombat(actual);
+					if (oldV != null) {
+						stage.setHeight(stage.getHeight() + 27);
+					}
+				}
 			}
 			skillCopy.setDescription(newV, false);
 			weapon.setItems(FXCollections.observableArrayList(skillCopy.getSecondChoiceItems(false)));
@@ -203,42 +215,50 @@ public class WeaponMasteryDialog {
 				actual.put("Ladezeit", true);
 			}
 
-			if (easierManeuverTable.getItems().isEmpty()) {
+			if (easierManeuverTable.getItems().size() == 1) {
 				actual.removeKey("Manöver:Erleichterung");
 			} else {
 				final JSONObject maneuvers = new JSONObject(actual);
 				for (final ManeuverOrPro maneuver : easierManeuverTable.getItems()) {
-					maneuvers.put(maneuver.name.get(), maneuver.value.get());
+					if (!maneuver.name.get().isEmpty()) {
+						maneuvers.put(maneuver.name.get(), maneuver.value.get());
+					}
 				}
 				actual.put("Manöver:Erleichterung", maneuvers);
 			}
 
-			if (ranged || additionalManeuverList.getItems().isEmpty()) {
+			if (ranged || additionalManeuverList.getItems().size() == 1) {
 				actual.removeKey("Manöver:Zusätzlich");
 			} else {
 				final JSONArray maneuvers = new JSONArray(actual);
 				for (final String maneuver : additionalManeuverList.getItems()) {
-					maneuvers.add(maneuver);
+					if (!maneuver.isEmpty()) {
+						maneuvers.add(maneuver);
+					}
 				}
 				actual.put("Manöver:Zusätzlich", maneuvers);
 			}
 
-			if (prosTable.getItems().isEmpty()) {
+			if (prosTable.getItems().size() == 1) {
 				actual.removeKey("Vorteile");
 			} else {
 				final JSONObject pros = new JSONObject(actual);
 				for (final ManeuverOrPro pro : prosTable.getItems()) {
-					pros.put(pro.name.get(), pro.value.get());
+					if (!pro.name.get().isEmpty()) {
+						pros.put(pro.name.get(), pro.value.get());
+					}
 				}
 				actual.put("Vorteile", pros);
 			}
 
-			if (weaponsList.getItems().isEmpty()) {
+			if (weaponsList.getItems().size() == 1) {
 				actual.removeKey("Waffen");
 			} else {
 				final JSONArray weapons = new JSONArray(actual);
 				for (final String weapon : weaponsList.getItems()) {
-					weapons.add(weapon);
+					if (!weapon.isEmpty()) {
+						weapons.add(weapon);
+					}
 				}
 				actual.put("Waffen", weapons);
 			}
@@ -248,15 +268,21 @@ public class WeaponMasteryDialog {
 
 		cancelButton.setOnAction(e -> stage.close());
 
+		stage.show();
+
+		final ChangeListener<? super Number> heightListener = (o, oldV, newV) -> stage.setHeight(stage.getHeight() + newV.doubleValue() - oldV.doubleValue());
+		easierManeuverTable.heightProperty().addListener(heightListener);
+		additionalManeuverList.heightProperty().addListener(heightListener);
+		prosTable.heightProperty().addListener(heightListener);
+		weaponsList.heightProperty().addListener(heightListener);
+
 		talent.setValue(skill.getDescription());
 		weapon.setValue(skill.getVariant());
 
 		initTable(easierManeuverTable, "Manöver:Erleichterung", actual);
 		initTable(prosTable, "Vorteile", actual);
 
-		initList(weaponsList, 51, "Waffen", actual);
-
-		stage.show();
+		initList(weaponsList, "Waffen", actual);
 	}
 
 	private void initCloseCombat(final JSONObject skill) {
@@ -287,17 +313,19 @@ public class WeaponMasteryDialog {
 			pa.getValueFactory().setValue(wm.getIntOrDefault("Parademodifikator", 0));
 		}
 
-		initList(additionalManeuverList, 76, "Manöver:Zusätzlich", skill);
+		initList(additionalManeuverList, "Manöver:Zusätzlich", skill);
 	}
 
-	private void initList(final ListView<String> list, final int height, final String key, final JSONObject actual) {
-		list.setPrefHeight(height);
-		list.setMinHeight(height);
-		list.setMaxHeight(height);
+	private void initList(final ListView<String> list, final String key, final JSONObject actual) {
+		DoubleBinding height = Bindings.size(list.getItems()).multiply(list.getFixedCellSize()).add(2);
+		if (list == additionalManeuverList) {
+			height = Bindings.when(additionalManeuverBox.visibleProperty()).then(height).otherwise(0.0);
+		}
+		list.minHeightProperty().bind(height);
+		list.maxHeightProperty().bind(height);
 
 		list.setCellFactory(c -> {
 			final ListCell<String> cell = new GraphicListCell<>(false) {
-
 				@Override
 				protected void createGraphic() {
 					final TextField t = new TextField();
@@ -308,32 +336,38 @@ public class WeaponMasteryDialog {
 			final ContextMenu contextMenu = new ContextMenu();
 
 			final MenuItem deleteItem = new MenuItem("Löschen");
-			deleteItem.setOnAction(e -> {
-				final int index = cell.getIndex();
-				list.getItems().remove(index);
-			});
+			deleteItem.setOnAction(e -> list.getItems().remove(cell.getIndex()));
 			deleteItem.visibleProperty().bind(cell.itemProperty().isNotNull());
 			contextMenu.getItems().add(deleteItem);
-
-			final MenuItem addItem = new MenuItem("Hinzufügen");
-			addItem.setOnAction(e -> {
-				list.getItems().add("Beschreibung");
-			});
-			contextMenu.getItems().add(addItem);
-
-			cell.setContextMenu(contextMenu);
+			cell.contextMenuProperty().bind(Bindings.when(cell.indexProperty().isNotEqualTo(Bindings.size(list.getItems()).subtract(1))).then(contextMenu)
+					.otherwise((ContextMenu) null));
 
 			return cell;
 		});
 
-		list.getItems().clear();
+		list.setOnEditCommit(event -> {
+			final int index = event.getIndex();
+			final String newValue = event.getNewValue();
+			if (index == list.getItems().size() - 1) {
+				if (newValue != null && !"".equals(newValue)) {
+					list.getItems().add("");
+					list.getItems().set(index, newValue);
+				}
+			} else if ("".equals(newValue)) {
+				list.getItems().remove(index);
+			} else {
+				list.getItems().set(index, newValue);
+			}
+		});
 
+		list.getItems().clear();
 		if (actual.containsKey(key)) {
 			final JSONArray items = actual.getArr(key);
 			for (final String item : items.getStrings()) {
 				list.getItems().add(item);
 			}
 		}
+		list.getItems().add("");
 	}
 
 	private void initRangedCombat(final JSONObject skill) {
@@ -366,39 +400,48 @@ public class WeaponMasteryDialog {
 		table.setMinHeight(101);
 		table.setMaxHeight(101);
 
-		((TableColumn<ManeuverOrPro, String>) table.getColumns().get(0)).setCellFactory(c -> new GraphicTableCell<>(false) {
+		final TableColumn<ManeuverOrPro, String> nameColumn = (TableColumn<ManeuverOrPro, String>) table.getColumns().get(0);
+		nameColumn.setCellFactory(c -> new GraphicTableCell<>(false) {
 			@Override
 			protected void createGraphic() {
 				final TextField t = new TextField();
 				createGraphic(t, t::getText, t::setText);
 			}
 		});
-		((TableColumn<ManeuverOrPro, Integer>) table.getColumns().get(1))
-				.setCellFactory(IntegerSpinnerTableCell.forTableColumn(0, 9, 1, false, (i, e) -> new Tuple<>(0, 9)));
+		nameColumn.setOnEditCommit(event -> {
+			if (event.getTablePosition().getRow() == table.getItems().size() - 1) {
+				if (event.getNewValue() != null && !"".equals(event.getNewValue())) {
+					table.getItems().add(new ManeuverOrPro("", Integer.MIN_VALUE));
+					event.getRowValue().value.set(1);
+					event.getRowValue().name.set(event.getNewValue());
+				}
+			} else if ("".equals(event.getNewValue())) {
+				table.getItems().remove(event.getTablePosition().getRow());
+			} else {
+				event.getRowValue().name.set(event.getNewValue());
+			}
+		});
 
+		((TableColumn<ManeuverOrPro, Integer>) table.getColumns().get(1)).setCellFactory(c -> new IntegerSpinnerTableCell<>(0, 9) {
+			@Override
+			public void startEdit() {
+				if (getTableRow().getIndex() < table.getItems().size() - 1) {
+					super.startEdit();
+				}
+			}
+		});
+
+		GUIUtil.autosizeTable(table);
 		GUIUtil.cellValueFactories(table, "name", "value");
 
 		table.setRowFactory(t -> {
 			final TableRow<ManeuverOrPro> row = new TableRow<>();
-
 			final ContextMenu contextMenu = new ContextMenu();
-
 			final MenuItem deleteItem = new MenuItem("Löschen");
-			deleteItem.setOnAction(e -> {
-				final int index = row.getIndex();
-				table.getItems().remove(index);
-			});
-			deleteItem.visibleProperty().bind(row.itemProperty().isNotNull());
+			deleteItem.setOnAction(event -> table.getItems().remove(row.getIndex()));
 			contextMenu.getItems().add(deleteItem);
-
-			final MenuItem addItem = new MenuItem("Hinzufügen");
-			addItem.setOnAction(e -> {
-				table.getItems().add(new ManeuverOrPro("Beschreibung", 1));
-			});
-			contextMenu.getItems().add(addItem);
-
-			row.setContextMenu(contextMenu);
-
+			row.contextMenuProperty().bind(Bindings.when(row.indexProperty().isNotEqualTo(Bindings.size(table.getItems()).subtract(1))).then(contextMenu)
+					.otherwise((ContextMenu) null));
 			return row;
 		});
 
@@ -408,5 +451,6 @@ public class WeaponMasteryDialog {
 				table.getItems().add(new ManeuverOrPro(item, items.getInt(item)));
 			}
 		}
+		table.getItems().add(new ManeuverOrPro("", Integer.MIN_VALUE));
 	}
 }

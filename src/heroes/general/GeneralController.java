@@ -230,9 +230,9 @@ public class GeneralController extends HeroTabController {
 
 		attributesTable.prefWidthProperty().bind(pane.widthProperty().subtract(22).divide(2));
 
-		GUIUtil.autosizeTable(attributesTable, 0, 2);
+		GUIUtil.autosizeTable(attributesTable);
 		GUIUtil.cellValueFactories(attributesTable, "name", "value", "manualModifier", "current");
-		attributesValueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 30, 1, false));
+		attributesValueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 30));
 		attributesValueColumn.setOnEditCommit(t -> {
 			if (HeroTabController.isEditable.get()) {
 				t.getRowValue().setValue(t.getNewValue());
@@ -241,7 +241,7 @@ public class GeneralController extends HeroTabController {
 						t.getNewValue());
 			}
 		});
-		attributesModifierColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99, 1, false));
+		attributesModifierColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99));
 		attributesModifierColumn.setOnEditCommit(t -> t.getRowValue().setManualModifier(t.getNewValue()));
 
 		attributesTable.setRowFactory(t -> {
@@ -277,9 +277,9 @@ public class GeneralController extends HeroTabController {
 
 		derivedValuesTable.prefWidthProperty().bind(pane.widthProperty().subtract(22).divide(2));
 
-		GUIUtil.autosizeTable(derivedValuesTable, 0, 2);
+		GUIUtil.autosizeTable(derivedValuesTable);
 		GUIUtil.cellValueFactories(derivedValuesTable, "name", "manualModifier", "current");
-		derivedModifierColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99, 1, false));
+		derivedModifierColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99));
 		derivedModifierColumn.setOnEditCommit(t -> t.getRowValue().setManualModifier(t.getNewValue()));
 		derivedCurrentColumn.setCellValueFactory(new PropertyValueFactory<DerivedValue, Integer>("current"));
 
@@ -301,11 +301,11 @@ public class GeneralController extends HeroTabController {
 
 		energiesTable.prefWidthProperty().bind(pane.widthProperty().subtract(17));
 
-		GUIUtil.autosizeTable(energiesTable, 4, 2);
+		GUIUtil.autosizeTable(energiesTable);
 		GUIUtil.cellValueFactories(energiesTable, "name", "permanent", "bought", "manualModifier", "currentPercentage");
-		energiesPermanentColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99, 1, false));
+		energiesPermanentColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99));
 		energiesPermanentColumn.setOnEditCommit(t -> t.getRowValue().setPermanent(t.getNewValue()));
-		energiesBoughtColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 99, 1, false));
+		energiesBoughtColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 99));
 		energiesBoughtColumn.setOnEditCommit(t -> {
 			if (HeroTabController.isEditable.get()) {
 				t.getRowValue().setBought(t.getNewValue());
@@ -314,7 +314,7 @@ public class GeneralController extends HeroTabController {
 				new EnergyEnhancementDialog(pane.getScene().getWindow(), energy, hero, energy.getMax() - energy.getBought() + t.getNewValue());
 			}
 		});
-		energiesModifierColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99, 1, false));
+		energiesModifierColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99));
 		energiesModifierColumn.setOnEditCommit(t -> t.getRowValue().setManualModifier(t.getNewValue()));
 		energiesCurrentColumn.setCellFactory(o -> new ColoredProgressBarTableCell<>());
 
@@ -558,13 +558,6 @@ public class GeneralController extends HeroTabController {
 			energiesTable.getItems().add(new HeroEnergy("Karmaenergie", new JSONObject(null), hero, dsa41basis.hero.Energy.COLOR_KAP));
 		}
 		energiesTable.getItems().add(new HeroEnergy("Magieresistenz", derivedValues.getObj("Magieresistenz"), hero, dsa41basis.hero.Energy.COLOR_MR));
-
-		attributesTable.setMinHeight(attributesTable.getItems().size() * 28 + 26);
-		attributesTable.setMaxHeight(attributesTable.getItems().size() * 28 + 26);
-		derivedValuesTable.setMinHeight(derivedValuesTable.getItems().size() * 28 + 26);
-		derivedValuesTable.setMaxHeight(derivedValuesTable.getItems().size() * 28 + 26);
-		energiesTable.setMinHeight(energiesTable.getItems().size() * 28 + 24);
-		energiesTable.setMaxHeight(energiesTable.getItems().size() * 28 + 24);
 
 		update = false;
 	}
