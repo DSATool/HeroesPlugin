@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import dsatool.ui.ReactiveComboBox?>
 <?import dsatool.ui.ReactiveSpinner?>
 
 <VBox fx:id="root" style="-fx-padding: 2, 2, 2, 2;" spacing="2" xmlns:fx="http://javafx.com/fxml" >
@@ -37,13 +38,13 @@
          <Label minHeight="0" />
       </placeholder>
       <columns>
-         <TableColumn text="Ritual" resizable="false" minWidth="100" />
-         <TableColumn fx:id="choiceColumn" text="Anzahl/Auswahl" resizable="false" minWidth="171" editable="true" />
+         <TableColumn text="Ritual" resizable="false" minWidth="125" />
+         <TableColumn fx:id="choiceColumn" text="Anzahl/Auswahl" resizable="false" minWidth="159" editable="true" />
       </columns>
    </TableView>
    <HBox spacing="2" alignment="CENTER_LEFT" >
-      <ComboBox fx:id="ritualList" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-      <Button fx:id="ritualAddButton" onAction="#add" prefHeight="25" prefWidth="25" text="&#xE145;" >
+      <ReactiveComboBox fx:id="ritualList" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+      <Button fx:id="ritualAddButton" onAction="#add" prefHeight="25" minWidth="25" maxWidth="25" text="&#xE145;" >
          <padding><Insets top="0" right="0" bottom="0" left="0"/></padding>
          <font>
             <Font name="Material Icons" size="20.0" />
