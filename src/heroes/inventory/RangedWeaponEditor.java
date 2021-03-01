@@ -58,6 +58,8 @@ public class RangedWeaponEditor {
 	@FXML
 	private ReactiveSpinner<Double> weight;
 	@FXML
+	private ReactiveSpinner<Integer> at;
+	@FXML
 	private ComboBox<String> bulletType;
 	@FXML
 	private VBox bulletBox;
@@ -120,8 +122,8 @@ public class RangedWeaponEditor {
 
 		stage = new Stage();
 		stage.setTitle("Bearbeiten");
-		stage.setScene(new Scene(root, 440, 390));
-		stage.setHeight(390);
+		stage.setScene(new Scene(root, 440, 420));
+		stage.setHeight(420);
 		stage.initModality(Modality.WINDOW_MODAL);
 		stage.setResizable(false);
 		stage.initOwner(window);
@@ -155,6 +157,7 @@ public class RangedWeaponEditor {
 		distanceTPFar.getValueFactory().setValue(distanceTp._4);
 		distanceTPVeryFar.getValueFactory().setValue(distanceTp._5);
 		weight.getValueFactory().setValue(weapon.getWeight());
+		at.getValueFactory().setValue(weapon.getWMraw());
 
 		bulletType.setItems(FXCollections.observableArrayList("Pfeile", "Bolzen"));
 
@@ -214,6 +217,7 @@ public class RangedWeaponEditor {
 			weapon.setDistanceTPs(distanceTPVeryClose.getValue(), distanceTPClose.getValue(), distanceTPMedium.getValue(), distanceTPFar.getValue(),
 					distanceTPVeryFar.getValue());
 			weapon.setWeight(weight.getValue());
+			weapon.setWM(at.getValue());
 			weapon.setAmmunitionType(noBullet.isSelected() ? bulletType.getValue() : null);
 			weapon.setBulletweight(noBullet.isSelected() ? weightBullet.getValue() : Double.NEGATIVE_INFINITY);
 			if (bulletBox.isVisible()) {
@@ -244,7 +248,7 @@ public class RangedWeaponEditor {
 			ammunitionBox.setVisible(false);
 			ammunitionBox.setManaged(false);
 		} else {
-			stage.setHeight(390);
+			stage.setHeight(420);
 			bulletBox.setVisible(false);
 			bulletBox.setManaged(false);
 			ammunitionBox.setVisible(true);

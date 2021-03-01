@@ -62,6 +62,10 @@
    <HBox spacing="2" alignment="CENTER_LEFT" >
       <Label text="Gewicht: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
       <ReactiveSpinner fx:id="weight" dmin="0" dmax="999.95" amountToStepBy="0.05" editable="true" prefWidth="80" />
+   </HBox>   
+   <HBox spacing="2" alignment="CENTER_LEFT" >
+      <Label text="AT-Modifikator: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+      <ReactiveSpinner fx:id="at" imin="-99" imax="99" editable="true" prefWidth="60" />
    </HBox>
    <HBox spacing="2" alignment="CENTER_LEFT" >
       <Label text="Geschosstyp: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
