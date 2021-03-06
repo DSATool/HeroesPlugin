@@ -16,6 +16,7 @@
 package heroes.general;
 
 import dsa41basis.hero.DerivedValue;
+import dsa41basis.hero.Energy;
 import dsatool.ui.ReactiveSpinner;
 import dsatool.util.ErrorLogger;
 import javafx.fxml.FXML;
@@ -64,11 +65,15 @@ public class DerivedValueEditor {
 		stage.setResizable(false);
 		stage.initOwner(window);
 
-		ses.getValueFactory().setValue(value.getSes());
+		if (needsSEs) {
+			ses.getValueFactory().setValue(((Energy) value).getSes());
+		}
 		modifier.getValueFactory().setValue(value.getModifier());
 
 		okButton.setOnAction(event -> {
-			value.setSes(ses.getValue());
+			if (needsSEs) {
+				((Energy) value).setSes(ses.getValue());
+			}
 			value.setModifier(modifier.getValue());
 			stage.close();
 		});
