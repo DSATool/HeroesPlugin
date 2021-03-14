@@ -28,6 +28,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -90,6 +91,8 @@ public class CloseCombatWeaponEditor {
 	private CheckBox dkS;
 	@FXML
 	private CheckBox dkP;
+	@FXML
+	private Hyperlink books;
 	@FXML
 	private Button cancelButton;
 	@FXML
@@ -181,6 +184,8 @@ public class CloseCombatWeaponEditor {
 			weapon.setNotes(notes.getText());
 			stage.close();
 		});
+
+		books.setOnAction(event -> new BooksEditor(stage, weapon));
 
 		cancelButton.setOnAction(event -> stage.close());
 

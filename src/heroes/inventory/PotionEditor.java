@@ -23,6 +23,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -46,6 +47,8 @@ public class PotionEditor {
 	private TextField effect;
 	@FXML
 	private ComboBox<String> quality;
+	@FXML
+	private Hyperlink books;
 	@FXML
 	private Button cancelButton;
 
@@ -83,6 +86,8 @@ public class PotionEditor {
 			potion.setNotes(notes.getText());
 			stage.close();
 		});
+
+		books.setOnAction(event -> new BooksEditor(stage, potion));
 
 		cancelButton.setOnAction(event -> stage.close());
 

@@ -22,6 +22,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -41,6 +42,8 @@ public class ClothingEditor {
 	private ReactiveSpinner<Double> weight;
 	@FXML
 	private ReactiveSpinner<Integer> ks;
+	@FXML
+	private Hyperlink books;
 	@FXML
 	private Button cancelButton;
 
@@ -74,6 +77,8 @@ public class ClothingEditor {
 			clothing.setNotes(notes.getText());
 			stage.close();
 		});
+
+		books.setOnAction(event -> new BooksEditor(stage, clothing));
 
 		cancelButton.setOnAction(event -> stage.close());
 

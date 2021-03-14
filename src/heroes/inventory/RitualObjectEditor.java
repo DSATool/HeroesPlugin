@@ -37,6 +37,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
@@ -82,6 +83,8 @@ public class RitualObjectEditor {
 	private Button ritualAddButton;
 	@FXML
 	private ComboBox<String> ritualList;
+	@FXML
+	private Hyperlink books;
 
 	private final JSONObject hero;
 	private final Map<String, CheckBox> types = new HashMap<>();
@@ -176,6 +179,8 @@ public class RitualObjectEditor {
 
 			stage.close();
 		});
+
+		books.setOnAction(event -> new BooksEditor(stage, ritualObject));
 
 		cancelButton.setOnAction(event -> stage.close());
 

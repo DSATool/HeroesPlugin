@@ -32,6 +32,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
@@ -128,6 +129,8 @@ public class ArtifactEditor {
 	private TableColumn<Spell, String> spellVariantColumn;
 	@FXML
 	private ReactiveSpinner<Double> weight;
+	@FXML
+	private Hyperlink books;
 	@FXML
 	private Button cancelButton;
 
@@ -306,6 +309,8 @@ public class ArtifactEditor {
 			artifact.setNotes(notes.getText());
 			stage.close();
 		});
+
+		books.setOnAction(event -> new BooksEditor(stage, artifact));
 
 		cancelButton.setOnAction(event -> stage.close());
 
