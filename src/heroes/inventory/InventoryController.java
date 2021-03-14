@@ -547,15 +547,23 @@ public class InventoryController extends HeroTabController {
 		}
 
 		for (final TableView<? extends InventoryItem> table : new TableView[] { closeCombatTable, rangedTable, shieldsTable, defensiveWeaponsTable, armorTable,
-				ritualObjectTable, potionsTable, clothingTable, equipmentTable }) {
+				ritualObjectTable, valuablesTable, potionsTable, artifactTable, clothingTable, equipmentTable }) {
 			((TableColumn<InventoryItem, String>) table.getColumns().get(0)).setCellFactory(c -> new TextFieldTableCell<>() {
 				@Override
 				public void updateItem(final String name, final boolean empty) {
 					super.updateItem(name, empty);
 					final InventoryItem item = getTableRow().getItem();
 					if (item != null) {
-						final String type = item.getItemType();
-						Util.addReference(this, equipment.getObj(type.isEmpty() ? name : type), 15, table.getColumns().get(0).widthProperty());
+						JSONObject referencedObject;
+						if (item.getItem().containsKey("Regelwerke")) {
+							referencedObject = item.getItem();
+						} else if (item.getBaseItem().containsKey("Regelwerke")) {
+							referencedObject = item.getBaseItem();
+						} else {
+							final String type = item.getItemType();
+							referencedObject = equipment.getObj(type.isEmpty() ? name : type);
+						}
+						Util.addReference(this, referencedObject, 15, table.getColumns().get(0).widthProperty());
 					}
 				}
 			});
