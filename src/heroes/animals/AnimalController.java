@@ -504,7 +504,7 @@ public class AnimalController {
 			return cell;
 		});
 		equipmentNameColumn.setOnEditCommit(event -> {
-			final JSONObject item = event.getRowValue().getItem();
+			final JSONObject item = event.getRowValue().getBaseItem();
 			item.put("Name", event.getNewValue());
 			item.notifyListeners(null);
 		});
@@ -521,7 +521,7 @@ public class AnimalController {
 		});
 		equipmentNotesColumn.setOnEditCommit(event -> {
 			final String note = event.getNewValue();
-			final JSONObject item = event.getRowValue().getItem();
+			final JSONObject item = event.getRowValue().getBaseItem();
 			if ("".equals(note)) {
 				item.removeKey("Anmerkungen");
 			} else {
@@ -543,9 +543,9 @@ public class AnimalController {
 			});
 
 			row.setOnDragDropped(e -> {
-				final JSONObject item = equipmentTable.getItems().get((Integer) e.getDragboard().getContent(DataFormat.PLAIN_TEXT)).getItem();
+				final JSONObject item = equipmentTable.getItems().get((Integer) e.getDragboard().getContent(DataFormat.PLAIN_TEXT)).getBaseItem();
 				items.remove(item);
-				final int targetIndex = items.indexOf(row.getItem().getItem()) + 1;
+				final int targetIndex = items.indexOf(row.getItem().getBaseItem()) + 1;
 				if (targetIndex == -1 || targetIndex > items.size()) {
 					items.add(item);
 				} else {
@@ -567,11 +567,11 @@ public class AnimalController {
 			editItem.setOnAction(event -> new HorseArmorEditor(pane.getScene().getWindow(), equipmentTable.getSelectionModel().getSelectedItem()));
 
 			final Menu location = new Menu("Ort");
-			contextMenu.setOnShowing(e -> updateLocationMenu(row.getItem().getItem(), location));
+			contextMenu.setOnShowing(e -> updateLocationMenu(row.getItem().getBaseItem(), location));
 
 			final MenuItem deleteItem = new MenuItem("Löschen");
 			deleteItem.setOnAction(event -> {
-				final JSONObject item = row.getItem().getItem();
+				final JSONObject item = row.getItem().getBaseItem();
 				final JSONValue parent = item.getParent();
 				parent.remove(item);
 				parent.notifyListeners(null);

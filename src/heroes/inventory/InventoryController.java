@@ -337,7 +337,7 @@ public class InventoryController extends HeroTabController {
 					++appearance;
 					index += 1 + tableView.getItems().subList(index + 1, tableView.getItems().size()).indexOf(toMove);
 				}
-				final JSONObject item = toMove.getItem();
+				final JSONObject item = toMove.getBaseItem();
 				index = items.indexOf(item);
 				for (; appearance > 0; --appearance) {
 					index = items.indexOf(item, index + 1);
@@ -350,7 +350,7 @@ public class InventoryController extends HeroTabController {
 					++appearance;
 					targetIndex += 1 + tableView.getItems().subList(targetIndex + 1, tableView.getItems().size()).indexOf(target);
 				}
-				final JSONObject targetItem = target.getItem();
+				final JSONObject targetItem = target.getBaseItem();
 				targetIndex = items.indexOf(targetItem);
 				for (; appearance > 0; --appearance) {
 					targetIndex = items.indexOf(targetItem, targetIndex + 1);
@@ -409,7 +409,7 @@ public class InventoryController extends HeroTabController {
 				final MenuItem addCatItem = new MenuItem(categoryLongNames[i]);
 				final String categoryName = categoryNames[i];
 				addCatItem.setOnAction(event -> {
-					final JSONObject item = row.getItem().getItem();
+					final JSONObject item = row.getItem().getBaseItem();
 					JSONArray categories = item.getArr("Kategorien");
 					if (categories == null) {
 						categories = new JSONArray(item);
@@ -443,7 +443,7 @@ public class InventoryController extends HeroTabController {
 
 			final MenuItem removeItem = new MenuItem("Entfernen aus " + name);
 			removeItem.setOnAction(event -> {
-				final JSONObject item = row.getItem().getItem();
+				final JSONObject item = row.getItem().getBaseItem();
 				final JSONArray categories = item.getArr("Kategorien");
 
 				if ("Ritualobjekte".equals(name)) {
@@ -463,11 +463,11 @@ public class InventoryController extends HeroTabController {
 			});
 
 			final Menu location = new Menu("Ort");
-			rowMenu.setOnShowing(e -> updateLocationMenu(row.getItem().getItem(), location));
+			rowMenu.setOnShowing(e -> updateLocationMenu(row.getItem().getBaseItem(), location));
 
 			final MenuItem deleteItem = new MenuItem("Löschen");
 			deleteItem.setOnAction(event -> {
-				final JSONObject item = row.getItem().getItem();
+				final JSONObject item = row.getItem().getBaseItem();
 				final JSONValue parent = item.getParent();
 				parent.remove(item);
 				parent.notifyListeners(null);
@@ -626,7 +626,7 @@ public class InventoryController extends HeroTabController {
 			return cell;
 		});
 		clothingNameColumn.setOnEditCommit(event -> {
-			final JSONObject item = event.getRowValue().getItem();
+			final JSONObject item = event.getRowValue().getBaseItem();
 			item.put("Name", event.getNewValue());
 			item.notifyListeners(null);
 		});
@@ -643,7 +643,7 @@ public class InventoryController extends HeroTabController {
 		});
 		clothingNotesColumn.setOnEditCommit(event -> {
 			final String note = event.getNewValue();
-			final JSONObject item = event.getRowValue().getItem();
+			final JSONObject item = event.getRowValue().getBaseItem();
 			if ("".equals(note)) {
 				item.removeKey("Anmerkungen");
 			} else {
@@ -680,7 +680,7 @@ public class InventoryController extends HeroTabController {
 			return cell;
 		});
 		equipmentNameColumn.setOnEditCommit(event -> {
-			final JSONObject item = event.getRowValue().getItem();
+			final JSONObject item = event.getRowValue().getBaseItem();
 			item.put("Name", event.getNewValue());
 			item.notifyListeners(null);
 		});
@@ -697,7 +697,7 @@ public class InventoryController extends HeroTabController {
 		});
 		equipmentNotesColumn.setOnEditCommit(event -> {
 			final String note = event.getNewValue();
-			final JSONObject item = event.getRowValue().getItem();
+			final JSONObject item = event.getRowValue().getBaseItem();
 			if ("".equals(note)) {
 				item.removeKey("Anmerkungen");
 			} else {
@@ -764,7 +764,7 @@ public class InventoryController extends HeroTabController {
 			return cell;
 		});
 		valuablesNameColumn.setOnEditCommit(event -> {
-			final JSONObject item = event.getRowValue().getItem();
+			final JSONObject item = event.getRowValue().getBaseItem();
 			item.put("Name", event.getNewValue());
 			item.notifyListeners(null);
 		});
@@ -781,7 +781,7 @@ public class InventoryController extends HeroTabController {
 		});
 		valuablesNotesColumn.setOnEditCommit(event -> {
 			final String note = event.getNewValue();
-			final JSONObject item = event.getRowValue().getItem();
+			final JSONObject item = event.getRowValue().getBaseItem();
 			if ("".equals(note)) {
 				item.removeKey("Anmerkungen");
 			} else {

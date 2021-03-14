@@ -100,8 +100,8 @@ public class HorseArmorEditor {
 			stage.setHeight(newV ? 330 : 170);
 		});
 
-		final JSONObject actual = item.getItem();
-		final JSONObject armor = actual.containsKey("Pferderüstung") ? actual.getObj("Pferderüstung") : actual;
+		final JSONObject actual = item.getBaseItem();
+		final JSONObject armor = item.getItem();
 		final JSONObject rs = armor.getObjOrDefault("Rüstungsschutz", actual.getObj("Rüstungsschutz"));
 
 		name.setText(item.getName());
