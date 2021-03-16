@@ -33,6 +33,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
@@ -91,6 +92,8 @@ public class BooksEditor {
 			booksTable.getItems().set(e.getTablePosition().getRow(), new Tuple<>(e.getRowValue()._1, e.getNewValue()));
 		});
 
+		booksTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
 		booksTable.setRowFactory(table -> {
 			final TableRow<Tuple<String, Integer>> row = new TableRow<>();
 			final ContextMenu contextMenu = new ContextMenu();
@@ -104,6 +107,9 @@ public class BooksEditor {
 			});
 			contextMenu.getItems().add(deleteItem);
 			row.contextMenuProperty().bind(Bindings.when(row.itemProperty().isNotNull()).then(contextMenu).otherwise((ContextMenu) null));
+
+			GUIUtil.dragDropReorder(row, moved -> isDefault = false, booksTable);
+
 			return row;
 		});
 

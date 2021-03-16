@@ -56,6 +56,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
@@ -64,10 +65,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.DataFormat;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -491,7 +488,7 @@ public class AnimalController {
 		GUIUtil.autosizeTable(equipmentTable);
 		GUIUtil.cellValueFactories(equipmentTable, "name", "notes");
 
-		final JSONArray items = actualAnimal.getArr("Ausrüstung");
+		equipmentTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
 		equipmentNameColumn.setCellFactory(o -> {
 			final TableCell<InventoryItem, String> cell = new GraphicTableCell<>(false) {
@@ -530,36 +527,24 @@ public class AnimalController {
 			item.notifyListeners(null);
 		});
 
+		final JSONArray items = actualAnimal.getArr("Ausrüstung");
+
 		equipmentTable.setRowFactory(tableView -> {
 			final TableRow<InventoryItem> row = new TableRow<>();
 
-			row.setOnDragDetected(e -> {
-				if (row.isEmpty()) return;
-				final Dragboard dragBoard = equipmentTable.startDragAndDrop(TransferMode.MOVE);
-				final ClipboardContent content = new ClipboardContent();
-				content.put(DataFormat.PLAIN_TEXT, row.getIndex());
-				dragBoard.setContent(content);
-				e.consume();
-			});
-
-			row.setOnDragDropped(e -> {
-				final JSONObject item = equipmentTable.getItems().get((Integer) e.getDragboard().getContent(DataFormat.PLAIN_TEXT)).getBaseItem();
-				items.remove(item);
-				final int targetIndex = items.indexOf(row.getItem().getBaseItem()) + 1;
-				if (targetIndex == -1 || targetIndex > items.size()) {
-					items.add(item);
-				} else {
-					items.add(targetIndex, item);
+			GUIUtil.dragDropReorder(row, moved -> {
+				for (final Object item : moved) {
+					items.remove(((InventoryItem) item).getBaseItem());
 				}
-				e.setDropCompleted(true);
-				items.notifyListeners(null);
-			});
-
-			row.setOnDragOver(e -> {
-				if (e.getGestureSource() == row.getTableView()) {
-					e.acceptTransferModes(TransferMode.MOVE);
+				int index = row.getIndex();
+				for (final Object item : moved) {
+					items.add(index, ((InventoryItem) item).getBaseItem());
+					++index;
 				}
-			});
+				if (moved.length > 0) {
+					items.notifyListeners(null);
+				}
+			}, equipmentTable);
 
 			final ContextMenu contextMenu = new ContextMenu();
 

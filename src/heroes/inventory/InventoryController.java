@@ -57,6 +57,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -66,17 +67,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.DataFormat;
-import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Window;
-import javafx.util.Callback;
 import javafx.util.converter.IntegerStringConverter;
 import jsonant.event.JSONListener;
 import jsonant.value.JSONArray;
@@ -316,59 +312,342 @@ public class InventoryController extends HeroTabController {
 		addItem(item);
 	}
 
-	private final <T extends InventoryItem> Callback<TableView<T>, TableRow<T>> contextMenu(final String name, final String category) {
-		return tableView -> {
+	private int findIndex(final InventoryItem item) {
+		final JSONObject actual = item.getBaseItem();
+		int index = items.indexOf(actual); // Can't just indexOf(item) because there may be several which are equals but not ==
+		while (items.getObj(index) != actual) {
+			index = items.indexOf(actual, index + 1);
+		}
+		return index;
+	}
+
+	@Override
+	protected Node getControl() {
+		return pane;
+	}
+
+	@Override
+	protected String getText() {
+		return "Inventar";
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void init() {
+		final FXMLLoader fxmlLoader = new FXMLLoader();
+
+		fxmlLoader.setController(this);
+
+		try {
+			fxmlLoader.load(getClass().getResource("Inventory.fxml").openStream());
+		} catch (final Exception e) {
+			ErrorLogger.logError(e);
+		}
+
+		super.init();
+
+		final JSONObject ritualGroups = ResourceManager.getResource("data/Ritualgruppen");
+		DSAUtil.foreach(group -> group.getString("Ritualobjekt") != null, (name, group) -> {
+			ritualObjectGroups.add(name);
+		}, ritualGroups);
+
+		ducats.setConverter(new IntegerStringConverter());
+		silver.setConverter(new IntegerStringConverter());
+		heller.setConverter(new IntegerStringConverter());
+		kreuzer.setConverter(new IntegerStringConverter());
+
+		initializeCloseCombatTable();
+		initializeRangedTable();
+		initializeShieldsTable();
+		initializeDefensiveWeaponsTable();
+		initializeArmorTable();
+		initializeRitualObjectTable();
+		initializeValuablesTable();
+		initializePotionsTable();
+		initializeArtifactTable();
+		initializeClothingTable();
+		initializeEquipmentTable();
+
+		for (final ComboBox<String> list : new ComboBox[] { closeCombatList, rangedList, shieldsList, defensiveWeaponsList, armorList, ritualObjectList,
+				potionsList, clothingList, equipmentList }) {
+			final ObservableList<String> unsorted = list.getItems();
+			itemLists.put(list, unsorted);
+			list.setItems(unsorted.sorted());
+			final EventHandler<? super KeyEvent> keyPressed = list.getOnKeyPressed();
+			list.setOnKeyPressed(e -> {
+				if (e.getCode() == KeyCode.ENTER) {
+					addItem(list);
+				} else {
+					keyPressed.handle(e);
+				}
+			});
+		}
+
+		for (final TableView<? extends InventoryItem> table : new TableView[] { closeCombatTable, rangedTable, shieldsTable, defensiveWeaponsTable, armorTable,
+				ritualObjectTable, valuablesTable, potionsTable, artifactTable, clothingTable, equipmentTable }) {
+			((TableColumn<InventoryItem, String>) table.getColumns().get(0)).setCellFactory(c -> new TextFieldTableCell<>() {
+				@Override
+				public void updateItem(final String name, final boolean empty) {
+					super.updateItem(name, empty);
+					final InventoryItem item = getTableRow().getItem();
+					if (item != null) {
+						JSONObject referencedObject;
+						if (item.getItem().containsKey("Regelwerke")) {
+							referencedObject = item.getItem();
+						} else if (item.getBaseItem().containsKey("Regelwerke")) {
+							referencedObject = item.getBaseItem();
+						} else {
+							final String type = item.getItemType();
+							referencedObject = equipment.getObj(type.isEmpty() ? name : type);
+						}
+						Util.addReference(this, referencedObject, 15, table.getColumns().get(0).widthProperty());
+					}
+				}
+			});
+		}
+
+		equipment.addListener(equipmentListener);
+
+		updateLists();
+	}
+
+	private void initializeArmorTable() {
+		final String armorSetting = Settings.getSettingStringOrDefault("Zonenrüstung", "Kampf", "Rüstungsart");
+
+		if ("Zonenrüstung".equals(armorSetting)) {
+			armorRsColumn.setVisible(false);
+		} else {
+			armorHeadColumn.setVisible(false);
+			armorBreastColumn.setVisible(false);
+			armorBackColumn.setVisible(false);
+			armorBellyColumn.setVisible(false);
+			armorLarmColumn.setVisible(false);
+			armorRarmColumn.setVisible(false);
+			armorLlegColumn.setVisible(false);
+			armorRlegColumn.setVisible(false);
+		}
+
+		initTable(armorTable, "Rüstung", "Rüstung");
+
+		if ("Gesamtrüstung".equals(armorSetting)) {
+			GUIUtil.cellValueFactories(armorTable, "name", "head", "breast", "back", "belly", "larm", "rarm", "lleg", "rleg", "totalrs", "totalbe", "weight");
+		} else {
+			GUIUtil.cellValueFactories(armorTable, "name", "head", "breast", "back", "belly", "larm", "rarm", "lleg", "rleg", "zoners", "zonebe", "weight");
+		}
+	}
+
+	private void initializeArtifactTable() {
+		initTable(artifactTable, "Artefakte", "Artefakt");
+		GUIUtil.cellValueFactories(artifactTable, "name", "notes");
+	}
+
+	private void initializeCloseCombatTable() {
+		initTable(closeCombatTable, "Nahkampfwaffen", "Nahkampfwaffe");
+		GUIUtil.cellValueFactories(closeCombatTable, "name", "tp", "tpkk", "weight", "length", "bf", "ini", "wm", "special", "dk");
+
+		closeCombatBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12));
+		closeCombatBFColumn.setOnEditCommit(t -> t.getRowValue().setBf(t.getNewValue()));
+	}
+
+	private void initializeClothingTable() {
+		initTable(clothingTable, "Kleidung", "Kleidung");
+		GUIUtil.cellValueFactories(clothingTable, "name", "notes");
+
+		clothingNameColumn.setCellFactory(o -> {
+			final TableCell<Clothing, String> cell = new GraphicTableCell<>(false) {
+				@Override
+				protected void createGraphic() {
+					final TextField t = new TextField();
+					createGraphic(t, t::getText, t::setText);
+				}
+			};
+			return cell;
+		});
+		clothingNameColumn.setOnEditCommit(event -> {
+			final JSONObject item = event.getRowValue().getBaseItem();
+			item.put("Name", event.getNewValue());
+			item.notifyListeners(null);
+		});
+
+		clothingNotesColumn.setCellFactory(o -> {
+			final TableCell<Clothing, String> cell = new GraphicTableCell<>(false) {
+				@Override
+				protected void createGraphic() {
+					final TextField t = new TextField();
+					createGraphic(t, t::getText, t::setText);
+				}
+			};
+			return cell;
+		});
+		clothingNotesColumn.setOnEditCommit(event -> {
+			final String note = event.getNewValue();
+			final JSONObject item = event.getRowValue().getBaseItem();
+			if ("".equals(note)) {
+				item.removeKey("Anmerkungen");
+			} else {
+				item.put("Anmerkungen", note);
+			}
+			item.notifyListeners(null);
+		});
+	}
+
+	private void initializeDefensiveWeaponsTable() {
+		initTable(defensiveWeaponsTable, "Parierwaffen", "Parierwaffe");
+		GUIUtil.cellValueFactories(defensiveWeaponsTable, "name", "wm", "ini", "bf", "weight");
+
+		defensiveWeaponsBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12));
+		defensiveWeaponsBFColumn.setOnEditCommit(t -> t.getRowValue().setBf(t.getNewValue()));
+	}
+
+	private void initializeEquipmentTable() {
+		initTable(equipmentTable, "Ausrüstung", "");
+		GUIUtil.cellValueFactories(equipmentTable, "name", "notes");
+
+		equipmentNameColumn.setCellFactory(o -> {
+			final TableCell<InventoryItem, String> cell = new GraphicTableCell<>(false) {
+				@Override
+				protected void createGraphic() {
+					final TextField t = new TextField();
+					createGraphic(t, t::getText, t::setText);
+				}
+			};
+			return cell;
+		});
+		equipmentNameColumn.setOnEditCommit(event -> {
+			final JSONObject item = event.getRowValue().getBaseItem();
+			item.put("Name", event.getNewValue());
+			item.notifyListeners(null);
+		});
+
+		equipmentNotesColumn.setCellFactory(o -> {
+			final TableCell<InventoryItem, String> cell = new GraphicTableCell<>(false) {
+				@Override
+				protected void createGraphic() {
+					final TextField t = new TextField();
+					createGraphic(t, t::getText, t::setText);
+				}
+			};
+			return cell;
+		});
+		equipmentNotesColumn.setOnEditCommit(event -> {
+			final String note = event.getNewValue();
+			final JSONObject item = event.getRowValue().getBaseItem();
+			if ("".equals(note)) {
+				item.removeKey("Anmerkungen");
+			} else {
+				item.put("Anmerkungen", note);
+			}
+			item.notifyListeners(null);
+		});
+	}
+
+	private void initializePotionsTable() {
+		initTable(potionsTable, "Alchemika", "Alchemikum");
+		GUIUtil.cellValueFactories(potionsTable, "name", "notes", "quality", "amount");
+
+		DoubleBinding potionsWidth = potionsTable.widthProperty().subtract(2);
+		potionsWidth = potionsWidth.subtract(potionsQualityColumn.widthProperty());
+		potionsWidth = potionsWidth.subtract(potionsAmountColumn.widthProperty());
+		potionsWidth = potionsWidth.divide(2);
+
+		potionsNameColumn.prefWidthProperty().bind(potionsWidth);
+		potionsNotesColumn.prefWidthProperty().bind(potionsWidth);
+
+		potionsAmountColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 99));
+		potionsAmountColumn.setOnEditCommit(t -> t.getRowValue().setAmount(t.getNewValue()));
+	}
+
+	private void initializeRangedTable() {
+		initTable(rangedTable, "Fernkampfwaffen", "Fernkampfwaffe");
+		GUIUtil.cellValueFactories(rangedTable, "name", "tp", "distance", "distancetp", "weight", "load");
+	}
+
+	private void initializeRitualObjectTable() {
+		initTable(ritualObjectTable, "Ritualobjekte", "Ritualobjekt");
+		GUIUtil.cellValueFactories(ritualObjectTable, "name", "type");
+	}
+
+	private void initializeShieldsTable() {
+		initTable(shieldsTable, "Schilde", "Schild");
+		GUIUtil.cellValueFactories(shieldsTable, "name", "wm", "ini", "bf", "weight");
+
+		shieldsBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12));
+		shieldsBFColumn.setOnEditCommit(t -> t.getRowValue().setBf(t.getNewValue()));
+	}
+
+	private void initializeValuablesTable() {
+		initTable(valuablesTable, "Wertgegenstände", "Wertgegenstand");
+		GUIUtil.cellValueFactories(valuablesTable, "name", "notes");
+
+		valuablesNameColumn.setCellFactory(o -> {
+			final TableCell<Valuable, String> cell = new GraphicTableCell<>(false) {
+				@Override
+				protected void createGraphic() {
+					final TextField t = new TextField();
+					createGraphic(t, t::getText, t::setText);
+				}
+			};
+			return cell;
+		});
+		valuablesNameColumn.setOnEditCommit(event -> {
+			final JSONObject item = event.getRowValue().getBaseItem();
+			item.put("Name", event.getNewValue());
+			item.notifyListeners(null);
+		});
+
+		valuablesNotesColumn.setCellFactory(o -> {
+			final TableCell<Valuable, String> cell = new GraphicTableCell<>(false) {
+				@Override
+				protected void createGraphic() {
+					final TextField t = new TextField();
+					createGraphic(t, t::getText, t::setText);
+				}
+			};
+			return cell;
+		});
+		valuablesNotesColumn.setOnEditCommit(event -> {
+			final String note = event.getNewValue();
+			final JSONObject item = event.getRowValue().getBaseItem();
+			if ("".equals(note)) {
+				item.removeKey("Anmerkungen");
+			} else {
+				item.put("Anmerkungen", note);
+			}
+			item.notifyListeners(null);
+		});
+	}
+
+	private <T extends InventoryItem> void initTable(final TableView<T> table, final String name, final String category) {
+		GUIUtil.autosizeTable(table);
+		table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+		table.setRowFactory(tableView -> {
 			final TableRow<T> row = new TableRow<>();
 
-			row.setOnDragDetected(e -> {
-				if (row.isEmpty()) return;
-				final Dragboard dragBoard = tableView.startDragAndDrop(TransferMode.MOVE);
-				final ClipboardContent content = new ClipboardContent();
-				content.put(DataFormat.PLAIN_TEXT, row.getIndex());
-				dragBoard.setContent(content);
-				e.consume();
-			});
+			GUIUtil.dragDropReorder(row, moved -> {
+				if (moved.length > 0) {
+					final int rowIndex = row.getIndex();
 
-			row.setOnDragDropped(e -> {
-				final InventoryItem toMove = tableView.getItems().get((Integer) e.getDragboard().getContent(DataFormat.PLAIN_TEXT));
-				int appearance = 0;
-				int index = tableView.getItems().indexOf(toMove);
-				while (index != (Integer) e.getDragboard().getContent(DataFormat.PLAIN_TEXT)) {
-					++appearance;
-					index += 1 + tableView.getItems().subList(index + 1, tableView.getItems().size()).indexOf(toMove);
-				}
-				final JSONObject item = toMove.getBaseItem();
-				index = items.indexOf(item);
-				for (; appearance > 0; --appearance) {
-					index = items.indexOf(item, index + 1);
-				}
-				items.removeAt(index);
-				final InventoryItem target = row.getItem();
-				appearance = 0;
-				int targetIndex = tableView.getItems().indexOf(target);
-				while (targetIndex != row.getIndex()) {
-					++appearance;
-					targetIndex += 1 + tableView.getItems().subList(targetIndex + 1, tableView.getItems().size()).indexOf(target);
-				}
-				final JSONObject targetItem = target.getBaseItem();
-				targetIndex = items.indexOf(targetItem);
-				for (; appearance > 0; --appearance) {
-					targetIndex = items.indexOf(targetItem, targetIndex + 1);
-				}
-				if (targetIndex == -1 || targetIndex > items.size()) {
-					items.add(item);
-				} else {
-					items.add(targetIndex, item);
-				}
-				e.setDropCompleted(true);
-				items.notifyListeners(null);
-			});
+					final int indexBefore = rowIndex > 0 ? findIndex(tableView.getItems().get(rowIndex - 1)) : -1;
+					int indexAfter = rowIndex + moved.length < tableView.getItems().size() ? findIndex(tableView.getItems().get(rowIndex + moved.length))
+							: Integer.MAX_VALUE;
 
-			row.setOnDragOver(e -> {
-				if (e.getGestureSource() == row.getTableView()) {
-					e.acceptTransferModes(TransferMode.MOVE);
+					for (final Object movedItem : moved) {
+						final InventoryItem item = (InventoryItem) movedItem;
+						final int index = findIndex(item);
+						if (index < indexBefore) {
+							items.removeAt(index);
+							items.add(indexBefore, item.getBaseItem());
+						} else if (index > indexAfter) {
+							items.removeAt(index);
+							items.add(indexAfter, item.getBaseItem());
+							++indexAfter;
+						} // Nothing to do if it was already in between
+					}
+
+					items.notifyListeners(null);
 				}
-			});
+			}, tableView);
 
 			final ContextMenu rowMenu = new ContextMenu();
 
@@ -481,324 +760,7 @@ public class InventoryController extends HeroTabController {
 			row.setContextMenu(rowMenu);
 
 			return row;
-		};
-	}
-
-	@Override
-	protected Node getControl() {
-		return pane;
-	}
-
-	@Override
-	protected String getText() {
-		return "Inventar";
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public void init() {
-		final FXMLLoader fxmlLoader = new FXMLLoader();
-
-		fxmlLoader.setController(this);
-
-		try {
-			fxmlLoader.load(getClass().getResource("Inventory.fxml").openStream());
-		} catch (final Exception e) {
-			ErrorLogger.logError(e);
-		}
-
-		super.init();
-
-		final JSONObject ritualGroups = ResourceManager.getResource("data/Ritualgruppen");
-		DSAUtil.foreach(group -> group.getString("Ritualobjekt") != null, (name, group) -> {
-			ritualObjectGroups.add(name);
-		}, ritualGroups);
-
-		ducats.setConverter(new IntegerStringConverter());
-		silver.setConverter(new IntegerStringConverter());
-		heller.setConverter(new IntegerStringConverter());
-		kreuzer.setConverter(new IntegerStringConverter());
-
-		initializeCloseCombatTable();
-		initializeRangedTable();
-		initializeShieldsTable();
-		initializeDefensiveWeaponsTable();
-		initializeArmorTable();
-		initializeRitualObjectTable();
-		initializeValuablesTable();
-		initializePotionsTable();
-		initializeArtifactTable();
-		initializeClothingTable();
-		initializeEquipmentTable();
-
-		for (final ComboBox<String> list : new ComboBox[] { closeCombatList, rangedList, shieldsList, defensiveWeaponsList, armorList, ritualObjectList,
-				potionsList, clothingList, equipmentList }) {
-			final ObservableList<String> unsorted = list.getItems();
-			itemLists.put(list, unsorted);
-			list.setItems(unsorted.sorted());
-			final EventHandler<? super KeyEvent> keyPressed = list.getOnKeyPressed();
-			list.setOnKeyPressed(e -> {
-				if (e.getCode() == KeyCode.ENTER) {
-					addItem(list);
-				} else {
-					keyPressed.handle(e);
-				}
-			});
-		}
-
-		for (final TableView<? extends InventoryItem> table : new TableView[] { closeCombatTable, rangedTable, shieldsTable, defensiveWeaponsTable, armorTable,
-				ritualObjectTable, valuablesTable, potionsTable, artifactTable, clothingTable, equipmentTable }) {
-			((TableColumn<InventoryItem, String>) table.getColumns().get(0)).setCellFactory(c -> new TextFieldTableCell<>() {
-				@Override
-				public void updateItem(final String name, final boolean empty) {
-					super.updateItem(name, empty);
-					final InventoryItem item = getTableRow().getItem();
-					if (item != null) {
-						JSONObject referencedObject;
-						if (item.getItem().containsKey("Regelwerke")) {
-							referencedObject = item.getItem();
-						} else if (item.getBaseItem().containsKey("Regelwerke")) {
-							referencedObject = item.getBaseItem();
-						} else {
-							final String type = item.getItemType();
-							referencedObject = equipment.getObj(type.isEmpty() ? name : type);
-						}
-						Util.addReference(this, referencedObject, 15, table.getColumns().get(0).widthProperty());
-					}
-				}
-			});
-		}
-
-		equipment.addListener(equipmentListener);
-
-		updateLists();
-	}
-
-	private void initializeArmorTable() {
-		final String armorSetting = Settings.getSettingStringOrDefault("Zonenrüstung", "Kampf", "Rüstungsart");
-
-		if ("Zonenrüstung".equals(armorSetting)) {
-			armorRsColumn.setVisible(false);
-		} else {
-			armorHeadColumn.setVisible(false);
-			armorBreastColumn.setVisible(false);
-			armorBackColumn.setVisible(false);
-			armorBellyColumn.setVisible(false);
-			armorLarmColumn.setVisible(false);
-			armorRarmColumn.setVisible(false);
-			armorLlegColumn.setVisible(false);
-			armorRlegColumn.setVisible(false);
-		}
-
-		GUIUtil.autosizeTable(armorTable);
-		if ("Gesamtrüstung".equals(armorSetting)) {
-			GUIUtil.cellValueFactories(armorTable, "name", "head", "breast", "back", "belly", "larm", "rarm", "lleg", "rleg", "totalrs", "totalbe", "weight");
-		} else {
-			GUIUtil.cellValueFactories(armorTable, "name", "head", "breast", "back", "belly", "larm", "rarm", "lleg", "rleg", "zoners", "zonebe", "weight");
-		}
-
-		armorTable.setRowFactory(contextMenu("Rüstung", "Rüstung"));
-	}
-
-	private void initializeArtifactTable() {
-		GUIUtil.autosizeTable(artifactTable);
-		GUIUtil.cellValueFactories(artifactTable, "name", "notes");
-
-		artifactTable.setRowFactory(contextMenu("Artefakte", "Artefakt"));
-	}
-
-	private void initializeCloseCombatTable() {
-		GUIUtil.autosizeTable(closeCombatTable);
-		GUIUtil.cellValueFactories(closeCombatTable, "name", "tp", "tpkk", "weight", "length", "bf", "ini", "wm", "special", "dk");
-
-		closeCombatBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12));
-		closeCombatBFColumn.setOnEditCommit(t -> t.getRowValue().setBf(t.getNewValue()));
-
-		closeCombatTable.setRowFactory(contextMenu("Nahkampfwaffen", "Nahkampfwaffe"));
-	}
-
-	private void initializeClothingTable() {
-		GUIUtil.autosizeTable(clothingTable);
-		GUIUtil.cellValueFactories(clothingTable, "name", "notes");
-
-		clothingTable.setRowFactory(contextMenu("Kleidung", "Kleidung"));
-
-		clothingNameColumn.setCellFactory(o -> {
-			final TableCell<Clothing, String> cell = new GraphicTableCell<>(false) {
-				@Override
-				protected void createGraphic() {
-					final TextField t = new TextField();
-					createGraphic(t, t::getText, t::setText);
-				}
-			};
-			return cell;
 		});
-		clothingNameColumn.setOnEditCommit(event -> {
-			final JSONObject item = event.getRowValue().getBaseItem();
-			item.put("Name", event.getNewValue());
-			item.notifyListeners(null);
-		});
-
-		clothingNotesColumn.setCellFactory(o -> {
-			final TableCell<Clothing, String> cell = new GraphicTableCell<>(false) {
-				@Override
-				protected void createGraphic() {
-					final TextField t = new TextField();
-					createGraphic(t, t::getText, t::setText);
-				}
-			};
-			return cell;
-		});
-		clothingNotesColumn.setOnEditCommit(event -> {
-			final String note = event.getNewValue();
-			final JSONObject item = event.getRowValue().getBaseItem();
-			if ("".equals(note)) {
-				item.removeKey("Anmerkungen");
-			} else {
-				item.put("Anmerkungen", note);
-			}
-			item.notifyListeners(null);
-		});
-	}
-
-	private void initializeDefensiveWeaponsTable() {
-		GUIUtil.autosizeTable(defensiveWeaponsTable);
-		GUIUtil.cellValueFactories(defensiveWeaponsTable, "name", "wm", "ini", "bf", "weight");
-
-		defensiveWeaponsBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12));
-		defensiveWeaponsBFColumn.setOnEditCommit(t -> t.getRowValue().setBf(t.getNewValue()));
-
-		defensiveWeaponsTable.setRowFactory(contextMenu("Parierwaffen", "Parierwaffe"));
-	}
-
-	private void initializeEquipmentTable() {
-		GUIUtil.autosizeTable(equipmentTable);
-		GUIUtil.cellValueFactories(equipmentTable, "name", "notes");
-
-		equipmentTable.setRowFactory(contextMenu("Ausrüstung", ""));
-
-		equipmentNameColumn.setCellFactory(o -> {
-			final TableCell<InventoryItem, String> cell = new GraphicTableCell<>(false) {
-				@Override
-				protected void createGraphic() {
-					final TextField t = new TextField();
-					createGraphic(t, t::getText, t::setText);
-				}
-			};
-			return cell;
-		});
-		equipmentNameColumn.setOnEditCommit(event -> {
-			final JSONObject item = event.getRowValue().getBaseItem();
-			item.put("Name", event.getNewValue());
-			item.notifyListeners(null);
-		});
-
-		equipmentNotesColumn.setCellFactory(o -> {
-			final TableCell<InventoryItem, String> cell = new GraphicTableCell<>(false) {
-				@Override
-				protected void createGraphic() {
-					final TextField t = new TextField();
-					createGraphic(t, t::getText, t::setText);
-				}
-			};
-			return cell;
-		});
-		equipmentNotesColumn.setOnEditCommit(event -> {
-			final String note = event.getNewValue();
-			final JSONObject item = event.getRowValue().getBaseItem();
-			if ("".equals(note)) {
-				item.removeKey("Anmerkungen");
-			} else {
-				item.put("Anmerkungen", note);
-			}
-			item.notifyListeners(null);
-		});
-	}
-
-	private void initializePotionsTable() {
-		GUIUtil.autosizeTable(potionsTable);
-		GUIUtil.cellValueFactories(potionsTable, "name", "notes", "quality", "amount");
-
-		DoubleBinding potionsWidth = potionsTable.widthProperty().subtract(2);
-		potionsWidth = potionsWidth.subtract(potionsQualityColumn.widthProperty());
-		potionsWidth = potionsWidth.subtract(potionsAmountColumn.widthProperty());
-		potionsWidth = potionsWidth.divide(2);
-
-		potionsNameColumn.prefWidthProperty().bind(potionsWidth);
-		potionsNotesColumn.prefWidthProperty().bind(potionsWidth);
-
-		potionsAmountColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 99));
-		potionsAmountColumn.setOnEditCommit(t -> t.getRowValue().setAmount(t.getNewValue()));
-
-		potionsTable.setRowFactory(contextMenu("Alchemika", "Alchemikum"));
-	}
-
-	private void initializeRangedTable() {
-		GUIUtil.autosizeTable(rangedTable);
-		GUIUtil.cellValueFactories(rangedTable, "name", "tp", "distance", "distancetp", "weight", "load");
-
-		rangedTable.setRowFactory(contextMenu("Fernkampfwaffen", "Fernkampfwaffe"));
-	}
-
-	private void initializeRitualObjectTable() {
-		GUIUtil.autosizeTable(ritualObjectTable);
-		GUIUtil.cellValueFactories(ritualObjectTable, "name", "type");
-
-		ritualObjectTable.setRowFactory(contextMenu("Ritualobjekte", "Ritualobjekt"));
-	}
-
-	private void initializeShieldsTable() {
-		GUIUtil.autosizeTable(shieldsTable);
-		GUIUtil.cellValueFactories(shieldsTable, "name", "wm", "ini", "bf", "weight");
-
-		shieldsBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12));
-		shieldsBFColumn.setOnEditCommit(t -> t.getRowValue().setBf(t.getNewValue()));
-
-		shieldsTable.setRowFactory(contextMenu("Schilde", "Schild"));
-	}
-
-	private void initializeValuablesTable() {
-		GUIUtil.autosizeTable(valuablesTable);
-		GUIUtil.cellValueFactories(valuablesTable, "name", "notes");
-
-		valuablesNameColumn.setCellFactory(o -> {
-			final TableCell<Valuable, String> cell = new GraphicTableCell<>(false) {
-				@Override
-				protected void createGraphic() {
-					final TextField t = new TextField();
-					createGraphic(t, t::getText, t::setText);
-				}
-			};
-			return cell;
-		});
-		valuablesNameColumn.setOnEditCommit(event -> {
-			final JSONObject item = event.getRowValue().getBaseItem();
-			item.put("Name", event.getNewValue());
-			item.notifyListeners(null);
-		});
-
-		valuablesNotesColumn.setCellFactory(o -> {
-			final TableCell<Valuable, String> cell = new GraphicTableCell<>(false) {
-				@Override
-				protected void createGraphic() {
-					final TextField t = new TextField();
-					createGraphic(t, t::getText, t::setText);
-				}
-			};
-			return cell;
-		});
-		valuablesNotesColumn.setOnEditCommit(event -> {
-			final String note = event.getNewValue();
-			final JSONObject item = event.getRowValue().getBaseItem();
-			if ("".equals(note)) {
-				item.removeKey("Anmerkungen");
-			} else {
-				item.put("Anmerkungen", note);
-			}
-			item.notifyListeners(null);
-		});
-
-		valuablesTable.setRowFactory(contextMenu("Wertgegenstände", "Wertgegenstand"));
 	}
 
 	private void refreshMoney() {
