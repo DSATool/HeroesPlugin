@@ -304,7 +304,7 @@ public class ArtifactEditor {
 			}
 			artifact.setAsp(asp.getValue(), pasp.getValue());
 			artifact.setTrigger(triggerType.getValue(), triggerActions.getValue(), triggerDesc.getText());
-			artifact.setSpells(spells);
+			artifact.setSpells(spells.clone(artifact.getItem()));
 			artifact.setWeight(weight.getValue());
 			artifact.setNotes(notes.getText());
 			stage.close();
