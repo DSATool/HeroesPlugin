@@ -184,7 +184,7 @@ public class BooksEditor {
 	private void initList() {
 		final String selected = bookList.getSelectionModel().getSelectedItem();
 		bookList.getItems().clear();
-		for (final String book : Settings.getSettingArrayOrDefault(null, "Allgemein", "Bücher").getStrings()) {
+		for (final String book : Settings.getSettingArray("Allgemein", "Bücher").getStrings()) {
 			if (!chosen.contains(book)) {
 				bookList.getItems().add(book);
 			}
