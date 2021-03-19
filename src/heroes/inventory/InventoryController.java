@@ -246,7 +246,7 @@ public class InventoryController extends HeroTabController {
 
 	private final List<String> ritualObjectGroups = new ArrayList<>();
 
-	private final String[] categoryNames = { "Nahkampfwaffe", "Fernkampfwaffe", "Schild", "Parierwaffe", "Rüstung", "Ritualobjekt", "Wertrgegenstand",
+	private final String[] categoryNames = { "Nahkampfwaffe", "Fernkampfwaffe", "Schild", "Parierwaffe", "Rüstung", "Ritualobjekt", "Wertgegenstand",
 			"Alchemikum", "Artefakt", "Kleidung" };
 	private final String[] categoryLongNames = { "Nahkampfwaffen", "Fernkampfwaffen", "Schilde", "Parierwaffen", "Rüstung", "Ritualobjekte", "Wertgegenstände",
 			"Alchemika", "Artefakte", "Kleidung" };
