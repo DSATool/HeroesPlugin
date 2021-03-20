@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import dsa41basis.inventory.BooksEditor;
 import dsa41basis.inventory.Ritual;
 import dsa41basis.inventory.RitualObject;
 import dsa41basis.util.DSAUtil;

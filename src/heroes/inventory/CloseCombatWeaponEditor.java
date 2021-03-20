@@ -18,6 +18,7 @@ package heroes.inventory;
 import org.controlsfx.control.CheckComboBox;
 
 import dsa41basis.fight.CloseCombatWeapon;
+import dsa41basis.inventory.BooksEditor;
 import dsatool.resources.ResourceManager;
 import dsatool.ui.ReactiveSpinner;
 import dsatool.util.ErrorLogger;

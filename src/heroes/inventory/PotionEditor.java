@@ -15,6 +15,7 @@
  */
 package heroes.inventory;
 
+import dsa41basis.inventory.BooksEditor;
 import dsa41basis.inventory.Potion;
 import dsatool.ui.ReactiveSpinner;
 import dsatool.util.ErrorLogger;

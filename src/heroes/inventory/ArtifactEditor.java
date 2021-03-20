@@ -16,6 +16,7 @@
 package heroes.inventory;
 
 import dsa41basis.inventory.Artifact;
+import dsa41basis.inventory.BooksEditor;
 import dsatool.gui.GUIUtil;
 import dsatool.resources.ResourceManager;
 import dsatool.ui.GraphicTableCell;
