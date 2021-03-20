@@ -490,12 +490,32 @@ public class AnimalController {
 
 		equipmentTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
+		final JSONObject equipment = ResourceManager.getResource("data/Ausruestung");
+
 		equipmentNameColumn.setCellFactory(o -> {
 			final TableCell<InventoryItem, String> cell = new GraphicTableCell<>(false) {
 				@Override
 				protected void createGraphic() {
 					final TextField t = new TextField();
 					createGraphic(t, t::getText, t::setText);
+				}
+
+				@Override
+				public void updateItem(final String name, final boolean empty) {
+					super.updateItem(name, empty);
+					final InventoryItem item = getTableRow().getItem();
+					if (item != null) {
+						JSONObject referencedObject;
+						if (item.getItem().containsKey("Regelwerke")) {
+							referencedObject = item.getItem();
+						} else if (item.getBaseItem().containsKey("Regelwerke")) {
+							referencedObject = item.getBaseItem();
+						} else {
+							final String type = item.getItemType();
+							referencedObject = equipment.getObj(type.isEmpty() ? name : type);
+						}
+						Util.addReference(this, referencedObject, 15, equipmentNameColumn.widthProperty());
+					}
 				}
 			};
 			return cell;
@@ -575,7 +595,7 @@ public class AnimalController {
 
 		DSAUtil.foreach(item -> true, (itemName, item) -> {
 			equipmentList.getItems().add(itemName);
-		}, ResourceManager.getResource("data/Ausruestung"));
+		}, equipment);
 	}
 
 	private void initProConSkills() {
@@ -629,7 +649,8 @@ public class AnimalController {
 				}
 				actual.notifyListeners(null);
 			});
-			row.contextMenuProperty().bind(Bindings.when(row.itemProperty().isNotNull()).then(proConContextMenu).otherwise((ContextMenu) null));
+			row.contextMenuProperty().bind(
+					Bindings.when(HeroTabController.isEditable.and(row.itemProperty().isNotNull())).then(proConContextMenu).otherwise((ContextMenu) null));
 
 			return row;
 		});
@@ -650,7 +671,8 @@ public class AnimalController {
 					actual.removeKey(item);
 					actual.notifyListeners(null);
 				});
-				row.contextMenuProperty().bind(Bindings.when(row.itemProperty().isNotNull()).then(ritualContextMenu).otherwise((ContextMenu) null));
+				row.contextMenuProperty().bind(
+						Bindings.when(HeroTabController.isEditable.and(row.itemProperty().isNotNull())).then(ritualContextMenu).otherwise((ContextMenu) null));
 
 				return row;
 			});
@@ -707,7 +729,8 @@ public class AnimalController {
 				actual.notifyListeners(null);
 			});
 
-			row.contextMenuProperty().bind(Bindings.when(row.itemProperty().isNotNull()).then(skillContextMenu).otherwise((ContextMenu) null));
+			row.contextMenuProperty().bind(
+					Bindings.when(HeroTabController.isEditable.and(row.itemProperty().isNotNull())).then(skillContextMenu).otherwise((ContextMenu) null));
 
 			return row;
 		});
