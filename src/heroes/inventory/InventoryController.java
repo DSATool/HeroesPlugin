@@ -276,7 +276,10 @@ public class InventoryController extends HeroTabController {
 	}
 
 	public void addItem(final ComboBox<String> list) {
-		final String itemName = list.getSelectionModel().getSelectedItem();
+		String itemName = list.getSelectionModel().getSelectedItem();
+		if (itemName == null) {
+			itemName = list.getEditor().getText();
+		}
 		final JSONObject item = equipment.getObj(itemName).clone(items);
 		if (!item.containsKey("Name")) {
 			item.put("Name", itemName);
@@ -375,10 +378,9 @@ public class InventoryController extends HeroTabController {
 			list.setItems(unsorted.sorted());
 			final EventHandler<? super KeyEvent> keyPressed = list.getOnKeyPressed();
 			list.setOnKeyPressed(e -> {
-				if (e.getCode() == KeyCode.ENTER) {
+				keyPressed.handle(e);
+				if (!e.isConsumed() && e.getCode() == KeyCode.ENTER) {
 					addItem(list);
-				} else {
-					keyPressed.handle(e);
 				}
 			});
 		}
