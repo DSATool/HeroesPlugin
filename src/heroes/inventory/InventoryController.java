@@ -66,7 +66,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
@@ -387,7 +386,13 @@ public class InventoryController extends HeroTabController {
 
 		for (final TableView<? extends InventoryItem> table : new TableView[] { closeCombatTable, rangedTable, shieldsTable, defensiveWeaponsTable, armorTable,
 				ritualObjectTable, valuablesTable, potionsTable, artifactTable, clothingTable, equipmentTable }) {
-			((TableColumn<InventoryItem, String>) table.getColumns().get(0)).setCellFactory(c -> new TextFieldTableCell<>() {
+			((TableColumn<InventoryItem, String>) table.getColumns().get(0)).setCellFactory(c -> new GraphicTableCell<>(false) {
+				@Override
+				protected void createGraphic() {
+					final TextField t = new TextField();
+					createGraphic(t, t::getText, t::setText);
+				}
+
 				@Override
 				public void updateItem(final String name, final boolean empty) {
 					super.updateItem(name, empty);
@@ -455,16 +460,6 @@ public class InventoryController extends HeroTabController {
 		initTable(clothingTable, "Kleidung", "Kleidung");
 		GUIUtil.cellValueFactories(clothingTable, "name", "notes");
 
-		clothingNameColumn.setCellFactory(o -> {
-			final TableCell<Clothing, String> cell = new GraphicTableCell<>(false) {
-				@Override
-				protected void createGraphic() {
-					final TextField t = new TextField();
-					createGraphic(t, t::getText, t::setText);
-				}
-			};
-			return cell;
-		});
 		clothingNameColumn.setOnEditCommit(event -> {
 			final JSONObject item = event.getRowValue().getBaseItem();
 			item.put("Name", event.getNewValue());
@@ -505,16 +500,6 @@ public class InventoryController extends HeroTabController {
 		initTable(equipmentTable, "Ausrüstung", "");
 		GUIUtil.cellValueFactories(equipmentTable, "name", "notes");
 
-		equipmentNameColumn.setCellFactory(o -> {
-			final TableCell<InventoryItem, String> cell = new GraphicTableCell<>(false) {
-				@Override
-				protected void createGraphic() {
-					final TextField t = new TextField();
-					createGraphic(t, t::getText, t::setText);
-				}
-			};
-			return cell;
-		});
 		equipmentNameColumn.setOnEditCommit(event -> {
 			final JSONObject item = event.getRowValue().getBaseItem();
 			item.put("Name", event.getNewValue());
@@ -581,16 +566,6 @@ public class InventoryController extends HeroTabController {
 		initTable(valuablesTable, "Wertgegenstände", "Wertgegenstand");
 		GUIUtil.cellValueFactories(valuablesTable, "name", "notes");
 
-		valuablesNameColumn.setCellFactory(o -> {
-			final TableCell<Valuable, String> cell = new GraphicTableCell<>(false) {
-				@Override
-				protected void createGraphic() {
-					final TextField t = new TextField();
-					createGraphic(t, t::getText, t::setText);
-				}
-			};
-			return cell;
-		});
 		valuablesNameColumn.setOnEditCommit(event -> {
 			final JSONObject item = event.getRowValue().getBaseItem();
 			item.put("Name", event.getNewValue());
