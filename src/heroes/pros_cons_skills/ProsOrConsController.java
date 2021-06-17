@@ -279,7 +279,7 @@ public class ProsOrConsController {
 		}
 
 		showAll.addListener((o, oldV, newV) -> setVisibility());
-	};
+	}
 
 	@FXML
 	protected void add() {

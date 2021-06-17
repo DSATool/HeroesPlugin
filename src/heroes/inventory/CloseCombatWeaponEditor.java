@@ -120,9 +120,7 @@ public class CloseCombatWeaponEditor {
 		name.setText(weapon.getName());
 		type.setText(weapon.getItemType());
 		final JSONObject rangedTalents = ResourceManager.getResource("data/Talente").getObj("Nahkampftalente");
-		for (final String talent : rangedTalents.keySet()) {
-			talents.getItems().add(talent);
-		}
+		talents.getItems().addAll(rangedTalents.keySet());
 		for (final String talent : weapon.getTalents()) {
 			talents.getCheckModel().check(talent);
 		}

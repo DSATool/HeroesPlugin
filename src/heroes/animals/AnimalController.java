@@ -106,7 +106,7 @@ public class AnimalController {
 		}
 	}
 
-	public class ProConSkill {
+	public static class ProConSkill {
 		private final StringProperty name = new SimpleStringProperty();
 		private final StringProperty description = new SimpleStringProperty();
 		private final IntegerProperty value = new SimpleIntegerProperty();

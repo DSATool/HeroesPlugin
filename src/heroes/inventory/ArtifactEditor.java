@@ -48,7 +48,7 @@ import jsonant.value.JSONObject;
 import jsonant.value.JSONValue;
 
 public class ArtifactEditor {
-	public class Spell {
+	public static class Spell {
 		private final StringProperty name = new SimpleStringProperty();
 		private final StringProperty variant = new SimpleStringProperty();
 		private final JSONObject actual;

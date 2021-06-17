@@ -48,9 +48,7 @@ public class Heroes extends Plugin {
 	 */
 	@Override
 	public void initialize() {
-		Main.addDetachableToolComposite("Helden", "Helden", 900, 800, () -> {
-			return new HeroesController().getRoot();
-		});
+		Main.addDetachableToolComposite("Helden", "Helden", 900, 800, () -> new HeroesController().getRoot());
 		Settings.addSetting(new StringChoiceSetting("Lernmethode", "Gegenseitiges Lehren",
 				List.of("Lehrmeister", "Gegenseitiges Lehren", "Selbststudium"), "Steigerung", "Lernmethode"));
 		Settings.addSetting(new BooleanSetting("Lehrmeisterkosten", true, "Steigerung", "Lehrmeisterkosten"));

@@ -21,35 +21,31 @@ import javafx.util.Callback;
 public class UiUtil {
 
 	@SuppressWarnings("rawtypes")
-	public static final Callback integerCellFactory = col -> {
-		return new TableCell() {
-			@Override
-			protected void updateItem(final Object item, final boolean empty) {
-				if (empty || item.equals(Integer.MIN_VALUE) || item.equals(Double.NEGATIVE_INFINITY)) {
-					setText("");
-				} else {
-					if (item instanceof Integer || item instanceof Long) {
-						setText(item.toString());
-					} else if (item instanceof Double) {
-						setText(Integer.toString(((Double) item).intValue()));
-					}
+	public static final Callback integerCellFactory = col -> new TableCell() {
+		@Override
+		protected void updateItem(final Object item, final boolean empty) {
+			if (empty || item.equals(Integer.MIN_VALUE) || item.equals(Double.NEGATIVE_INFINITY)) {
+				setText("");
+			} else {
+				if (item instanceof Integer || item instanceof Long) {
+					setText(item.toString());
+				} else if (item instanceof Double) {
+					setText(Integer.toString(((Double) item).intValue()));
 				}
 			}
-		};
+		}
 	};
 
 	@SuppressWarnings("rawtypes")
-	public static final Callback signedIntegerCellFactory = col -> {
-		return new TableCell() {
-			@Override
-			protected void updateItem(final Object item, final boolean empty) {
-				if (empty || item.equals(Integer.MIN_VALUE)) {
-					setText("");
-				} else {
-					setText(((Integer) item > 0 ? "+" : "") + item.toString());
-				}
+	public static final Callback signedIntegerCellFactory = col -> new TableCell() {
+		@Override
+		protected void updateItem(final Object item, final boolean empty) {
+			if (empty || item.equals(Integer.MIN_VALUE)) {
+				setText("");
+			} else {
+				setText(((Integer) item > 0 ? "+" : "") + item.toString());
 			}
-		};
+		}
 	};
 
 	private UiUtil() {}

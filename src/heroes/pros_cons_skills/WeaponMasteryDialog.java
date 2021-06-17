@@ -55,7 +55,7 @@ import jsonant.value.JSONObject;
 
 public class WeaponMasteryDialog {
 
-	public class ManeuverOrPro {
+	public static class ManeuverOrPro {
 		public StringProperty name;
 		public IntegerProperty value;
 
@@ -363,9 +363,7 @@ public class WeaponMasteryDialog {
 		list.getItems().clear();
 		if (actual.containsKey(key)) {
 			final JSONArray items = actual.getArr(key);
-			for (final String item : items.getStrings()) {
-				list.getItems().add(item);
-			}
+			list.getItems().addAll(items.getStrings());
 		}
 		list.getItems().add("");
 	}

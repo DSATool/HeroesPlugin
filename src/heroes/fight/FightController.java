@@ -353,7 +353,7 @@ public class FightController extends HeroTabController {
 			if ("Pfeile".equals(t.getNewValue()) || "Bolzen".equals(t.getNewValue())) {
 				new AmmunitionDialog(pane.getScene().getWindow(), t.getRowValue());
 			} else {
-				t.getRowValue().setAmmunition(Integer.valueOf(t.getNewValue()));
+				t.getRowValue().setAmmunition(Integer.parseInt(t.getNewValue()));
 			}
 		});
 
