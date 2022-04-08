@@ -39,7 +39,11 @@ public class CheaperSkillsController extends ProsOrConsController {
 		valueColumn.setPrefWidth(100);
 		valueColumn.setCellValueFactory(new PropertyValueFactory<ProOrCon, Integer>("numCheaper"));
 		valueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(1, 9));
-		valueColumn.setOnEditCommit(t -> t.getRowValue().setNumCheaper(t.getNewValue()));
+		valueColumn.setOnEditCommit(t -> {
+			if (t.getRowValue() != null) {
+				t.getRowValue().setNumCheaper(t.getNewValue());
+			}
+		});
 	}
 
 	@Override

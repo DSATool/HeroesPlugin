@@ -453,7 +453,11 @@ public class InventoryController extends HeroTabController {
 		GUIUtil.cellValueFactories(closeCombatTable, "name", "tp", "tpkk", "weight", "length", "bf", "ini", "wm", "special", "dk");
 
 		closeCombatBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12));
-		closeCombatBFColumn.setOnEditCommit(t -> t.getRowValue().setBf(t.getNewValue()));
+		closeCombatBFColumn.setOnEditCommit(t -> {
+			if (t.getRowValue() != null) {
+				t.getRowValue().setBf(t.getNewValue());
+			}
+		});
 	}
 
 	private void initializeClothingTable() {
@@ -493,7 +497,11 @@ public class InventoryController extends HeroTabController {
 		GUIUtil.cellValueFactories(defensiveWeaponsTable, "name", "wm", "ini", "bf", "weight");
 
 		defensiveWeaponsBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12));
-		defensiveWeaponsBFColumn.setOnEditCommit(t -> t.getRowValue().setBf(t.getNewValue()));
+		defensiveWeaponsBFColumn.setOnEditCommit(t -> {
+			if (t.getRowValue() != null) {
+				t.getRowValue().setBf(t.getNewValue());
+			}
+		});
 	}
 
 	private void initializeEquipmentTable() {
@@ -541,7 +549,11 @@ public class InventoryController extends HeroTabController {
 		potionsNotesColumn.prefWidthProperty().bind(potionsWidth);
 
 		potionsAmountColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 99));
-		potionsAmountColumn.setOnEditCommit(t -> t.getRowValue().setAmount(t.getNewValue()));
+		potionsAmountColumn.setOnEditCommit(t -> {
+			if (t.getRowValue() != null) {
+				t.getRowValue().setAmount(t.getNewValue());
+			}
+		});
 	}
 
 	private void initializeRangedTable() {
@@ -559,7 +571,11 @@ public class InventoryController extends HeroTabController {
 		GUIUtil.cellValueFactories(shieldsTable, "name", "wm", "ini", "bf", "weight");
 
 		shieldsBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12));
-		shieldsBFColumn.setOnEditCommit(t -> t.getRowValue().setBf(t.getNewValue()));
+		shieldsBFColumn.setOnEditCommit(t -> {
+			if (t.getRowValue() != null) {
+				t.getRowValue().setBf(t.getNewValue());
+			}
+		});
 	}
 
 	private void initializeValuablesTable() {

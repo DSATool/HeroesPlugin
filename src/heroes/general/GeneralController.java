@@ -234,15 +234,20 @@ public class GeneralController extends HeroTabController {
 		GUIUtil.cellValueFactories(attributesTable, "name", "value", "manualModifier", "current");
 		attributesValueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 30));
 		attributesValueColumn.setOnEditCommit(t -> {
-			if (HeroTabController.isEditable.get()) {
-				t.getRowValue().setValue(t.getNewValue());
-			} else if (!t.getNewValue().equals(t.getOldValue())) {
-				new AttributeEnhancementDialog(pane.getScene().getWindow(), t.getRowValue(), hero,
-						t.getNewValue());
-			}
+			if (t.getRowValue() != null)
+				if (HeroTabController.isEditable.get()) {
+					t.getRowValue().setValue(t.getNewValue());
+				} else if (!t.getNewValue().equals(t.getOldValue())) {
+					new AttributeEnhancementDialog(pane.getScene().getWindow(), t.getRowValue(), hero,
+							t.getNewValue());
+				}
 		});
 		attributesModifierColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99));
-		attributesModifierColumn.setOnEditCommit(t -> t.getRowValue().setManualModifier(t.getNewValue()));
+		attributesModifierColumn.setOnEditCommit(t -> {
+			if (t.getRowValue() != null) {
+				t.getRowValue().setManualModifier(t.getNewValue());
+			}
+		});
 
 		attributesTable.setRowFactory(t -> {
 			final TableRow<Attribute> row = new TableRow<>();
@@ -280,7 +285,11 @@ public class GeneralController extends HeroTabController {
 		GUIUtil.autosizeTable(derivedValuesTable);
 		GUIUtil.cellValueFactories(derivedValuesTable, "name", "manualModifier", "current");
 		derivedModifierColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99));
-		derivedModifierColumn.setOnEditCommit(t -> t.getRowValue().setManualModifier(t.getNewValue()));
+		derivedModifierColumn.setOnEditCommit(t -> {
+			if (t.getRowValue() != null) {
+				t.getRowValue().setManualModifier(t.getNewValue());
+			}
+		});
 		derivedCurrentColumn.setCellValueFactory(new PropertyValueFactory<DerivedValue, Integer>("current"));
 
 		derivedValuesTable.setRowFactory(t -> {
@@ -304,18 +313,27 @@ public class GeneralController extends HeroTabController {
 		GUIUtil.autosizeTable(energiesTable);
 		GUIUtil.cellValueFactories(energiesTable, "name", "permanent", "bought", "manualModifier", "currentPercentage");
 		energiesPermanentColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99));
-		energiesPermanentColumn.setOnEditCommit(t -> t.getRowValue().setPermanent(t.getNewValue()));
-		energiesBoughtColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 99));
-		energiesBoughtColumn.setOnEditCommit(t -> {
-			if (HeroTabController.isEditable.get()) {
-				t.getRowValue().setBought(t.getNewValue());
-			} else {
-				final HeroEnergy energy = t.getRowValue();
-				new EnergyEnhancementDialog(pane.getScene().getWindow(), energy, hero, energy.getMax() - energy.getBought() + t.getNewValue());
+		energiesPermanentColumn.setOnEditCommit(t -> {
+			if (t.getRowValue() != null) {
+				t.getRowValue().setPermanent(t.getNewValue());
 			}
 		});
+		energiesBoughtColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 99));
+		energiesBoughtColumn.setOnEditCommit(t -> {
+			if (t.getRowValue() != null)
+				if (HeroTabController.isEditable.get()) {
+					t.getRowValue().setBought(t.getNewValue());
+				} else {
+					final HeroEnergy energy = t.getRowValue();
+					new EnergyEnhancementDialog(pane.getScene().getWindow(), energy, hero, energy.getMax() - energy.getBought() + t.getNewValue());
+				}
+		});
 		energiesModifierColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99));
-		energiesModifierColumn.setOnEditCommit(t -> t.getRowValue().setManualModifier(t.getNewValue()));
+		energiesModifierColumn.setOnEditCommit(t -> {
+			if (t.getRowValue() != null) {
+				t.getRowValue().setManualModifier(t.getNewValue());
+			}
+		});
 		energiesCurrentColumn.setCellFactory(o -> new ColoredProgressBarTableCell<>());
 
 		energiesTable.setRowFactory(t -> {

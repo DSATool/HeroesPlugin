@@ -219,7 +219,11 @@ public class RitualObjectEditor {
 				}
 			}
 		});
-		choiceColumn.setOnEditCommit(t -> t.getRowValue().setChoice(t.getNewValue()));
+		choiceColumn.setOnEditCommit(t -> {
+			if (t.getRowValue() != null) {
+				t.getRowValue().setChoice(t.getNewValue());
+			}
+		});
 
 		ritualTable.setRowFactory(t -> {
 			final TableRow<Ritual> row = new TableRow<>();

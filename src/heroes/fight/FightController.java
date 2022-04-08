@@ -274,7 +274,11 @@ public class FightController extends HeroTabController {
 		closeCombatPAColumn.setCellFactory(UiUtil.integerCellFactory);
 		closeCombatIniColumn.setCellFactory(UiUtil.signedIntegerCellFactory);
 		closeCombatBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12));
-		closeCombatBFColumn.setOnEditCommit(t -> t.getRowValue().setBf(t.getNewValue()));
+		closeCombatBFColumn.setOnEditCommit(t -> {
+			if (t.getRowValue() != null) {
+				t.getRowValue().setBf(t.getNewValue());
+			}
+		});
 
 		rangedCombatTable.prefWidthProperty().bind(pane.widthProperty().subtract(17));
 
@@ -350,11 +354,12 @@ public class FightController extends HeroTabController {
 			}
 		});
 		rangedCombatAmmunitionColumn.setOnEditCommit((final CellEditEvent<RangedWeapon, String> t) -> {
-			if ("Pfeile".equals(t.getNewValue()) || "Bolzen".equals(t.getNewValue())) {
-				new AmmunitionDialog(pane.getScene().getWindow(), t.getRowValue());
-			} else {
-				t.getRowValue().setAmmunition(Integer.parseInt(t.getNewValue()));
-			}
+			if (t.getRowValue() != null)
+				if ("Pfeile".equals(t.getNewValue()) || "Bolzen".equals(t.getNewValue())) {
+					new AmmunitionDialog(pane.getScene().getWindow(), t.getRowValue());
+				} else {
+					t.getRowValue().setAmmunition(Integer.parseInt(t.getNewValue()));
+				}
 		});
 
 		shieldsTable.prefWidthProperty().bind(pane.widthProperty().subtract(17));
@@ -364,7 +369,11 @@ public class FightController extends HeroTabController {
 
 		shieldsIniColumn.setCellFactory(UiUtil.signedIntegerCellFactory);
 		shieldsBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12));
-		shieldsBFColumn.setOnEditCommit(t -> t.getRowValue().setBf(t.getNewValue()));
+		shieldsBFColumn.setOnEditCommit(t -> {
+			if (t.getRowValue() != null) {
+				t.getRowValue().setBf(t.getNewValue());
+			}
+		});
 
 		defensiveWeaponsTable.prefWidthProperty().bind(pane.widthProperty().subtract(17));
 
@@ -374,7 +383,11 @@ public class FightController extends HeroTabController {
 		defensiveWeaponsPAColumn.setCellFactory(UiUtil.signedIntegerCellFactory);
 		defensiveWeaponsIniColumn.setCellFactory(UiUtil.signedIntegerCellFactory);
 		defensiveWeaponsBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12));
-		defensiveWeaponsBFColumn.setOnEditCommit(t -> t.getRowValue().setBf(t.getNewValue()));
+		defensiveWeaponsBFColumn.setOnEditCommit(t -> {
+			if (t.getRowValue() != null) {
+				t.getRowValue().setBf(t.getNewValue());
+			}
+		});
 
 		final String armorSetting = Settings.getSettingStringOrDefault("Zonenrüstung", "Kampf", "Rüstungsart");
 

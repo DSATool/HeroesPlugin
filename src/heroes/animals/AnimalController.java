@@ -408,9 +408,17 @@ public class AnimalController {
 		GUIUtil.cellValueFactories(attributesTable, "name", "value", "manualModifier", "current");
 
 		attributesValueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 999));
-		attributesValueColumn.setOnEditCommit(t -> t.getRowValue().setValue(t.getNewValue()));
+		attributesValueColumn.setOnEditCommit(t -> {
+			if (t.getRowValue() != null) {
+				t.getRowValue().setValue(t.getNewValue());
+			}
+		});
 		attributesModifierColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99));
-		attributesModifierColumn.setOnEditCommit(t -> t.getRowValue().setManualModifier(t.getNewValue()));
+		attributesModifierColumn.setOnEditCommit(t -> {
+			if (t.getRowValue() != null) {
+				t.getRowValue().setManualModifier(t.getNewValue());
+			}
+		});
 
 		if (type == CharacterType.HORSE) {
 			final JSONObject attributes = actualAnimal.getObj("Eigenschaften");
@@ -626,9 +634,17 @@ public class AnimalController {
 				super.startEdit();
 			}
 		});
-		proConDescColumn.setOnEditCommit(t -> t.getRowValue().setDescription(t.getNewValue()));
+		proConDescColumn.setOnEditCommit(t -> {
+			if (t.getRowValue() != null) {
+				t.getRowValue().setDescription(t.getNewValue());
+			}
+		});
 		proConValueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 9999));
-		proConValueColumn.setOnEditCommit(t -> t.getRowValue().setValue(t.getNewValue()));
+		proConValueColumn.setOnEditCommit(t -> {
+			if (t.getRowValue() != null) {
+				t.getRowValue().setValue(t.getNewValue());
+			}
+		});
 
 		proConsTable.setRowFactory(t -> {
 			final TableRow<ProConSkill> row = new TableRow<>();
@@ -707,7 +723,11 @@ public class AnimalController {
 				super.startEdit();
 			}
 		});
-		skillDescColumn.setOnEditCommit(t -> t.getRowValue().setDescription(t.getNewValue()));
+		skillDescColumn.setOnEditCommit(t -> {
+			if (t.getRowValue() != null) {
+				t.getRowValue().setDescription(t.getNewValue());
+			}
+		});
 
 		skillsTable.setRowFactory(t -> {
 			final TableRow<ProConSkill> row = new TableRow<>();
@@ -747,16 +767,28 @@ public class AnimalController {
 		GUIUtil.cellValueFactories(statsTable, "name", "value", "bought", "manualModifier", "current");
 
 		statsValueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 999));
-		statsValueColumn.setOnEditCommit(t -> t.getRowValue().setValue(t.getNewValue()));
+		statsValueColumn.setOnEditCommit(t -> {
+			if (t.getRowValue() != null) {
+				t.getRowValue().setValue(t.getNewValue());
+			}
+		});
 		statsModifierColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99));
-		statsModifierColumn.setOnEditCommit(t -> t.getRowValue().setManualModifier(t.getNewValue()));
+		statsModifierColumn.setOnEditCommit(t -> {
+			if (t.getRowValue() != null) {
+				t.getRowValue().setManualModifier(t.getNewValue());
+			}
+		});
 
 		for (final String attribute : new String[] { "Loyalität", "Lebensenergie", "Ausdauer" }) {
 			statsTable.getItems().add(new AnimalAttribute(attribute, baseValues.getObj(attribute)));
 		}
 		if (type == CharacterType.MAGIC_ANIMAL) {
 			statsBoughtColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 99));
-			statsBoughtColumn.setOnEditCommit(t -> t.getRowValue().setBought(t.getNewValue()));
+			statsBoughtColumn.setOnEditCommit(t -> {
+				if (t.getRowValue() != null) {
+					t.getRowValue().setBought(t.getNewValue());
+				}
+			});
 			statsTable.getItems().add(new AnimalAttribute("Astralenergie", baseValues.getObj("Astralenergie")));
 		} else {
 			statsBoughtColumn.setMinWidth(0.0);

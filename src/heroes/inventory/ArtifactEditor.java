@@ -195,23 +195,24 @@ public class ArtifactEditor {
 			}
 		});
 		spellNameColumn.setOnEditCommit(event -> {
-			if (event.getTablePosition().getRow() == spellTable.getItems().size() - 1) {
-				if (event.getNewValue() != null && !"".equals(event.getNewValue())) {
-					final JSONObject newSpell = new JSONObject(spells);
-					newSpell.put("Spruch", event.getNewValue());
-					spells.add(newSpell);
-					spells.notifyListeners(null);
+			if (event.getRowValue() != null)
+				if (event.getTablePosition().getRow() == spellTable.getItems().size() - 1) {
+					if (event.getNewValue() != null && !"".equals(event.getNewValue())) {
+						final JSONObject newSpell = new JSONObject(spells);
+						newSpell.put("Spruch", event.getNewValue());
+						spells.add(newSpell);
+						spells.notifyListeners(null);
+						updateSpellTable();
+					}
+				} else if ("".equals(event.getNewValue())) {
+					final JSONObject item = event.getRowValue().actual;
+					final JSONValue parent = item.getParent();
+					parent.remove(item);
+					parent.notifyListeners(null);
 					updateSpellTable();
+				} else {
+					event.getRowValue().setName(event.getNewValue());
 				}
-			} else if ("".equals(event.getNewValue())) {
-				final JSONObject item = event.getRowValue().actual;
-				final JSONValue parent = item.getParent();
-				parent.remove(item);
-				parent.notifyListeners(null);
-				updateSpellTable();
-			} else {
-				event.getRowValue().setName(event.getNewValue());
-			}
 		});
 
 		spellVariantColumn.setCellFactory(o -> new GraphicTableCell<>(false) {
@@ -228,7 +229,11 @@ public class ArtifactEditor {
 				}
 			}
 		});
-		spellVariantColumn.setOnEditCommit(event -> event.getRowValue().setVariant(event.getNewValue()));
+		spellVariantColumn.setOnEditCommit(event -> {
+			if (event.getRowValue() != null) {
+				event.getRowValue().setVariant(event.getNewValue());
+			}
+		});
 
 		type.valueProperty().addListener((o, oldV, newV) -> {
 			loadNum.setDisable(true);

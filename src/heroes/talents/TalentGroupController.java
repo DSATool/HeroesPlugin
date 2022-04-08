@@ -143,7 +143,9 @@ public class TalentGroupController {
 			}
 		});
 		nameColumn.setOnEditCommit((final CellEditEvent<Talent, String> t) -> {
-			t.getRowValue().setVariant(t.getNewValue());
+			if (t.getRowValue() != null) {
+				t.getRowValue().setVariant(t.getNewValue());
+			}
 		});
 		nameColumn.editableProperty().bind(HeroTabController.isEditable);
 
@@ -317,7 +319,9 @@ public class TalentGroupController {
 		primaryColumn.setCellValueFactory(new PropertyValueFactory<Talent, Boolean>("primaryTalent"));
 		primaryColumn.setCellFactory(CheckBoxTableCell.forTableColumn(primaryColumn));
 		primaryColumn.setOnEditCommit((final CellEditEvent<Talent, Boolean> t) -> {
-			t.getRowValue().setPrimaryTalent(t.getNewValue());
+			if (t.getRowValue() != null) {
+				t.getRowValue().setPrimaryTalent(t.getNewValue());
+			}
 		});
 		primaryColumn.editableProperty().bind(HeroTabController.isEditable);
 		++i;
@@ -326,7 +330,9 @@ public class TalentGroupController {
 		sesColumn.setCellValueFactory(new PropertyValueFactory<Talent, Integer>("ses"));
 		sesColumn.setCellFactory(o -> new IntegerSpinnerTableCell(0, 9));
 		sesColumn.setOnEditCommit((final CellEditEvent<Talent, Integer> t) -> {
-			t.getRowValue().setSes(t.getNewValue());
+			if (t.getRowValue() != null) {
+				t.getRowValue().setSes(t.getNewValue());
+			}
 		});
 		++i;
 
@@ -351,11 +357,12 @@ public class TalentGroupController {
 			}
 		});
 		valueColumn.setOnEditCommit((final CellEditEvent<Talent, Integer> t) -> {
-			if (HeroTabController.isEditable.get()) {
-				t.getRowValue().setValue(t.getNewValue());
-			} else {
-				new TalentEnhancementDialog(pane.getScene().getWindow(), t.getRowValue(), hero, t.getNewValue());
-			}
+			if (t.getRowValue() != null)
+				if (HeroTabController.isEditable.get()) {
+					t.getRowValue().setValue(t.getNewValue());
+				} else {
+					new TalentEnhancementDialog(pane.getScene().getWindow(), t.getRowValue(), hero, t.getNewValue());
+				}
 		});
 
 		if (representationsList != null) {
