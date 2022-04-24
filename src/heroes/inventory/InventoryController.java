@@ -18,7 +18,6 @@ package heroes.inventory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import dsa41basis.fight.Armor;
 import dsa41basis.fight.ArmorEditor;
@@ -55,7 +54,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TabPane;
@@ -65,7 +63,6 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
@@ -171,15 +168,6 @@ public class InventoryController extends HeroTabController {
 	private TableColumn<DefensiveWeapon, Double> defensiveWeaponsWeightColumn;
 
 	@FXML
-	private ComboBox<String> equipmentList;
-	@FXML
-	private TableColumn<InventoryItem, String> equipmentNameColumn;
-	@FXML
-	private TableColumn<InventoryItem, String> equipmentNotesColumn;
-	@FXML
-	private TableView<InventoryItem> equipmentTable;
-
-	@FXML
 	private ComboBox<String> potionsList;
 	@FXML
 	private TableView<Potion> potionsTable;
@@ -236,10 +224,13 @@ public class InventoryController extends HeroTabController {
 	@FXML
 	private TextField newValuableField;
 
+	private final EquipmentList equipmentList = new EquipmentList(true);
+
 	private final JSONObject equipment;
 	private JSONArray items;
 	private final JSONListener heroMoneyListener = o -> refreshMoney();
 	private final JSONListener heroItemListener = o -> refreshTables();
+	private final JSONListener heroInventoriesListener = o -> update();
 
 	private final HashMap<ComboBox<String>, ObservableList<String>> itemLists = new HashMap<>();
 
@@ -253,7 +244,6 @@ public class InventoryController extends HeroTabController {
 	private JSONObject money;
 
 	private final JSONObject ritualGroups = ResourceManager.getResource("data/Ritualgruppen");
-	private final JSONListener equipmentListener = o -> updateLists();
 
 	public InventoryController(final TabPane tabPane) {
 		super(tabPane);
@@ -267,6 +257,11 @@ public class InventoryController extends HeroTabController {
 		item.put("Name", itemName);
 		item.put("Kategorien", new JSONArray(new ArrayList<>(List.of("Artefakt")), item));
 		addItem(item);
+	}
+
+	@FXML
+	private void addInventory() {
+		new InventoryDialog(pane.getScene().getWindow(), hero.getObj("Besitz").getArr("Inventare"), null);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -288,7 +283,7 @@ public class InventoryController extends HeroTabController {
 		} else if (list == clothingList && (!item.containsKey("Kategorien") || !item.getArr("Kategorien").getStrings().contains("Kleidung"))) {
 			item.getArr("Kategorien").add("Kleidung");
 		}
-		if (list == potionsList || list == clothingList || list == equipmentList) {
+		if (list == potionsList || list == clothingList) {
 			list.setValue("");
 		}
 		addItem(item);
@@ -299,9 +294,9 @@ public class InventoryController extends HeroTabController {
 			items.add(item);
 			items.notifyListeners(null);
 		} else if (item.getArr("Kategorien").getStrings().contains("Alchemikum")) {
-			new PotionPurchaseDialog(pane.getScene().getWindow(), hero, item);
+			new PotionPurchaseDialog(pane.getScene().getWindow(), hero, items, item);
 		} else {
-			new ItemPurchaseDialog(pane.getScene().getWindow(), hero, item);
+			new ItemPurchaseDialog(pane.getScene().getWindow(), hero, items, item);
 		}
 	}
 
@@ -368,10 +363,9 @@ public class InventoryController extends HeroTabController {
 		initializePotionsTable();
 		initializeArtifactTable();
 		initializeClothingTable();
-		initializeEquipmentTable();
 
 		for (final ComboBox<String> list : new ComboBox[] { closeCombatList, rangedList, shieldsList, defensiveWeaponsList, armorList, ritualObjectList,
-				potionsList, clothingList, equipmentList }) {
+				potionsList, clothingList }) {
 			final ObservableList<String> unsorted = list.getItems();
 			itemLists.put(list, unsorted);
 			list.setItems(unsorted.sorted());
@@ -385,7 +379,7 @@ public class InventoryController extends HeroTabController {
 		}
 
 		for (final TableView<? extends InventoryItem> table : new TableView[] { closeCombatTable, rangedTable, shieldsTable, defensiveWeaponsTable, armorTable,
-				ritualObjectTable, valuablesTable, potionsTable, artifactTable, clothingTable, equipmentTable }) {
+				ritualObjectTable, valuablesTable, potionsTable, artifactTable, clothingTable }) {
 			((TableColumn<InventoryItem, String>) table.getColumns().get(0)).setCellFactory(c -> new GraphicTableCell<>(false) {
 				@Override
 				protected void createGraphic() {
@@ -413,7 +407,7 @@ public class InventoryController extends HeroTabController {
 			});
 		}
 
-		equipment.addListener(equipmentListener);
+		inventoryBox.getChildren().add(inventoryBox.getChildren().size() - 1, equipmentList.getControl());
 
 		updateLists();
 	}
@@ -501,38 +495,6 @@ public class InventoryController extends HeroTabController {
 			if (t.getRowValue() != null) {
 				t.getRowValue().setBf(t.getNewValue());
 			}
-		});
-	}
-
-	private void initializeEquipmentTable() {
-		initTable(equipmentTable, "Ausrüstung", "");
-		GUIUtil.cellValueFactories(equipmentTable, "name", "notes");
-
-		equipmentNameColumn.setOnEditCommit(event -> {
-			final JSONObject item = event.getRowValue().getBaseItem();
-			item.put("Name", event.getNewValue());
-			item.notifyListeners(null);
-		});
-
-		equipmentNotesColumn.setCellFactory(o -> {
-			final TableCell<InventoryItem, String> cell = new GraphicTableCell<>(false) {
-				@Override
-				protected void createGraphic() {
-					final TextField t = new TextField();
-					createGraphic(t, t::getText, t::setText);
-				}
-			};
-			return cell;
-		});
-		equipmentNotesColumn.setOnEditCommit(event -> {
-			final String note = event.getNewValue();
-			final JSONObject item = event.getRowValue().getBaseItem();
-			if ("".equals(note)) {
-				item.removeKey("Anmerkungen");
-			} else {
-				item.put("Anmerkungen", note);
-			}
-			item.notifyListeners(null);
 		});
 	}
 
@@ -735,7 +697,7 @@ public class InventoryController extends HeroTabController {
 			});
 
 			final Menu location = new Menu("Ort");
-			rowMenu.setOnShowing(e -> updateLocationMenu(row.getItem().getBaseItem(), location));
+			rowMenu.setOnShowing(e -> EquipmentList.updateLocationMenu(row.getItem().getBaseItem(), location, hero));
 
 			final MenuItem deleteItem = new MenuItem("Löschen");
 			deleteItem.setOnAction(event -> {
@@ -775,79 +737,62 @@ public class InventoryController extends HeroTabController {
 		potionsTable.getItems().clear();
 		artifactTable.getItems().clear();
 		clothingTable.getItems().clear();
-		equipmentTable.getItems().clear();
 
 		final JSONObject ritualGroups = ResourceManager.getResource("data/Ritualgruppen");
 
-		HeroUtil.foreachInventoryItem(hero, item -> true, (item, fromAnimal) -> {
+		HeroUtil.foreachInventoryItem(hero, item -> true, (item, fromExtraInventory) -> {
 			final JSONArray categories = item.getArr("Kategorien");
-			boolean found = false;
 			if (categories != null) {
 				if (categories.contains("Kleidung")) {
 					final JSONObject actual = item.getObjOrDefault("Kleidung", item);
 					final Clothing newItem = new Clothing(actual, item);
 					clothingTable.getItems().add(newItem);
-					found = true;
 				}
 				if (categories.contains("Nahkampfwaffe")) {
 					final JSONObject actual = item.getObjOrDefault("Nahkampfwaffe", item);
 					closeCombatTable.getItems()
 							.add(new CloseCombatWeapon(null, actual, item, ResourceManager.getResource("data/Talente").getObj("Nahkampftalente"), null));
-					found = true;
 				}
 				if (categories.contains("Fernkampfwaffe")) {
 					final JSONObject actual = item.getObjOrDefault("Fernkampfwaffe", item);
 					rangedTable.getItems()
 							.add(new RangedWeapon(null, actual, item, ResourceManager.getResource("data/Talente").getObj("Fernkampftalente"), null));
-					found = true;
 				}
 				if (categories.contains("Schild")) {
 					final JSONObject actual = item.getObjOrDefault("Schild", item);
 					shieldsTable.getItems().add(new DefensiveWeapon(true, null, actual, item));
-					found = true;
 				}
 				if (categories.contains("Parierwaffe")) {
 					final JSONObject actual = item.getObjOrDefault("Parierwaffe", item);
 					defensiveWeaponsTable.getItems().add(new DefensiveWeapon(false, null, actual, item));
-					found = true;
 				}
 				if (categories.contains("Rüstung")) {
 					final JSONObject actual = item.getObjOrDefault("Rüstung", item);
 					armorTable.getItems().add(new Armor(actual, item));
-					found = true;
 				}
 				if (categories.contains("Wertgegenstand")) {
 					final JSONObject actual = item.getObjOrDefault("Wertgegenstand", item);
 					valuablesTable.getItems().add(new Valuable(actual, item));
-					found = true;
 				}
 				if (categories.contains("Alchemikum")) {
 					final JSONObject actual = item.getObjOrDefault("Alchemikum", item);
 					potionsTable.getItems().add(new Potion(actual, item));
-					found = true;
 				}
 				if (categories.contains("Artefakt")) {
 					final JSONObject actual = item.getObjOrDefault("Artefakt", item);
 					artifactTable.getItems().add(new Artifact(actual, item));
-					found = true;
 				}
 				for (final String ritualGroupName : ritualObjectGroups) {
 					final JSONObject ritualGroup = ritualGroups.getObj(ritualGroupName);
 					if (categories.contains(ritualGroup.getString("Ritualobjekt"))) {
 						final JSONObject actual = item.getObjOrDefault(ritualGroup.getString("Ritualobjekt"), item);
 						ritualObjectTable.getItems().add(new RitualObject(actual, item, ritualGroupName));
-						found = true;
 					}
 				}
 				if (categories.contains("Bannschwert")) {
 					final JSONObject actual = item.getObjOrDefault("Bannschwert", item);
 					ritualObjectTable.getItems().add(new RitualObject(actual, item, "Bannschwert"));
-					found = true;
 				}
-			}
-			if (!found && !fromAnimal) {
-				final InventoryItem newItem = new InventoryItem(item, item);
-				equipmentTable.getItems().add(newItem);
 			}
 		});
 
@@ -859,6 +804,7 @@ public class InventoryController extends HeroTabController {
 		if (items != null) {
 			items.addListener(heroItemListener);
 		}
+		hero.getObj("Besitz").addListener(heroInventoriesListener);
 		hero.getArr("Tiere").addListener(heroItemListener);
 	}
 
@@ -875,6 +821,7 @@ public class InventoryController extends HeroTabController {
 	protected void unregisterListeners() {
 		hero.getObj("Besitz").getObj("Geld").removeListener(heroMoneyListener);
 		items.removeListener(heroItemListener);
+		hero.getObj("Besitz").remove(heroInventoriesListener);
 		hero.getArr("Tiere").removeListener(heroItemListener);
 		closeCombatTable.getItems().clear();
 		rangedTable.getItems().clear();
@@ -886,14 +833,14 @@ public class InventoryController extends HeroTabController {
 		potionsTable.getItems().clear();
 		artifactTable.getItems().clear();
 		clothingTable.getItems().clear();
-		equipmentTable.getItems().clear();
+		equipmentList.unregisterListeners();
 	}
 
 	@Override
 	protected void update() {
-		final JSONObject inventory = hero.getObj("Besitz");
+		final JSONObject possessions = hero.getObj("Besitz");
 
-		money = inventory.getObj("Geld");
+		money = possessions.getObj("Geld");
 
 		refreshMoney();
 
@@ -918,7 +865,7 @@ public class InventoryController extends HeroTabController {
 			money.notifyListeners(heroMoneyListener);
 		});
 
-		items = inventory.getArr("Ausrüstung");
+		items = possessions.getArr("Ausrüstung");
 
 		inventoryBox.getChildren().remove(ritualObjectPane);
 		if (HeroUtil.isMagical(hero)) {
@@ -926,6 +873,21 @@ public class InventoryController extends HeroTabController {
 		}
 
 		refreshTables();
+
+		equipmentList.setHero(hero, possessions, "Ausrüstung", null, items);
+
+		inventoryBox.getChildren().remove(11, inventoryBox.getChildren().size() - 1);
+
+		final JSONArray inventories = possessions.getArrOrDefault("Inventare", null);
+
+		DSAUtil.foreach(inventory -> true, inventory -> {
+			final EquipmentList list = new EquipmentList(false);
+
+			final String name = inventory.getStringOrDefault("Name", "Unbenanntes Inventar");
+			list.setHero(hero, inventory, name, inventories, possessions.getArr("Ausrüstung"));
+
+			inventoryBox.getChildren().add(inventoryBox.getChildren().size() - 1, list.getControl());
+		}, inventories);
 	}
 
 	private void updateLists() {
@@ -933,45 +895,33 @@ public class InventoryController extends HeroTabController {
 
 		DSAUtil.foreach(item -> true, (itemName, item) -> {
 			final JSONArray categories = item.getArr("Kategorien");
-			boolean found = false;
 			if (categories.contains("Kleidung")) {
 				itemLists.get(clothingList).add(itemName);
-				found = true;
 			}
 			if (categories.contains("Nahkampfwaffe")) {
 				itemLists.get(closeCombatList).add(itemName);
-				found = true;
 			}
 			if (categories.contains("Fernkampfwaffe")) {
 				itemLists.get(rangedList).add(itemName);
-				found = true;
 			}
 			if (categories.contains("Schild")) {
 				itemLists.get(shieldsList).add(itemName);
-				found = true;
 			}
 			if (categories.contains("Parierwaffe")) {
 				itemLists.get(defensiveWeaponsList).add(itemName);
-				found = true;
 			}
 			if (categories.contains("Rüstung")) {
 				itemLists.get(armorList).add(itemName);
-				found = true;
 			}
 			if (categories.contains("Alchemikum")) {
 				itemLists.get(potionsList).add(itemName);
-				found = true;
 			}
 			for (final String ritualGroupName : ritualObjectGroups) {
 				final JSONObject ritualGroup = ritualGroups.getObj(ritualGroupName);
 				if (categories.contains(ritualGroup.getString("Ritualobjekt"))) {
 					itemLists.get(ritualObjectList).add(itemName);
-					found = true;
 					break;
 				}
-			}
-			if (!found) {
-				itemLists.get(equipmentList).add(itemName);
 			}
 		}, equipment);
 
@@ -982,64 +932,4 @@ public class InventoryController extends HeroTabController {
 		setState(armorList, armorAddButton);
 		setState(ritualObjectList, ritualObjectAddButton);
 	}
-
-	private void updateLocationMenu(final JSONObject item, final Menu location) {
-		location.getItems().clear();
-		final ToggleGroup locationGroup = new ToggleGroup();
-		final RadioMenuItem heroLocationItem = new RadioMenuItem(hero.getObj("Biografie").getString("Vorname"));
-		heroLocationItem.setToggleGroup(locationGroup);
-		location.getItems().add(heroLocationItem);
-		final JSONArray animals = hero.getArr("Tiere");
-		final Map<JSONObject, RadioMenuItem> names = new HashMap<>(animals.size());
-		for (int i = 0; i < animals.size(); ++i) {
-			final JSONObject animal = animals.getObj(i);
-			final String name = animal.getObj("Biografie").getString("Name");
-			final RadioMenuItem animalLocationItem = new RadioMenuItem(name);
-			animalLocationItem.setToggleGroup(locationGroup);
-			names.put(animal, animalLocationItem);
-			location.getItems().add(animalLocationItem);
-		}
-
-		final JSONValue possessor = item.getParent() != null ? item.getParent().getParent() : null;
-		if (possessor != null && possessor.getParent() instanceof JSONObject) {
-			heroLocationItem.setSelected(true);
-			for (final JSONObject animal : names.keySet()) {
-				names.get(animal).setOnAction(e -> {
-					final JSONValue parent = item.getParent();
-					parent.remove(item);
-					parent.notifyListeners(null);
-					final JSONArray equipment = animal.getArr("Ausrüstung");
-					equipment.add(item.clone(equipment));
-					equipment.notifyListeners(null);
-					location.getParentPopup().hide();
-				});
-			}
-		} else {
-			heroLocationItem.setOnAction(e -> {
-				final JSONValue parent = item.getParent();
-				parent.remove(item);
-				parent.notifyListeners(null);
-				final JSONArray equipment = hero.getObj("Besitz").getArr("Ausrüstung");
-				equipment.add(item.clone(equipment));
-				equipment.notifyListeners(null);
-				location.getParentPopup().hide();
-			});
-			for (final JSONObject animal : names.keySet()) {
-				if (possessor != null && animal.equals(possessor)) {
-					names.get(animal).setSelected(true);
-				} else {
-					names.get(animal).setOnAction(e -> {
-						final JSONValue parent = item.getParent();
-						parent.remove(item);
-						parent.notifyListeners(null);
-						final JSONArray equipment = animal.getArr("Ausrüstung");
-						equipment.add(item.clone(equipment));
-						equipment.notifyListeners(null);
-						location.getParentPopup().hide();
-					});
-				}
-			}
-		}
-	}
-
 }

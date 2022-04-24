@@ -31,7 +31,7 @@
          </HBox>
       </TitledPane>
       <TitledPane text="Nahkampfwaffen" >
-         <VBox style="-fx-padding: 0, 0, 0, 0;" >
+         <VBox style="-fx-padding: -1, 0, -1, 0;" >
             <TableView fx:id="closeCombatTable" editable="true" fixedCellSize="25" >
                <styleClass>
                   <String fx:value="remove-vertical-scrollbar" />
@@ -68,7 +68,7 @@
          </VBox>
       </TitledPane>
       <TitledPane text="Fernkampfwaffen" >
-         <VBox fillWidth="true" style="-fx-padding: 0, 0, 0, 0;" >
+         <VBox fillWidth="true" style="-fx-padding: -1, 0, -1, 0;" >
             <TableView fx:id="rangedTable" fixedCellSize="25" >
                <styleClass>
                   <String fx:value="remove-vertical-scrollbar" />
@@ -101,7 +101,7 @@
          </VBox>
       </TitledPane>
       <TitledPane text="Schilde" >
-         <VBox fillWidth="true" style="-fx-padding: 0, 0, 0, 0;" >
+         <VBox fillWidth="true" style="-fx-padding: -1, 0, -1, 0;" >
             <TableView fx:id="shieldsTable" editable="true" fixedCellSize="25" >
                <styleClass>
                   <String fx:value="remove-vertical-scrollbar" />
@@ -133,7 +133,7 @@
          </VBox>
       </TitledPane>
       <TitledPane text="Parierwaffen" >
-         <VBox fillWidth="true" style="-fx-padding: 0, 0, 0, 0;" >
+         <VBox fillWidth="true" style="-fx-padding: -1, 0, -1, 0;" >
             <TableView fx:id="defensiveWeaponsTable" editable="true" fixedCellSize="25" >
                <styleClass>
                   <String fx:value="remove-vertical-scrollbar" />
@@ -165,7 +165,7 @@
          </VBox>
       </TitledPane>
       <TitledPane text="Rüstung" >
-         <VBox fillWidth="true" style="-fx-padding: 0, 0, 0, 0;" >
+         <VBox fillWidth="true" style="-fx-padding: -1, 0, -1, 0;" >
             <TableView fx:id="armorTable" fixedCellSize="25" >
                <styleClass>
                   <String fx:value="remove-vertical-scrollbar" />
@@ -204,7 +204,7 @@
          </VBox>
       </TitledPane>
       <TitledPane fx:id="ritualObjectPane" text="Ritualobjekte" >
-         <VBox fillWidth="true" style="-fx-padding: 0, 0, 0, 0;" >
+         <VBox fillWidth="true" style="-fx-padding: -1, 0, -1, 0;" >
             <TableView fx:id="ritualObjectTable" fixedCellSize="25" >
                <styleClass>
                   <String fx:value="remove-vertical-scrollbar" />
@@ -233,7 +233,7 @@
          </VBox>
       </TitledPane>
       <TitledPane text="Wertgegenstände" >
-         <VBox fillWidth="true" style="-fx-padding: 0, 0, 0, 0;" >
+         <VBox fillWidth="true" style="-fx-padding: -1, 0, -1, 0;" >
             <TableView fx:id="valuablesTable" editable="true" fixedCellSize="25" >
                <styleClass>
                   <String fx:value="remove-vertical-scrollbar" />
@@ -262,7 +262,7 @@
          </VBox>
       </TitledPane>
       <TitledPane text="Alchemika" >
-         <VBox fillWidth="true" style="-fx-padding: 0, 0, 0, 0;" >
+         <VBox fillWidth="true" style="-fx-padding: -1, 0, -1, 0;" >
             <TableView fx:id="potionsTable" editable="true" fixedCellSize="25" >
                <styleClass>
                   <String fx:value="remove-vertical-scrollbar" />
@@ -293,7 +293,7 @@
          </VBox>
       </TitledPane>
       <TitledPane text="Artefakte" >
-         <VBox fillWidth="true" style="-fx-padding: 0, 0, 0, 0;" >
+         <VBox fillWidth="true" style="-fx-padding: -1, 0, -1, 0;" >
             <TableView fx:id="artifactTable" fixedCellSize="25" >
                <styleClass>
                   <String fx:value="remove-vertical-scrollbar" />
@@ -322,7 +322,7 @@
          </VBox>
       </TitledPane>
       <TitledPane text="Kleidung" >
-         <VBox fillWidth="true" style="-fx-padding: 0, 0, 0, 0;" >
+         <VBox fillWidth="true" style="-fx-padding: -1, 0, -1, 0;" >
             <TableView fx:id="clothingTable" editable="true" fixedCellSize="26" >
                <styleClass>
                   <String fx:value="remove-vertical-scrollbar" />
@@ -350,34 +350,12 @@
             </HBox>
          </VBox>
       </TitledPane>
-      <TitledPane text="Ausrüstung" >
-         <VBox fillWidth="true" style="-fx-padding: 0, 0, 0, 0;" >
-            <TableView fx:id="equipmentTable" editable="true" fixedCellSize="26" >
-               <styleClass>
-                  <String fx:value="remove-vertical-scrollbar" />
-                  <String fx:value="remove-horizontal-scrollbar" />
-               </styleClass>
-               <placeholder>
-                  <Label minHeight="0" />
-               </placeholder>
-               <columns>
-                  <TableColumn fx:id="equipmentNameColumn" text="Gegenstand" minWidth="100" editable="true" />
-                  <TableColumn fx:id="equipmentNotesColumn" text="Anmerkungen" minWidth="100" resizable="false" editable="true" />
-               </columns>
-            </TableView>
-            <HBox spacing="2" >
-               <ReactiveComboBox fx:id="equipmentList" editable="true" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-               <Button fx:id="equipmentAddButton" onAction="#addItem" minWidth="25" prefHeight="25" prefWidth="25" text="&#xE145;" >
-                  <padding><Insets top="0" right="0" bottom="0" left="0"/></padding>
-                  <font>
-                     <Font name="Material Icons" size="20.0" />
-                  </font>
-                  <tooltip>
-                     <Tooltip text="Hinzufügen" />
-                  </tooltip>
-               </Button>
-            </HBox>
-         </VBox>
-      </TitledPane>
+      <Button text="Inventar hinzufügen" onAction="#addInventory" >
+         <VBox.margin>
+            <Insets>
+               <left>2</left>
+            </Insets>
+         </VBox.margin>
+      </Button>
    </VBox>
 </ScrollPane>

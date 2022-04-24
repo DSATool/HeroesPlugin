@@ -15,17 +15,13 @@
  */
 package heroes.animals;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import dsa41basis.fight.AttackTable;
 import dsa41basis.hero.Attribute;
-import dsa41basis.inventory.InventoryItem;
 import dsa41basis.ui.hero.BasicValuesController;
 import dsa41basis.ui.hero.BasicValuesController.CharacterType;
 import dsa41basis.util.DSAUtil;
-import dsa41basis.util.HeroUtil;
 import dsatool.gui.GUIUtil;
 import dsatool.resources.ResourceManager;
 import dsatool.ui.GraphicTableCell;
@@ -33,6 +29,8 @@ import dsatool.ui.IntegerSpinnerTableCell;
 import dsatool.ui.ReactiveSpinner;
 import dsatool.util.ErrorLogger;
 import dsatool.util.Util;
+import heroes.inventory.EquipmentList;
+import heroes.inventory.InventoryDialog;
 import heroes.ui.HeroTabController;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
@@ -53,25 +51,18 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.RadioMenuItem;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import jsonant.event.JSONListener;
 import jsonant.value.JSONArray;
 import jsonant.value.JSONObject;
-import jsonant.value.JSONValue;
 
 public class AnimalController {
 
@@ -230,28 +221,21 @@ public class AnimalController {
 	@FXML
 	private Button skillsAddButton;
 	@FXML
-	private TableColumn<InventoryItem, String> equipmentNameColumn;
-	@FXML
-	private TableColumn<InventoryItem, String> equipmentNotesColumn;
-	@FXML
-	private TableView<InventoryItem> equipmentTable;
-	@FXML
-	private ComboBox<String> equipmentList;
-	@FXML
 	private TitledPane pane;
 	@FXML
 	private VBox stack;
 	@FXML
 	private VBox statsAndAttacksBox;
 
-	private final JSONObject hero;
 	private final JSONObject actualAnimal;
 	private final CharacterType type;
 	private final AttackTable attacksTable;
+	private final EquipmentList equipment;
 
 	private final JSONListener animalListener;
+	private final JSONListener inventoriesListener = o -> updateInventories();
 
-	public AnimalController(final JSONObject hero, final JSONObject animal, final CharacterType type) {
+	public AnimalController(final JSONObject animal, final CharacterType type) {
 		final FXMLLoader fxmlLoader = new FXMLLoader();
 
 		fxmlLoader.setController(this);
@@ -262,23 +246,18 @@ public class AnimalController {
 			ErrorLogger.logError(e);
 		}
 
-		if (type == CharacterType.MAGIC_ANIMAL) {
-			GridPane.setRowIndex(attributesBox, 7);
-			GridPane.setRowIndex(skillsBox, 8);
-			GridPane.setRowIndex(equipmentTable, 9);
-		} else {
-			GridPane.setRowIndex(attributesBox, 6);
-			GridPane.setRowIndex(skillsBox, 7);
-			GridPane.setRowIndex(equipmentTable, 8);
+		if (type != CharacterType.MAGIC_ANIMAL) {
 			ritualsBox.setManaged(false);
 			ritualsBox.setVisible(false);
 
 			if (type == CharacterType.HORSE) {
-				((VBox) statsTable.getParent()).getChildren().remove(statsTable);
+				statsAndAttacksBox.getChildren().remove(statsTable);
 			}
 
 		}
 		pane.textProperty().bindBidirectional(name.textProperty());
+
+		final JSONObject hero = (JSONObject) animal.getParent().getParent();
 
 		final ContextMenu contextMenu = new ContextMenu();
 		final MenuItem deleteItem = new MenuItem("Löschen");
@@ -302,9 +281,8 @@ public class AnimalController {
 
 		pane.setContextMenu(contextMenu);
 
-		this.hero = hero;
-		actualAnimal = animal;
 		this.type = type;
+		actualAnimal = animal;
 
 		final BasicValuesController basicValues = new BasicValuesController(HeroTabController.isEditable.not(), type);
 		basicValues.setCharacter(animal);
@@ -314,18 +292,24 @@ public class AnimalController {
 		initAttributes();
 		initStats();
 		initProConSkills();
-		initEquipment();
+
+		equipment = new EquipmentList(false);
+		equipment.setHero(hero, actualAnimal, "Ausrüstung", null, actualAnimal.getArr("Ausrüstung"));
+		stack.getChildren().add(stack.getChildren().size() - 1, equipment.getControl());
+
+		updateInventories();
 
 		animalListener = o -> {
 			updateProCons();
 			updateSkills();
-			updateEquipment();
+			equipment.updateEquipment();
 			if (type == CharacterType.MAGIC_ANIMAL) {
 				updateRituals();
 			}
 		};
 
 		actualAnimal.addListener(animalListener);
+		actualAnimal.getArr("Inventare").addListener(inventoriesListener);
 
 		attacksTable = new AttackTable(HeroTabController.isEditable, attributesBox.widthProperty().subtract(2).divide(1.667),
 				type == CharacterType.MAGIC_ANIMAL);
@@ -351,13 +335,8 @@ public class AnimalController {
 	}
 
 	@FXML
-	public void addItem() {
-		final String itemName = equipmentList.getSelectionModel().getSelectedItem();
-		final JSONArray items = actualAnimal.getArr("Ausrüstung");
-		final JSONObject item = ResourceManager.getResource("data/Ausruestung").getObj(itemName).clone(items);
-		item.put("Name", itemName);
-		items.add(item);
-		items.notifyListeners(null);
+	private void addInventory() {
+		new InventoryDialog(pane.getScene().getWindow(), actualAnimal.getArr("Inventare"), null);
 	}
 
 	@FXML
@@ -490,120 +469,6 @@ public class AnimalController {
 		size.valueProperty().addListener(biographyListener);
 		weight.getValueFactory().setValue(biography.getIntOrDefault("Gewicht", 0));
 		weight.valueProperty().addListener(biographyListener);
-	}
-
-	private void initEquipment() {
-		GUIUtil.autosizeTable(equipmentTable);
-		GUIUtil.cellValueFactories(equipmentTable, "name", "notes");
-
-		equipmentTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-
-		final JSONObject equipment = ResourceManager.getResource("data/Ausruestung");
-
-		equipmentNameColumn.setCellFactory(o -> {
-			final TableCell<InventoryItem, String> cell = new GraphicTableCell<>(false) {
-				@Override
-				protected void createGraphic() {
-					final TextField t = new TextField();
-					createGraphic(t, t::getText, t::setText);
-				}
-
-				@Override
-				public void updateItem(final String name, final boolean empty) {
-					super.updateItem(name, empty);
-					final InventoryItem item = getTableRow().getItem();
-					if (item != null) {
-						JSONObject referencedObject;
-						if (item.getItem().containsKey("Regelwerke")) {
-							referencedObject = item.getItem();
-						} else if (item.getBaseItem().containsKey("Regelwerke")) {
-							referencedObject = item.getBaseItem();
-						} else {
-							final String type = item.getItemType();
-							referencedObject = equipment.getObj(type.isEmpty() ? name : type);
-						}
-						Util.addReference(this, referencedObject, 15, equipmentNameColumn.widthProperty());
-					}
-				}
-			};
-			return cell;
-		});
-		equipmentNameColumn.setOnEditCommit(event -> {
-			final JSONObject item = event.getRowValue().getBaseItem();
-			item.put("Name", event.getNewValue());
-			item.notifyListeners(null);
-		});
-
-		equipmentNotesColumn.setCellFactory(o -> {
-			final TableCell<InventoryItem, String> cell = new GraphicTableCell<>(false) {
-				@Override
-				protected void createGraphic() {
-					final TextField t = new TextField();
-					createGraphic(t, t::getText, t::setText);
-				}
-			};
-			return cell;
-		});
-		equipmentNotesColumn.setOnEditCommit(event -> {
-			final String note = event.getNewValue();
-			final JSONObject item = event.getRowValue().getBaseItem();
-			if ("".equals(note)) {
-				item.removeKey("Anmerkungen");
-			} else {
-				item.put("Anmerkungen", note);
-			}
-			item.notifyListeners(null);
-		});
-
-		final JSONArray items = actualAnimal.getArr("Ausrüstung");
-
-		equipmentTable.setRowFactory(tableView -> {
-			final TableRow<InventoryItem> row = new TableRow<>();
-
-			GUIUtil.dragDropReorder(row, moved -> {
-				for (final Object item : moved) {
-					items.remove(((InventoryItem) item).getBaseItem());
-				}
-				int index = row.getIndex();
-				for (final Object item : moved) {
-					items.add(index, ((InventoryItem) item).getBaseItem());
-					++index;
-				}
-				if (moved.length > 0) {
-					items.notifyListeners(null);
-				}
-			}, equipmentTable);
-
-			final ContextMenu contextMenu = new ContextMenu();
-
-			final MenuItem editItem = new MenuItem("Bearbeiten");
-			editItem.setOnAction(event -> new HorseArmorEditor(pane.getScene().getWindow(), equipmentTable.getSelectionModel().getSelectedItem()));
-
-			final Menu location = new Menu("Ort");
-			contextMenu.setOnShowing(e -> updateLocationMenu(row.getItem().getBaseItem(), location));
-
-			final MenuItem deleteItem = new MenuItem("Löschen");
-			deleteItem.setOnAction(event -> {
-				final JSONObject item = row.getItem().getBaseItem();
-				final JSONValue parent = item.getParent();
-				parent.remove(item);
-				parent.notifyListeners(null);
-			});
-
-			contextMenu.getItems().addAll(editItem, location, deleteItem);
-
-			row.setContextMenu(contextMenu);
-
-			return row;
-		});
-
-		updateEquipment();
-
-		equipmentList.getItems().clear();
-
-		DSAUtil.foreach(item -> true, (itemName, item) -> {
-			equipmentList.getItems().add(itemName);
-		}, equipment);
 	}
 
 	private void initProConSkills() {
@@ -814,62 +679,24 @@ public class AnimalController {
 		});
 	}
 
-	private void updateEquipment() {
-		equipmentTable.getItems().clear();
-
-		HeroUtil.foreachInventoryItem(true, item -> true, (item, fromAnimal) -> {
-			final InventoryItem newItem = new InventoryItem(item, item);
-			newItem.recompute();
-			equipmentTable.getItems().add(newItem);
-		}, actualAnimal);
+	public void unregisterListeners() {
+		actualAnimal.removeListener(animalListener);
+		actualAnimal.getArr("Inventare").removeListener(inventoriesListener);
 	}
 
-	private void updateLocationMenu(final JSONObject item, final Menu location) {
-		location.getItems().clear();
+	private void updateInventories() {
+		stack.getChildren().remove(5, stack.getChildren().size() - 1);
 
-		final ToggleGroup locationGroup = new ToggleGroup();
+		final JSONArray inventories = actualAnimal.getArrOrDefault("Inventare", null);
 
-		final RadioMenuItem heroLocationItem = new RadioMenuItem(hero.getObj("Biografie").getString("Vorname"));
-		heroLocationItem.setToggleGroup(locationGroup);
-		location.getItems().add(heroLocationItem);
+		DSAUtil.foreach(inventory -> true, inventory -> {
+			final EquipmentList list = new EquipmentList(false);
 
-		final JSONArray animals = hero.getArr("Tiere");
-		final Map<JSONObject, RadioMenuItem> animalItems = new HashMap<>(animals.size());
-		for (int i = 0; i < animals.size(); ++i) {
-			final JSONObject animal = animals.getObj(i);
-			final String name = animal.getObj("Biografie").getString("Name");
-			final RadioMenuItem animalLocationItem = new RadioMenuItem(name);
-			animalLocationItem.setToggleGroup(locationGroup);
-			animalItems.put(animal, animalLocationItem);
-			location.getItems().add(animalLocationItem);
-		}
+			final String name = inventory.getStringOrDefault("Name", "Unbenanntes Inventar");
+			list.setHero((JSONObject) actualAnimal.getParent().getParent(), inventory, name, inventories, actualAnimal.getArr("Ausrüstung"));
 
-		heroLocationItem.setOnAction(e -> {
-			final JSONValue parent = item.getParent();
-			parent.remove(item);
-			parent.notifyListeners(null);
-			final JSONArray equipment = hero.getObj("Besitz").getArr("Ausrüstung");
-			equipment.add(item.clone(equipment));
-			equipment.notifyListeners(null);
-			location.getParentPopup().hide();
-		});
-
-		final JSONValue possessor = item.getParent() != null ? item.getParent().getParent() : null;
-		for (final JSONObject animal : animalItems.keySet()) {
-			if (possessor != null && animal.equals(possessor)) {
-				animalItems.get(animal).setSelected(true);
-			} else {
-				animalItems.get(animal).setOnAction(e -> {
-					final JSONValue parent = item.getParent();
-					parent.remove(item);
-					parent.notifyListeners(null);
-					final JSONArray equipment = animal.getArr("Ausrüstung");
-					equipment.add(item.clone(equipment));
-					equipment.notifyListeners(null);
-					location.getParentPopup().hide();
-				});
-			}
-		}
+			stack.getChildren().add(stack.getChildren().size() - 1, list.getControl());
+		}, inventories);
 	}
 
 	private void updateProCons() {

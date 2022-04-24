@@ -15,8 +15,6 @@
  */
 package heroes.inventory;
 
-import dsa41basis.util.HeroUtil;
-import dsatool.ui.ReactiveSpinner;
 import dsatool.util.ErrorLogger;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -30,55 +28,46 @@ import javafx.stage.Window;
 import jsonant.value.JSONArray;
 import jsonant.value.JSONObject;
 
-public class ItemPurchaseDialog {
+public class InventoryDialog {
+
 	@FXML
 	private VBox root;
 	@FXML
 	private TextField name;
 	@FXML
-	private TextField notes;
-	@FXML
 	private Button okButton;
-	@FXML
-	private ReactiveSpinner<Double> cost;
 	@FXML
 	private Button cancelButton;
 
-	public ItemPurchaseDialog(final Window window, final JSONObject hero, final JSONArray inventory, final JSONObject item) {
+	public InventoryDialog(final Window window, final JSONArray inventories, final JSONObject inventory) {
 		final FXMLLoader fxmlLoader = new FXMLLoader();
 
 		fxmlLoader.setController(this);
 
 		try {
-			fxmlLoader.load(getClass().getResource("ItemPurchaseDialog.fxml").openStream());
+			fxmlLoader.load(getClass().getResource("InventoryDialog.fxml").openStream());
 		} catch (final Exception e) {
 			ErrorLogger.logError(e);
 		}
 
 		final Stage stage = new Stage();
-		stage.setTitle("Kaufen");
-		stage.setScene(new Scene(root, 290, 110));
+		stage.setTitle("Inventar");
+		stage.setScene(new Scene(root, 290, 55));
 		stage.initModality(Modality.WINDOW_MODAL);
 		stage.setResizable(false);
 		stage.initOwner(window);
 
-		name.setText(item.getStringOrDefault("Name", ""));
-		notes.setText(item.getStringOrDefault("Anmerkungen", ""));
-		cost.getValueFactory().setValue(item.getDoubleOrDefault("Preis", 0.0));
+		name.setText(inventory != null ? inventory.getStringOrDefault("Name", "Neues Inventar") : "Neues Inventar");
 
 		okButton.setOnAction(event -> {
-			item.put("Name", name.getText());
-			final String note = notes.getText();
-			if ("".equals(note)) {
-				item.removeKey("Anmerkungen");
-			} else {
-				item.put("Anmerkungen", note);
+			JSONObject actualInventory = inventory;
+			if (inventory == null) {
+				actualInventory = new JSONObject(inventories);
+				actualInventory.put("Ausrüstung", new JSONArray(actualInventory));
+				inventories.add(actualInventory);
 			}
-			final int kreutzer = (int) (cost.getValue() * 100);
-			item.put("Preis", kreutzer / 100.0);
-			HeroUtil.addMoney(hero, -kreutzer);
-			inventory.add(item);
-			inventory.notifyListeners(null);
+			actualInventory.put("Name", name.getText());
+			actualInventory.notifyListeners(null);
 			stage.close();
 		});
 
@@ -89,4 +78,5 @@ public class ItemPurchaseDialog {
 
 		stage.show();
 	}
+
 }

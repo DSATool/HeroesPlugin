@@ -49,7 +49,7 @@ public class PotionPurchaseDialog {
 
 	private boolean costChanged = false;
 
-	public PotionPurchaseDialog(final Window window, final JSONObject hero, final JSONObject item) {
+	public PotionPurchaseDialog(final Window window, final JSONObject hero, final JSONArray inventory, final JSONObject item) {
 		final FXMLLoader fxmlLoader = new FXMLLoader();
 
 		fxmlLoader.setController(this);
@@ -97,9 +97,8 @@ public class PotionPurchaseDialog {
 			final int kreutzer = (int) (cost.getValue() * 100);
 			item.put("Preis", kreutzer / 100.0);
 			HeroUtil.addMoney(hero, -kreutzer);
-			final JSONArray items = hero.getObj("Besitz").getArr("Ausrüstung");
-			items.add(item);
-			items.notifyListeners(null);
+			inventory.add(item);
+			inventory.notifyListeners(null);
 			stage.close();
 		});
 

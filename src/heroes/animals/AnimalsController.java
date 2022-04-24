@@ -106,14 +106,17 @@ public class AnimalsController extends HeroTabController {
 	protected void update() {
 		final ObservableList<Node> items = animalsBox.getChildren();
 		items.remove(0, items.size() - 1);
+		for (final AnimalController controller : controllers) {
+			controller.unregisterListeners();
+		}
 		controllers.clear();
 		animals = hero.getArr("Tiere");
 		for (int i = 0; i < animals.size(); ++i) {
 			final JSONObject animal = animals.getObj(i);
 			final AnimalController newController = switch (animal.getObj("Biografie").getStringOrDefault("Typ", "Tier")) {
-				case "Reittier" -> new AnimalController(hero, animal, CharacterType.HORSE);
-				case "Vertrautentier" -> new AnimalController(hero, animal, CharacterType.MAGIC_ANIMAL);
-				default -> new AnimalController(hero, animal, CharacterType.ANIMAL);
+				case "Reittier" -> new AnimalController(animal, CharacterType.HORSE);
+				case "Vertrautentier" -> new AnimalController(animal, CharacterType.MAGIC_ANIMAL);
+				default -> new AnimalController(animal, CharacterType.ANIMAL);
 			};
 			items.add(i, newController.getControl());
 			controllers.add(newController);

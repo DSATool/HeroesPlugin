@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.HBox?>
@@ -11,6 +12,11 @@
          <Button text="Vertrautentier hinzufügen" onAction="#addAnimal" />
          <Button text="Reittier hinzufügen" onAction="#addAnimal" />
          <Button text="Sonstiges Tier hinzufügen" onAction="#addAnimal" />
+         <VBox.margin>
+            <Insets>
+               <left>2</left>
+            </Insets>
+         </VBox.margin>
       </HBox>
    </VBox>
 </ScrollPane>
