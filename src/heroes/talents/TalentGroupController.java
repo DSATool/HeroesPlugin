@@ -202,7 +202,7 @@ public class TalentGroupController {
 			});
 			deleteItem.visibleProperty().bind(Bindings.createBooleanBinding(() -> {
 				final Talent talent = row.getItem();
-				return talent != null && talent.getTalent().getBoolOrDefault("Basis", false)
+				return talent != null && !talent.getTalent().getBoolOrDefault("Basis", false)
 						&& (HeroTabController.isEditable.get() || talent.getValue() == Integer.MIN_VALUE && talent.getSes() == 0);
 			}, row.itemProperty(), HeroTabController.isEditable));
 			contextMenu.getItems().add(deleteItem);
