@@ -95,7 +95,7 @@
                   <Label minHeight="0" />
                </placeholder>
                <columns>
-                  <TableColumn fx:id="proConNameColumn" text="Vor-/Nachteil" minWidth="150" prefWidth="200" styleClass="left-aligned" style="-fx-alignment: CENTER-LEFT;" />
+                  <TableColumn fx:id="proConNameColumn" text="Vor-/Nachteil" minWidth="150" prefWidth="200" editable="false" styleClass="left-aligned" style="-fx-alignment: CENTER-LEFT;" />
                   <TableColumn fx:id="proConDescColumn" text="Beschreibung" minWidth="85" prefWidth="200" resizable="false" styleClass="left-aligned" style="-fx-alignment: CENTER-LEFT;" />
                   <TableColumn fx:id="proConValueColumn" text="Wert" minWidth="60" maxWidth="60" resizable="false" editable="true" style="-fx-alignment: CENTER;" />
                </columns>	
