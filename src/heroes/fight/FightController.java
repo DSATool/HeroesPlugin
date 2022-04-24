@@ -48,6 +48,7 @@ import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TitledPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import jsonant.event.JSONListener;
 import jsonant.value.JSONArray;
@@ -225,7 +226,22 @@ public class FightController extends HeroTabController {
 		GUIUtil.cellValueFactories(closeCombatTable, "name", "type", "ebe", "tp", "at", "pa", "ini", "dk", "bf");
 
 		closeCombatTable.setRowFactory(table -> {
-			final TableRow<CloseCombatWeapon> row = new TableRow<>();
+			final TableRow<CloseCombatWeapon> row = new TableRow<>() {
+				@Override
+				public void updateItem(final CloseCombatWeapon weapon, final boolean empty) {
+					super.updateItem(weapon, empty);
+					if (weapon == null) {
+						setTooltip(null);
+					} else {
+						final String notes = HeroUtil.getWeaponNotes(weapon.getItem(), weapon.getBaseItem(), weapon.getType(), hero);
+						if (notes.isBlank()) {
+							setTooltip(null);
+						} else {
+							setTooltip(new Tooltip(notes));
+						}
+					}
+				}
+			};
 
 			final ContextMenu rowMenu = new ContextMenu();
 
@@ -286,7 +302,22 @@ public class FightController extends HeroTabController {
 		GUIUtil.cellValueFactories(rangedCombatTable, "name", "type", "ebe", "tp", "at", "load", "distance", "distancetp", "ammunition");
 
 		rangedCombatTable.setRowFactory(table -> {
-			final TableRow<RangedWeapon> row = new TableRow<>();
+			final TableRow<RangedWeapon> row = new TableRow<>() {
+				@Override
+				public void updateItem(final RangedWeapon weapon, final boolean empty) {
+					super.updateItem(weapon, empty);
+					if (weapon == null) {
+						setTooltip(null);
+					} else {
+						final String notes = HeroUtil.getWeaponNotes(weapon.getItem(), weapon.getBaseItem(), weapon.getType(), hero);
+						if (notes.isBlank()) {
+							setTooltip(null);
+						} else {
+							setTooltip(new Tooltip(notes));
+						}
+					}
+				}
+			};
 
 			final ContextMenu rowMenu = new ContextMenu();
 
@@ -367,6 +398,38 @@ public class FightController extends HeroTabController {
 		GUIUtil.autosizeTable(shieldsTable);
 		GUIUtil.cellValueFactories(shieldsTable, "name", "at", "pa", "ini", "bf");
 
+		shieldsTable.setRowFactory(table -> {
+			final TableRow<DefensiveWeapon> row = new TableRow<>() {
+				@Override
+				public void updateItem(final DefensiveWeapon weapon, final boolean empty) {
+					super.updateItem(weapon, empty);
+					if (weapon == null) {
+						setTooltip(null);
+					} else {
+						final String notes = HeroUtil.getItemNotes(weapon.getItem(), weapon.getBaseItem());
+						if (notes.isBlank()) {
+							setTooltip(null);
+						} else {
+							setTooltip(new Tooltip(notes));
+						}
+					}
+				}
+			};
+
+			final ContextMenu rowMenu = new ContextMenu();
+
+			final MenuItem paItem = new MenuItem("Parade");
+			paItem.setOnAction(e -> {
+				final DefensiveWeapon item = row.getItem();
+				new SingleRollDialog(pane.getScene().getWindow(), SingleRollDialog.Type.DEFENSE, hero, item);
+			});
+
+			rowMenu.getItems().add(paItem);
+			row.setContextMenu(rowMenu);
+
+			return row;
+		});
+
 		shieldsIniColumn.setCellFactory(UiUtil.signedIntegerCellFactory);
 		shieldsBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12));
 		shieldsBFColumn.setOnEditCommit(t -> {
@@ -379,6 +442,27 @@ public class FightController extends HeroTabController {
 
 		GUIUtil.autosizeTable(defensiveWeaponsTable);
 		GUIUtil.cellValueFactories(defensiveWeaponsTable, "name", "at", "pa", "ini", "bf");
+
+		defensiveWeaponsTable.setRowFactory(table -> {
+			final TableRow<DefensiveWeapon> row = new TableRow<>() {
+				@Override
+				public void updateItem(final DefensiveWeapon weapon, final boolean empty) {
+					super.updateItem(weapon, empty);
+					if (weapon == null) {
+						setTooltip(null);
+					} else {
+						final String notes = HeroUtil.getItemNotes(weapon.getItem(), weapon.getBaseItem());
+						if (notes.isBlank()) {
+							setTooltip(null);
+						} else {
+							setTooltip(new Tooltip(notes));
+						}
+					}
+				}
+			};
+
+			return row;
+		});
 
 		defensiveWeaponsPAColumn.setCellFactory(UiUtil.signedIntegerCellFactory);
 		defensiveWeaponsIniColumn.setCellFactory(UiUtil.signedIntegerCellFactory);
@@ -412,6 +496,27 @@ public class FightController extends HeroTabController {
 		} else {
 			GUIUtil.cellValueFactories(armorTable, "name", "head", "breast", "back", "belly", "larm", "rarm", "lleg", "rleg", "zoners", "zonebe");
 		}
+
+		armorTable.setRowFactory(table -> {
+			final TableRow<Armor> row = new TableRow<>() {
+				@Override
+				public void updateItem(final Armor weapon, final boolean empty) {
+					super.updateItem(weapon, empty);
+					if (weapon == null) {
+						setTooltip(null);
+					} else {
+						final String notes = HeroUtil.getItemNotes(weapon.getItem(), weapon.getBaseItem());
+						if (notes.isBlank()) {
+							setTooltip(null);
+						} else {
+							setTooltip(new Tooltip(notes));
+						}
+					}
+				}
+			};
+
+			return row;
+		});
 	}
 
 	@Override
