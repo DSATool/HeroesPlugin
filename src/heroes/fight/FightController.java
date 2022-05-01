@@ -15,7 +15,6 @@
  */
 package heroes.fight;
 
-import dsa41basis.fight.Armor;
 import dsa41basis.fight.CloseCombatWeapon;
 import dsa41basis.fight.DefensiveWeapon;
 import dsa41basis.fight.RangedWeapon;
@@ -24,7 +23,6 @@ import dsa41basis.util.DSAUtil;
 import dsa41basis.util.HeroUtil;
 import dsatool.gui.GUIUtil;
 import dsatool.resources.ResourceManager;
-import dsatool.resources.Settings;
 import dsatool.ui.GraphicTableCell;
 import dsatool.ui.IntegerSpinnerTableCell;
 import dsatool.ui.ReactiveSpinner;
@@ -47,7 +45,6 @@ import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TitledPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import jsonant.event.JSONListener;
@@ -56,32 +53,6 @@ import jsonant.value.JSONObject;
 
 public class FightController extends HeroTabController {
 
-	@FXML
-	private TableColumn<Armor, Integer> armorBackColumn;
-	@FXML
-	private TableColumn<Armor, Double> armorBeColumn;
-	@FXML
-	private TableColumn<Armor, Integer> armorBellyColumn;
-	@FXML
-	private TableColumn<Armor, Integer> armorBreastColumn;
-	@FXML
-	private TableColumn<Armor, Integer> armorHeadColumn;
-	@FXML
-	private TableColumn<Armor, Integer> armorLarmColumn;
-	@FXML
-	private TableColumn<Armor, Integer> armorLlegColumn;
-	@FXML
-	private TableColumn<Armor, String> armorNameColumn;
-	@FXML
-	private TitledPane armorPane;
-	@FXML
-	private TableColumn<Armor, Integer> armorRarmColumn;
-	@FXML
-	private TableColumn<Armor, Integer> armorRlegColumn;
-	@FXML
-	private TableColumn<Armor, Double> armorRsColumn;
-	@FXML
-	private TableView<Armor> armorTable;
 	@FXML
 	private TableColumn<CloseCombatWeapon, Integer> closeCombatBFColumn;
 	@FXML
@@ -140,7 +111,6 @@ public class FightController extends HeroTabController {
 		rangedCombatTable.getItems().clear();
 		shieldsTable.getItems().clear();
 		defensiveWeaponsTable.getItems().clear();
-		armorTable.getItems().clear();
 
 		final JSONObject talents = ResourceManager.getResource("data/Talente");
 		final JSONObject closeCombatTalents = talents.getObj("Nahkampftalente");
@@ -183,13 +153,6 @@ public class FightController extends HeroTabController {
 					defensiveWeaponsTable.getItems().add(new DefensiveWeapon(false, hero, item.getObj("Parierwaffe"), item));
 				} else {
 					defensiveWeaponsTable.getItems().add(new DefensiveWeapon(false, hero, item, item));
-				}
-			}
-			if (categories.contains("Rüstung")) {
-				if (item.containsKey("Rüstung")) {
-					armorTable.getItems().add(new Armor(item.getObj("Rüstung"), item));
-				} else {
-					armorTable.getItems().add(new Armor(item, item));
 				}
 			}
 		}, items);
@@ -473,50 +436,6 @@ public class FightController extends HeroTabController {
 			}
 		});
 
-		final String armorSetting = Settings.getSettingStringOrDefault("Zonenrüstung", "Kampf", "Rüstungsart");
-
-		armorTable.prefWidthProperty().bind(pane.widthProperty().subtract(17));
-
-		if ("Zonenrüstung".equals(armorSetting)) {
-			armorRsColumn.setVisible(false);
-		} else {
-			armorHeadColumn.setVisible(false);
-			armorBreastColumn.setVisible(false);
-			armorBackColumn.setVisible(false);
-			armorBellyColumn.setVisible(false);
-			armorLarmColumn.setVisible(false);
-			armorRarmColumn.setVisible(false);
-			armorLlegColumn.setVisible(false);
-			armorRlegColumn.setVisible(false);
-		}
-
-		GUIUtil.autosizeTable(armorTable);
-		if ("Gesamtrüstung".equals(armorSetting)) {
-			GUIUtil.cellValueFactories(armorTable, "name", "head", "breast", "back", "belly", "larm", "rarm", "lleg", "rleg", "totalrs", "totalbe");
-		} else {
-			GUIUtil.cellValueFactories(armorTable, "name", "head", "breast", "back", "belly", "larm", "rarm", "lleg", "rleg", "zoners", "zonebe");
-		}
-
-		armorTable.setRowFactory(table -> {
-			final TableRow<Armor> row = new TableRow<>() {
-				@Override
-				public void updateItem(final Armor weapon, final boolean empty) {
-					super.updateItem(weapon, empty);
-					if (weapon == null) {
-						setTooltip(null);
-					} else {
-						final String notes = HeroUtil.getItemNotes(weapon.getItem(), weapon.getBaseItem());
-						if (notes.isBlank()) {
-							setTooltip(null);
-						} else {
-							setTooltip(new Tooltip(notes));
-						}
-					}
-				}
-			};
-
-			return row;
-		});
 	}
 
 	@Override
@@ -531,7 +450,6 @@ public class FightController extends HeroTabController {
 		rangedCombatTable.getItems().clear();
 		shieldsTable.getItems().clear();
 		defensiveWeaponsTable.getItems().clear();
-		armorTable.getItems().clear();
 	}
 
 	@Override

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TitledPane?>
+
+<TitledPane fx:id="pane" xmlns:fx="http://javafx.com/fxml" >
+   <TableView fx:id="armorTable" fixedCellSize="28" >
+      <styleClass>
+         <String fx:value="remove-vertical-scrollbar" />
+         <String fx:value="remove-horizontal-scrollbar" />
+      </styleClass>
+      <placeholder>
+         <Label minHeight="0" />
+      </placeholder>
+      <columns>
+         <TableColumn fx:id="armorNameColumn" text="Rüstungsteil" minWidth="150" resizable="false" styleClass="left-aligned" style="-fx-alignment: CENTER-LEFT;" />
+         <TableColumn fx:id="armorHeadColumn" text="Kopf" minWidth="60" maxWidth="60" resizable="false" style="-fx-alignment: CENTER;" />
+         <TableColumn fx:id="armorBreastColumn" text="Brust" minWidth="60" maxWidth="60" resizable="false" style="-fx-alignment: CENTER;" />
+         <TableColumn fx:id="armorBackColumn" text="Rücken" minWidth="60" maxWidth="60" resizable="false" style="-fx-alignment: CENTER;" />
+         <TableColumn fx:id="armorBellyColumn" text="Bauch" minWidth="60" maxWidth="60" resizable="false" style="-fx-alignment: CENTER;" />
+         <TableColumn fx:id="armorLarmColumn" text="LArm" minWidth="60" maxWidth="60" resizable="false" style="-fx-alignment: CENTER;" />
+         <TableColumn fx:id="armorRarmColumn" text="RArm" minWidth="60" maxWidth="60" resizable="false" style="-fx-alignment: CENTER;" />
+         <TableColumn fx:id="armorLlegColumn" text="LBein" minWidth="60" maxWidth="60" resizable="false" style="-fx-alignment: CENTER;" />
+         <TableColumn fx:id="armorRlegColumn" text="RBein" minWidth="60" maxWidth="60" resizable="false" style="-fx-alignment: CENTER;" />
+         <TableColumn fx:id="armorRsColumn" text="RS" minWidth="40" maxWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
+         <TableColumn fx:id="armorBeColumn" text="BE" minWidth="40" maxWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
+      </columns>
+   </TableView>
+</TitledPane>

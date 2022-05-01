@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableColumn?>
@@ -20,8 +22,8 @@
                <Label minHeight="0" />
             </placeholder>
             <columns>
-               <TableColumn fx:id="closeCombatNameColumn" text="Waffe" minWidth="100" prefWidth="500" styleClass="left-aligned" style="-fx-alignment: CENTER-LEFT;" />
-               <TableColumn fx:id="closeCombatTypeColumn" text="Typ" minWidth="100" prefWidth="100" resizable="false" editable="true" />
+               <TableColumn fx:id="closeCombatNameColumn" text="Waffe" minWidth="100" prefWidth="300" styleClass="left-aligned" style="-fx-alignment: CENTER-LEFT;" />
+               <TableColumn fx:id="closeCombatTypeColumn" text="Typ" minWidth="100" prefWidth="120" resizable="false" editable="true" />
                <TableColumn fx:id="closeCombatEBEColumn" text="eBE" minWidth="40" maxWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
                <TableColumn fx:id="closeCombatTPColumn" text="TP" minWidth="70" maxWidth="70" resizable="false" style="-fx-alignment: CENTER;" />
                <TableColumn fx:id="closeCombatATColumn" text="AT" minWidth="40" maxWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
@@ -42,8 +44,8 @@
                <Label minHeight="0" />
             </placeholder>
             <columns>
-               <TableColumn fx:id="rangedCombatNameColumn" text="Waffe" minWidth="100" prefWidth="500" styleClass="left-aligned" style="-fx-alignment: CENTER-LEFT;" />
-               <TableColumn fx:id="rangedCombatTypeColumn" text="Typ" minWidth="100" prefWidth="100" resizable="false" editable="true" />
+               <TableColumn fx:id="rangedCombatNameColumn" text="Waffe" minWidth="100" prefWidth="200" styleClass="left-aligned" style="-fx-alignment: CENTER-LEFT;" />
+               <TableColumn fx:id="rangedCombatTypeColumn" text="Typ" minWidth="100" prefWidth="120" resizable="false" editable="true" />
                <TableColumn fx:id="rangedCombatEBEColumn" text="eBE" minWidth="40" maxWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
                <TableColumn fx:id="rangedCombatTPColumn" text="TP" minWidth="70" maxWidth="70" resizable="false" style="-fx-alignment: CENTER;" />
                <TableColumn fx:id="rangedCombatATColumn" text="AT" minWidth="40" maxWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
@@ -90,30 +92,16 @@
             </columns>
          </TableView>
       </TitledPane>
-      <TitledPane text="Rüstung" >
-         <TableView fx:id="armorTable" fixedCellSize="28" >
-            <styleClass>
-               <String fx:value="remove-vertical-scrollbar" />
-               <String fx:value="remove-horizontal-scrollbar" />
-            </styleClass>
-            <placeholder>
-               <Label minHeight="0" />
-            </placeholder>
-            <columns>
-               <TableColumn fx:id="armorNameColumn" text="Rüstungsteil" minWidth="150" resizable="false" styleClass="left-aligned" style="-fx-alignment: CENTER-LEFT;" />
-               <TableColumn fx:id="armorHeadColumn" text="Kopf" minWidth="60" maxWidth="60" resizable="false" style="-fx-alignment: CENTER;" />
-               <TableColumn fx:id="armorBreastColumn" text="Brust" minWidth="60" maxWidth="60" resizable="false" style="-fx-alignment: CENTER;" />
-               <TableColumn fx:id="armorBackColumn" text="Rücken" minWidth="60" maxWidth="60" resizable="false" style="-fx-alignment: CENTER;" />
-               <TableColumn fx:id="armorBellyColumn" text="Bauch" minWidth="60" maxWidth="60" resizable="false" style="-fx-alignment: CENTER;" />
-               <TableColumn fx:id="armorLarmColumn" text="LArm" minWidth="60" maxWidth="60" resizable="false" style="-fx-alignment: CENTER;" />
-               <TableColumn fx:id="armorRarmColumn" text="RArm" minWidth="60" maxWidth="60" resizable="false" style="-fx-alignment: CENTER;" />
-               <TableColumn fx:id="armorLlegColumn" text="LBein" minWidth="60" maxWidth="60" resizable="false" style="-fx-alignment: CENTER;" />
-               <TableColumn fx:id="armorRlegColumn" text="RBein" minWidth="60" maxWidth="60" resizable="false" style="-fx-alignment: CENTER;" />
-               <TableColumn fx:id="armorRsColumn" text="RS" minWidth="40" maxWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
-               <TableColumn fx:id="armorBeColumn" text="BE" minWidth="40" maxWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
-            </columns>
-         </TableView>
-      </TitledPane>
+      <Button text="Rüstungskombination hinzufügen" onAction="#addArmorSet" >
+         <styleClass>
+            <String fx:value="chosen" />
+         </styleClass>
+         <VBox.margin>
+            <Insets>
+               <left>2</left>
+            </Insets>
+         </VBox.margin>
+      </Button>
    </VBox>
 </ScrollPane>
 
