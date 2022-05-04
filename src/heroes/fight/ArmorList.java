@@ -21,6 +21,7 @@ import dsatool.gui.GUIUtil;
 import dsatool.resources.Settings;
 import dsatool.util.ErrorLogger;
 import dsatool.util.Util;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ContextMenu;
@@ -242,6 +243,10 @@ public class ArmorList {
 				}
 			}
 		});
+	}
+
+	public ObservableList<Armor> getArmor() {
+		return armorTable.getItems();
 	}
 
 	public Control getControl() {

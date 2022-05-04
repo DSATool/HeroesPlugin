@@ -19,7 +19,6 @@ import dsa41basis.fight.CloseCombatWeapon;
 import dsa41basis.fight.DefensiveWeapon;
 import dsa41basis.fight.RangedWeapon;
 import dsa41basis.ui.hero.SingleRollDialog;
-import dsa41basis.util.DSAUtil;
 import dsa41basis.util.HeroUtil;
 import dsatool.gui.GUIUtil;
 import dsatool.resources.ResourceManager;
@@ -30,6 +29,7 @@ import dsatool.util.ErrorLogger;
 import heroes.ui.HeroTabController;
 import heroes.util.UiUtil;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -39,6 +39,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Control;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TabPane;
@@ -47,15 +48,19 @@ import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TitledPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.layout.VBox;
 import jsonant.event.JSONListener;
 import jsonant.value.JSONArray;
 import jsonant.value.JSONObject;
 
 public class FightController extends HeroTabController {
 
+	@FXML
+	private TitledPane closeCombatPane;
 	@FXML
 	private TableColumn<CloseCombatWeapon, Integer> closeCombatBFColumn;
 	@FXML
@@ -71,6 +76,8 @@ public class FightController extends HeroTabController {
 	@FXML
 	private TableColumn<CloseCombatWeapon, String> closeCombatTypeColumn;
 	@FXML
+	private TitledPane defensiveWeaponsPane;
+	@FXML
 	private TableColumn<DefensiveWeapon, Integer> defensiveWeaponsBFColumn;
 	@FXML
 	private TableColumn<DefensiveWeapon, Integer> defensiveWeaponsIniColumn;
@@ -83,6 +90,10 @@ public class FightController extends HeroTabController {
 	@FXML
 	private ScrollPane pane;
 	@FXML
+	private VBox stack;
+	@FXML
+	private TitledPane rangedCombatPane;
+	@FXML
 	private TableColumn<RangedWeapon, String> rangedCombatAmmunitionColumn;
 	@FXML
 	private TableColumn<RangedWeapon, Integer> rangedCombatEBEColumn;
@@ -94,6 +105,8 @@ public class FightController extends HeroTabController {
 	private TableColumn<RangedWeapon, String> rangedCombatTPColumn;
 	@FXML
 	private TableColumn<RangedWeapon, String> rangedCombatTypeColumn;
+	@FXML
+	private TitledPane shieldsPane;
 	@FXML
 	private TableColumn<DefensiveWeapon, Integer> shieldsBFColumn;
 	@FXML
@@ -129,7 +142,19 @@ public class FightController extends HeroTabController {
 
 		closeCombatTable.getItems().add(new CloseCombatWeapon(hero, HeroUtil.infight, HeroUtil.infight, closeCombatTalents, actualCloseCombatTalents));
 
-		DSAUtil.foreach(item -> item.containsKey("Kategorien"), item -> {
+		stack.getChildren().remove(4, stack.getChildren().size() - 1);
+		final JSONObject armorSets = hero.getObj("Kampf").getObjOrDefault("Rüstungskombinationen", new JSONObject(null));
+		for (final String name : armorSets.keySet()) {
+			stack.getChildren().add(stack.getChildren().size() - 1, new ArmorList(hero, name).getControl());
+		}
+		final ArmorList armorList = new ArmorList(hero, null);
+		final Control armorControl = armorList.getControl();
+		stack.getChildren().add(stack.getChildren().size() - 1, armorControl);
+		final BooleanBinding hasArmor = Bindings.isNotEmpty(armorList.getArmor());
+		armorControl.visibleProperty().bind(hasArmor);
+		armorControl.managedProperty().bind(hasArmor);
+
+		HeroUtil.foreachInventoryItem(hero, item -> item.containsKey("Kategorien"), (item, extraInventory) -> {
 			final JSONArray categories = item.getArr("Kategorien");
 
 			if (categories.contains("Nahkampfwaffe")) {
@@ -195,6 +220,10 @@ public class FightController extends HeroTabController {
 		}
 
 		super.init();
+
+		final BooleanBinding hasCloseCombat = Bindings.isNotEmpty(closeCombatTable.getItems());
+		closeCombatPane.visibleProperty().bind(hasCloseCombat);
+		closeCombatPane.managedProperty().bind(hasCloseCombat);
 
 		closeCombatTable.prefWidthProperty().bind(pane.widthProperty().subtract(17));
 
@@ -331,6 +360,10 @@ public class FightController extends HeroTabController {
 			}
 		});
 
+		final BooleanBinding hasRanged = Bindings.isNotEmpty(rangedCombatTable.getItems());
+		rangedCombatPane.visibleProperty().bind(hasRanged);
+		rangedCombatPane.managedProperty().bind(hasRanged);
+
 		rangedCombatTable.prefWidthProperty().bind(pane.widthProperty().subtract(17));
 
 		GUIUtil.autosizeTable(rangedCombatTable);
@@ -428,6 +461,10 @@ public class FightController extends HeroTabController {
 				}
 		});
 
+		final BooleanBinding hasShields = Bindings.isNotEmpty(shieldsTable.getItems());
+		shieldsPane.visibleProperty().bind(hasShields);
+		shieldsPane.managedProperty().bind(hasShields);
+
 		shieldsTable.prefWidthProperty().bind(pane.widthProperty().subtract(17));
 
 		GUIUtil.autosizeTable(shieldsTable);
@@ -500,6 +537,10 @@ public class FightController extends HeroTabController {
 				t.getRowValue().setBf(t.getNewValue());
 			}
 		});
+
+		final BooleanBinding hasDefensiveWeapons = Bindings.isNotEmpty(defensiveWeaponsTable.getItems());
+		defensiveWeaponsPane.visibleProperty().bind(hasDefensiveWeapons);
+		defensiveWeaponsPane.managedProperty().bind(hasDefensiveWeapons);
 
 		defensiveWeaponsTable.prefWidthProperty().bind(pane.widthProperty().subtract(17));
 
@@ -576,7 +617,6 @@ public class FightController extends HeroTabController {
 				t.getRowValue().setBf(t.getNewValue());
 			}
 		});
-
 	}
 
 	@Override
