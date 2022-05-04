@@ -29,12 +29,14 @@ import dsatool.ui.ReactiveSpinner;
 import dsatool.util.ErrorLogger;
 import heroes.ui.HeroTabController;
 import heroes.util.UiUtil;
+import javafx.beans.binding.Bindings;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -47,6 +49,7 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.ComboBoxTableCell;
+import javafx.scene.control.cell.TextFieldTableCell;
 import jsonant.event.JSONListener;
 import jsonant.value.JSONArray;
 import jsonant.value.JSONObject;
@@ -106,6 +109,12 @@ public class FightController extends HeroTabController {
 		super(tabPane);
 	}
 
+	@FXML
+	private void addArmorSet() {
+		new ArmorSetDialog(pane.getScene().getWindow(), hero, hero.getObj("Kampf").getObj("Rüstungskombinationen"), null);
+	}
+
+	@SuppressWarnings("unchecked")
 	private void fillTables() {
 		closeCombatTable.getItems().clear();
 		rangedCombatTable.getItems().clear();
@@ -117,8 +126,6 @@ public class FightController extends HeroTabController {
 		final JSONObject actualCloseCombatTalents = hero.getObj("Talente").getObj("Nahkampftalente");
 		final JSONObject rangedCombatTalents = talents.getObj("Fernkampftalente");
 		final JSONObject actualRangedCombatTalents = hero.getObj("Talente").getObj("Fernkampftalente");
-		final JSONObject inventory = hero.getObj("Besitz");
-		final JSONArray items = inventory.getArr("Ausrüstung");
 
 		closeCombatTable.getItems().add(new CloseCombatWeapon(hero, HeroUtil.infight, HeroUtil.infight, closeCombatTalents, actualCloseCombatTalents));
 
@@ -155,7 +162,13 @@ public class FightController extends HeroTabController {
 					defensiveWeaponsTable.getItems().add(new DefensiveWeapon(false, hero, item, item));
 				}
 			}
-		}, items);
+		});
+
+		if (HeroUtil.getMainWeapon(hero) == null) {
+			defensiveWeaponsPAColumn.setCellFactory(UiUtil.signedIntegerCellFactory);
+		} else {
+			defensiveWeaponsPAColumn.setCellFactory(UiUtil.integerCellFactory);
+		}
 	}
 
 	@Override
@@ -193,7 +206,7 @@ public class FightController extends HeroTabController {
 				@Override
 				public void updateItem(final CloseCombatWeapon weapon, final boolean empty) {
 					super.updateItem(weapon, empty);
-					if (weapon == null) {
+					if (empty) {
 						setTooltip(null);
 					} else {
 						final String notes = HeroUtil.getWeaponNotes(weapon.getItem(), weapon.getBaseItem(), weapon.getType(), hero);
@@ -220,10 +233,69 @@ public class FightController extends HeroTabController {
 				new SingleRollDialog(pane.getScene().getWindow(), SingleRollDialog.Type.DEFENSE, hero, item);
 			});
 
-			rowMenu.getItems().addAll(atItem, paItem);
+			final MenuItem changeHandItem = new MenuItem();
+			changeHandItem.textProperty().bind(Bindings.createStringBinding(() -> {
+				final CloseCombatWeapon item = row.getItem();
+				if (item == null) return "";
+				return "In die " + (row.getItem().isSecondHand() != hero.getObj("Vorteile").containsKey("Linkshänder") ? "rechte Hand" : "linke Hand");
+			}, row.itemProperty(), Bindings.createBooleanBinding(() -> row.getItem() != null && row.getItem().isSecondHand(), row.itemProperty())));
+			changeHandItem.setOnAction(e -> {
+				final CloseCombatWeapon item = row.getItem();
+				item.setSecondHand(!item.isSecondHand());
+			});
+			changeHandItem.visibleProperty().bind(Bindings.createBooleanBinding(() -> {
+				final CloseCombatWeapon item = row.getItem();
+				if (item == null) return false;
+				return !item.getSpecial().contains("z");
+			}, row.itemProperty(), Bindings.createBooleanBinding(() -> row.getItem() != null && row.getItem().getSpecial().contains("z"), row.itemProperty())));
+
+			final CheckMenuItem mainWeaponItem = new CheckMenuItem();
+			mainWeaponItem.textProperty().bind(Bindings.createStringBinding(() -> {
+				final CloseCombatWeapon item = row.getItem();
+				if (item == null) return "";
+				return row.getItem().isSecondHand() ? "Seitenwaffe" : "Hauptwaffe";
+			}, row.itemProperty(), Bindings.createBooleanBinding(() -> row.getItem() != null && row.getItem().isSecondHand(), row.itemProperty())));
+			mainWeaponItem.setOnAction(e -> {
+				final CloseCombatWeapon item = row.getItem();
+				if (!item.isMainWeapon()) {
+					unsetMainWeapon(item.isSecondHand());
+				}
+				item.setMainWeapon(!item.isMainWeapon());
+			});
+			mainWeaponItem.visibleProperty().bind(Bindings.createBooleanBinding(() -> {
+				final CloseCombatWeapon item = row.getItem();
+				if (item == null) return false;
+				return !item.getSpecial().contains("z");
+			}, row.itemProperty(), Bindings.createBooleanBinding(() -> row.getItem() != null && row.getItem().getSpecial().contains("z"), row.itemProperty())));
+
+			rowMenu.getItems().addAll(atItem, paItem, changeHandItem, mainWeaponItem);
+			rowMenu.setOnShowing(e -> mainWeaponItem.setSelected(row.getItem() != null && row.getItem().isMainWeapon()));
 			row.setContextMenu(rowMenu);
 
 			return row;
+		});
+
+		closeCombatNameColumn.setCellFactory(p -> {
+			final TextFieldTableCell<CloseCombatWeapon, String> cell = new TextFieldTableCell<>() {
+				@Override
+				public void updateItem(final String item, final boolean empty) {
+					super.updateItem(item, empty);
+					final CloseCombatWeapon weapon = getTableRow().getItem();
+					if (weapon != null) {
+						if (weapon.isMainWeapon()) {
+							getStyleClass().add("bold");
+						} else {
+							getStyleClass().remove("bold");
+						}
+						if (weapon.isSecondHand()) {
+							getStyleClass().add("italic");
+						} else {
+							getStyleClass().remove("italic");
+						}
+					}
+				}
+			};
+			return cell;
 		});
 
 		closeCombatTypeColumn.setCellFactory(p -> {
@@ -387,10 +459,38 @@ public class FightController extends HeroTabController {
 				new SingleRollDialog(pane.getScene().getWindow(), SingleRollDialog.Type.DEFENSE, hero, item);
 			});
 
-			rowMenu.getItems().add(paItem);
+			final CheckMenuItem mainWeaponItem = new CheckMenuItem("Seitenwaffe");
+			mainWeaponItem.setOnAction(e -> {
+				final DefensiveWeapon item = row.getItem();
+				if (!item.isMainWeapon()) {
+					unsetMainWeapon(true);
+				}
+				item.setMainWeapon(!item.isMainWeapon());
+			});
+
+			rowMenu.getItems().addAll(paItem, mainWeaponItem);
+			rowMenu.setOnShowing(e -> mainWeaponItem.setSelected(row.getItem() != null && row.getItem().isMainWeapon()));
 			row.setContextMenu(rowMenu);
 
 			return row;
+		});
+
+		shieldsNameColumn.setCellFactory(p -> {
+			final TextFieldTableCell<DefensiveWeapon, String> cell = new TextFieldTableCell<>() {
+				@Override
+				public void updateItem(final String item, final boolean empty) {
+					super.updateItem(item, empty);
+					final DefensiveWeapon weapon = getTableRow().getItem();
+					if (weapon != null) {
+						if (weapon.isMainWeapon()) {
+							getStyleClass().add("bold");
+						} else {
+							getStyleClass().remove("bold");
+						}
+					}
+				}
+			};
+			return cell;
 		});
 
 		shieldsIniColumn.setCellFactory(UiUtil.signedIntegerCellFactory);
@@ -424,10 +524,51 @@ public class FightController extends HeroTabController {
 				}
 			};
 
+			final ContextMenu rowMenu = new ContextMenu();
+
+			final MenuItem paItem = new MenuItem("Parade");
+			paItem.setOnAction(e -> {
+				final DefensiveWeapon item = row.getItem();
+				new SingleRollDialog(pane.getScene().getWindow(), SingleRollDialog.Type.DEFENSE, hero, item);
+			});
+
+			final CheckMenuItem mainWeaponItem = new CheckMenuItem("Seitenwaffe");
+			mainWeaponItem.setOnAction(e -> {
+				final DefensiveWeapon item = row.getItem();
+				if (!item.isMainWeapon()) {
+					unsetMainWeapon(true);
+				}
+				item.setMainWeapon(!item.isMainWeapon());
+			});
+
+			rowMenu.getItems().addAll(paItem, mainWeaponItem);
+			rowMenu.setOnShowing(e -> {
+				paItem.setVisible(HeroUtil.getMainWeapon(hero) != null);
+				mainWeaponItem.setSelected(row.getItem() != null && row.getItem().isMainWeapon());
+			});
+			row.setContextMenu(rowMenu);
+
 			return row;
 		});
 
-		defensiveWeaponsPAColumn.setCellFactory(UiUtil.signedIntegerCellFactory);
+		defensiveWeaponsNameColumn.setCellFactory(p -> {
+			final TextFieldTableCell<DefensiveWeapon, String> cell = new TextFieldTableCell<>() {
+				@Override
+				public void updateItem(final String item, final boolean empty) {
+					super.updateItem(item, empty);
+					final DefensiveWeapon weapon = getTableRow().getItem();
+					if (weapon != null) {
+						if (weapon.isMainWeapon()) {
+							getStyleClass().add("bold");
+						} else {
+							getStyleClass().remove("bold");
+						}
+					}
+				}
+			};
+			return cell;
+		});
+
 		defensiveWeaponsIniColumn.setCellFactory(UiUtil.signedIntegerCellFactory);
 		defensiveWeaponsBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12));
 		defensiveWeaponsBFColumn.setOnEditCommit(t -> {
@@ -450,6 +591,50 @@ public class FightController extends HeroTabController {
 		rangedCombatTable.getItems().clear();
 		shieldsTable.getItems().clear();
 		defensiveWeaponsTable.getItems().clear();
+	}
+
+	private void unsetMainWeapon(final boolean secondary) {
+		HeroUtil.foreachInventoryItem(hero,
+				otherItem -> otherItem.containsKey("Kategorien"),
+				(otherItem, extraInventory) -> {
+					if (otherItem.getArr("Kategorien").contains("Nahkampfwaffe")) {
+						final JSONObject baseWeapon = otherItem;
+						if (otherItem != null && otherItem.containsKey("Nahkampfwaffe")) {
+							otherItem = otherItem.getObj("Nahkampfwaffe");
+						}
+
+						if (otherItem.getBoolOrDefault("Hauptwaffe", baseWeapon.getBoolOrDefault("Hauptwaffe", false))
+								&& otherItem.getBoolOrDefault("Zweithand", baseWeapon.getBoolOrDefault("Zweithand", false)) == secondary) {
+							otherItem.removeKey("Hauptwaffe");
+							otherItem.notifyListeners(listener);
+						}
+					}
+
+					if (secondary) {
+						if (otherItem.getArr("Kategorien").contains("Schild")) {
+							final JSONObject baseWeapon = otherItem;
+							if (otherItem != null && otherItem.containsKey("Schild")) {
+								otherItem = otherItem.getObj("Schild");
+							}
+
+							if (otherItem.getBoolOrDefault("Seitenwaffe", baseWeapon.getBoolOrDefault("Seitenwaffe", false))) {
+								otherItem.removeKey("Seitenwaffe");
+								otherItem.notifyListeners(listener);
+							}
+						}
+						if (otherItem.getArr("Kategorien").contains("Parierwaffe")) {
+							final JSONObject baseWeapon = otherItem;
+							if (otherItem != null && otherItem.containsKey("Parierwaffe")) {
+								otherItem = otherItem.getObj("Parierwaffe");
+							}
+
+							if (otherItem.getBoolOrDefault("Seitenwaffe", baseWeapon.getBoolOrDefault("Seitenwaffe", false))) {
+								otherItem.removeKey("Seitenwaffe");
+								otherItem.notifyListeners(listener);
+							}
+						}
+					}
+				});
 	}
 
 	@Override
