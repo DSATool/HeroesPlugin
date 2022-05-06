@@ -246,7 +246,7 @@ public class RangedWeaponEditor {
 
 	private void setAmmunitionVisible(final boolean bulletTypes) {
 		if (bulletTypes) {
-			stage.setHeight(stage.getHeight() + (ammunitionTypes.size() - 1) * 25);
+			stage.setHeight(420 + (ammunitionTypes.size() - 1) * 25);
 			bulletBox.setVisible(true);
 			bulletBox.setManaged(true);
 			ammunitionBox.setVisible(false);
