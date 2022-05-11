@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dsa41basis.ui.hero.BasicValuesController.CharacterType;
+import dsatool.gui.GUIUtil;
 import dsatool.util.ErrorLogger;
 import heroes.ui.HeroTabController;
 import javafx.collections.ObservableList;
@@ -27,6 +28,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Control;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.VBox;
@@ -119,6 +121,13 @@ public class AnimalsController extends HeroTabController {
 				default -> new AnimalController(animal, CharacterType.ANIMAL);
 			};
 			items.add(i, newController.getControl());
+			GUIUtil.dragDropReorder(newController.getControl(), moved -> {
+				final int index = animalsBox.getChildren().indexOf(moved);
+				final JSONObject current = (JSONObject) ((Control) moved).getUserData();
+				animals.remove(current);
+				animals.add(index, current);
+				animals.notifyListeners(null);
+			}, animalsBox);
 			controllers.add(newController);
 		}
 

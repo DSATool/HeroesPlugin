@@ -50,6 +50,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
@@ -246,6 +247,8 @@ public class AnimalController {
 			ErrorLogger.logError(e);
 		}
 
+		pane.setUserData(animal);
+
 		if (type != CharacterType.MAGIC_ANIMAL) {
 			ritualsBox.setManaged(false);
 			ritualsBox.setVisible(false);
@@ -257,9 +260,30 @@ public class AnimalController {
 		}
 		pane.textProperty().bindBidirectional(name.textProperty());
 
-		final JSONObject hero = (JSONObject) animal.getParent().getParent();
+		final JSONArray animals = (JSONArray) animal.getParent();
 
 		final ContextMenu contextMenu = new ContextMenu();
+
+		final int index = animals.indexOf(animal);
+		if (index > 0) {
+			final MenuItem upItem = new MenuItem("Nach oben");
+			upItem.setOnAction(event -> {
+				animals.remove(animal);
+				animals.add(index - 1, animal);
+				animals.notifyListeners(null);
+			});
+			contextMenu.getItems().add(upItem);
+		}
+		if (index < animals.size() - 1) {
+			final MenuItem downItem = new MenuItem("Nach unten");
+			downItem.setOnAction(event -> {
+				animals.remove(animal);
+				animals.add(index + 1, animal);
+				animals.notifyListeners(null);
+			});
+			contextMenu.getItems().add(downItem);
+		}
+
 		final MenuItem deleteItem = new MenuItem("Löschen");
 		deleteItem.setOnAction(e -> {
 			final Alert deleteConfirmation = new Alert(AlertType.CONFIRMATION);
@@ -270,8 +294,8 @@ public class AnimalController {
 
 			final Optional<ButtonType> result = deleteConfirmation.showAndWait();
 			if (result.isPresent() && result.get().equals(ButtonType.YES)) {
-				hero.getArr("Tiere").remove(animal);
-				hero.getArr("Tiere").notifyListeners(null);
+				animals.remove(animal);
+				animals.notifyListeners(null);
 			}
 		});
 		contextMenu.getItems().add(deleteItem);
@@ -294,7 +318,7 @@ public class AnimalController {
 		initProConSkills();
 
 		equipment = new EquipmentList(false);
-		equipment.setHero(hero, actualAnimal, "Ausrüstung", null, actualAnimal.getArr("Ausrüstung"));
+		equipment.setHero((JSONObject) animals.getParent(), actualAnimal, "Ausrüstung", null, actualAnimal.getArr("Ausrüstung"));
 		stack.getChildren().add(stack.getChildren().size() - 1, equipment.getControl());
 
 		updateInventories();
@@ -696,6 +720,14 @@ public class AnimalController {
 			list.setHero((JSONObject) actualAnimal.getParent().getParent(), inventory, name, inventories, actualAnimal.getArr("Ausrüstung"));
 
 			stack.getChildren().add(stack.getChildren().size() - 1, list.getControl());
+
+			GUIUtil.dragDropReorder(list.getControl(), moved -> {
+				final int index = stack.getChildren().indexOf(moved) - 5;
+				final JSONObject current = (JSONObject) ((Control) moved).getUserData();
+				inventories.remove(current);
+				inventories.add(index, current);
+				inventories.notifyListeners(null);
+			}, stack);
 		}, inventories);
 	}
 

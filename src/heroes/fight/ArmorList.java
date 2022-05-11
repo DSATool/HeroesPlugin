@@ -33,6 +33,7 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseButton;
 import jsonant.value.JSONArray;
 import jsonant.value.JSONObject;
 
@@ -183,6 +184,12 @@ public class ArmorList {
 
 			final JSONObject armorSets = fight.getObj("Rüstungskombinationen");
 
+			pane.setOnMouseClicked(e -> {
+				if (e.getButton().equals(MouseButton.PRIMARY) && e.getClickCount() == 2) {
+					new ArmorSetDialog(pane.getScene().getWindow(), hero, armorSets, armorSets.getObj(armorSet));
+				}
+			});
+
 			if (!isDefault) {
 				final MenuItem defaultItem = new MenuItem("Zum Standard machen");
 				defaultItem.setOnAction(event -> {
@@ -197,25 +204,25 @@ public class ArmorList {
 			contextMenu.getItems().add(editItem);
 
 			final int index = Util.getIndex(armorSets, armorSet);
-			if (index < armorSets.size() - 1) {
-				final MenuItem downItem = new MenuItem("Nach unten");
-				downItem.setOnAction(event -> {
-					final JSONObject current = armorSets.getObj(armorSet);
-					armorSets.removeKey(armorSet);
-					Util.insertAt(armorSets, armorSetting, current, index + 1);
-					armorSets.notifyListeners(null);
-				});
-				contextMenu.getItems().add(downItem);
-			}
 			if (index > 0) {
 				final MenuItem upItem = new MenuItem("Nach oben");
 				upItem.setOnAction(event -> {
 					final JSONObject current = armorSets.getObj(armorSet);
 					armorSets.removeKey(armorSet);
-					Util.insertAt(armorSets, armorSetting, current, index - 1);
+					Util.insertAt(armorSets, armorSet, current, index - 1);
 					armorSets.notifyListeners(null);
 				});
 				contextMenu.getItems().add(upItem);
+			}
+			if (index < armorSets.size() - 1) {
+				final MenuItem downItem = new MenuItem("Nach unten");
+				downItem.setOnAction(event -> {
+					final JSONObject current = armorSets.getObj(armorSet);
+					armorSets.removeKey(armorSet);
+					Util.insertAt(armorSets, armorSet, current, index + 1);
+					armorSets.notifyListeners(null);
+				});
+				contextMenu.getItems().add(downItem);
 			}
 
 			final MenuItem deleteItem = new MenuItem("Löschen");

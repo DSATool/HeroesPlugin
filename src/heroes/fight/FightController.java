@@ -26,6 +26,7 @@ import dsatool.ui.GraphicTableCell;
 import dsatool.ui.IntegerSpinnerTableCell;
 import dsatool.ui.ReactiveSpinner;
 import dsatool.util.ErrorLogger;
+import dsatool.util.Util;
 import heroes.ui.HeroTabController;
 import heroes.util.UiUtil;
 import javafx.beans.binding.Bindings;
@@ -145,7 +146,16 @@ public class FightController extends HeroTabController {
 		stack.getChildren().remove(4, stack.getChildren().size() - 1);
 		final JSONObject armorSets = hero.getObj("Kampf").getObjOrDefault("Rüstungskombinationen", new JSONObject(null));
 		for (final String name : armorSets.keySet()) {
-			stack.getChildren().add(stack.getChildren().size() - 1, new ArmorList(hero, name).getControl());
+			final Control armor = new ArmorList(hero, name).getControl();
+			stack.getChildren().add(stack.getChildren().size() - 1, armor);
+			GUIUtil.dragDropReorder(armor, moved -> {
+				final int index = stack.getChildren().indexOf(moved) - 4;
+				final String key = ((TitledPane) moved).getText();
+				final JSONObject current = armorSets.getObj(key);
+				armorSets.removeKey(key);
+				Util.insertAt(armorSets, key, current, index);
+				armorSets.notifyListeners(null);
+			}, stack);
 		}
 		final ArmorList armorList = new ArmorList(hero, null);
 		final Control armorControl = armorList.getControl();

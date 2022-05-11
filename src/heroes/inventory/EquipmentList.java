@@ -415,24 +415,22 @@ public class EquipmentList {
 		actualEquipment = inventory.getArr("Ausrüstung");
 
 		pane.setText(name);
+		pane.setUserData(inventory);
 
 		if (inventories != null) {
 			final ContextMenu contextMenu = new ContextMenu();
+
+			pane.setOnMouseClicked(e -> {
+				if (e.getButton().equals(MouseButton.PRIMARY) && e.getClickCount() == 2) {
+					new InventoryDialog(pane.getScene().getWindow(), inventories, inventory);
+				}
+			});
 
 			final MenuItem editItem = new MenuItem("Bearbeiten");
 			editItem.setOnAction(event -> new InventoryDialog(pane.getScene().getWindow(), inventories, inventory));
 			contextMenu.getItems().add(editItem);
 
 			final int index = inventories.indexOf(inventory);
-			if (index < inventories.size() - 1) {
-				final MenuItem downItem = new MenuItem("Nach unten");
-				downItem.setOnAction(event -> {
-					inventories.remove(inventory);
-					inventories.add(index + 1, inventory);
-					inventories.notifyListeners(null);
-				});
-				contextMenu.getItems().add(downItem);
-			}
 			if (index > 0) {
 				final MenuItem upItem = new MenuItem("Nach oben");
 				upItem.setOnAction(event -> {
@@ -441,6 +439,15 @@ public class EquipmentList {
 					inventories.notifyListeners(null);
 				});
 				contextMenu.getItems().add(upItem);
+			}
+			if (index < inventories.size() - 1) {
+				final MenuItem downItem = new MenuItem("Nach unten");
+				downItem.setOnAction(event -> {
+					inventories.remove(inventory);
+					inventories.add(index + 1, inventory);
+					inventories.notifyListeners(null);
+				});
+				contextMenu.getItems().add(downItem);
 			}
 
 			final MenuItem deleteItem = new MenuItem("Löschen");

@@ -52,6 +52,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Control;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
@@ -876,7 +877,9 @@ public class InventoryController extends HeroTabController {
 
 		equipmentList.setHero(hero, possessions, "Ausrüstung", null, items);
 
-		inventoryBox.getChildren().remove(11, inventoryBox.getChildren().size() - 1);
+		if (inventoryBox.getChildren().size() > 11) {
+			inventoryBox.getChildren().remove(11, inventoryBox.getChildren().size() - 1);
+		}
 
 		final JSONArray inventories = possessions.getArrOrDefault("Inventare", null);
 
@@ -887,6 +890,14 @@ public class InventoryController extends HeroTabController {
 			list.setHero(hero, inventory, name, inventories, possessions.getArr("Ausrüstung"));
 
 			inventoryBox.getChildren().add(inventoryBox.getChildren().size() - 1, list.getControl());
+
+			GUIUtil.dragDropReorder(list.getControl(), moved -> {
+				final int index = inventoryBox.getChildren().indexOf(moved) - 11;
+				final JSONObject current = (JSONObject) ((Control) moved).getUserData();
+				inventories.remove(current);
+				inventories.add(index, current);
+				inventories.notifyListeners(null);
+			}, inventoryBox);
 		}, inventories);
 	}
 
