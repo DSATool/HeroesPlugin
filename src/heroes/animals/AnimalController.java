@@ -284,7 +284,7 @@ public class AnimalController {
 		this.type = type;
 		actualAnimal = animal;
 
-		final BasicValuesController basicValues = new BasicValuesController(HeroTabController.isEditable.not(), type);
+		final BasicValuesController basicValues = new BasicValuesController(HeroTabController.isEditable.not(), type, type == CharacterType.HORSE);
 		basicValues.setCharacter(animal);
 		stack.getChildren().add(1, basicValues.getControl());
 
@@ -405,7 +405,7 @@ public class AnimalController {
 				attributesTable.getItems().add(new AnimalAttribute(attribute, attributes.getObj(attribute)));
 			}
 			final JSONObject stats = actualAnimal.getObj("Basiswerte");
-			for (final String stat : new String[] { "Tragkraft", "Zugkraft", "Loyalität", "Lebensenergie" }) {
+			for (final String stat : new String[] { "Loyalität", "Lebensenergie" }) {
 				attributesTable.getItems().add(new AnimalAttribute(stat, stats.getObj(stat)));
 			}
 		} else {
