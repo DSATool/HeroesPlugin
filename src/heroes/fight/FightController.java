@@ -26,7 +26,6 @@ import dsatool.ui.GraphicTableCell;
 import dsatool.ui.IntegerSpinnerTableCell;
 import dsatool.ui.ReactiveSpinner;
 import dsatool.util.ErrorLogger;
-import dsatool.util.Util;
 import heroes.ui.HeroTabController;
 import heroes.util.UiUtil;
 import javafx.beans.binding.Bindings;
@@ -125,7 +124,7 @@ public class FightController extends HeroTabController {
 
 	@FXML
 	private void addArmorSet() {
-		new ArmorSetDialog(pane.getScene().getWindow(), hero, hero.getObj("Kampf").getObj("Rüstungskombinationen"), null);
+		new ArmorSetDialog(pane.getScene().getWindow(), hero, hero.getObj("Kampf").getArr("Rüstungskombinationen"), null);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -144,16 +143,15 @@ public class FightController extends HeroTabController {
 		closeCombatTable.getItems().add(new CloseCombatWeapon(hero, HeroUtil.infight, HeroUtil.infight, closeCombatTalents, actualCloseCombatTalents));
 
 		stack.getChildren().remove(4, stack.getChildren().size() - 1);
-		final JSONObject armorSets = hero.getObj("Kampf").getObjOrDefault("Rüstungskombinationen", new JSONObject(null));
-		for (final String name : armorSets.keySet()) {
-			final Control armor = new ArmorList(hero, name).getControl();
+		final JSONArray armorSets = hero.getObj("Kampf").getArrOrDefault("Rüstungskombinationen", new JSONArray(null));
+		for (int i = 0; i < armorSets.size(); ++i) {
+			final Control armor = new ArmorList(hero, armorSets.getObj(i)).getControl();
 			stack.getChildren().add(stack.getChildren().size() - 1, armor);
 			GUIUtil.dragDropReorder(armor, moved -> {
 				final int index = stack.getChildren().indexOf(moved) - 4;
-				final String key = ((TitledPane) moved).getText();
-				final JSONObject current = armorSets.getObj(key);
-				armorSets.removeKey(key);
-				Util.insertAt(armorSets, key, current, index);
+				final JSONArray current = (JSONArray) ((TitledPane) moved).getUserData();
+				armorSets.remove(current);
+				armorSets.add(index, current);
 				armorSets.notifyListeners(null);
 			}, stack);
 		}

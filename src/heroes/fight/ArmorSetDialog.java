@@ -17,7 +17,6 @@ package heroes.fight;
 
 import dsa41basis.util.HeroUtil;
 import dsatool.util.ErrorLogger;
-import dsatool.util.Util;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -44,7 +43,7 @@ public class ArmorSetDialog {
 	@FXML
 	private Button cancelButton;
 
-	public ArmorSetDialog(final Window window, final JSONObject hero, final JSONObject armorSets, final JSONObject armorSet) {
+	public ArmorSetDialog(final Window window, final JSONObject hero, final JSONArray armorSets, final JSONObject armorSet) {
 		final FXMLLoader fxmlLoader = new FXMLLoader();
 
 		fxmlLoader.setController(this);
@@ -62,26 +61,27 @@ public class ArmorSetDialog {
 		stage.setResizable(false);
 		stage.initOwner(window);
 
-		name.setText(armorSet != null ? armorSets.keyOf(armorSet) : "Neue Rüstungskombination");
+		name.setText(armorSet != null ? armorSet.getStringOrDefault("Name", nextFreeName(armorSets)) : nextFreeName(armorSets));
 
 		okButton.setOnAction(event -> {
 			final String newName = name.getText();
-			if (armorSets.containsKey(newName) && !newName.equals(armorSets.keyOf(armorSet))) {
-				final Alert alert = new Alert(AlertType.WARNING);
-				alert.setTitle("Name bereits vergeben");
-				alert.setHeaderText("Rüstungskombinationen müssen eindeutig benannt sein.");
-				alert.setContentText("Die Rüstungskombination konnte nicht gespeichert werden.");
-				alert.getButtonTypes().setAll(ButtonType.OK);
-			} else {
-				JSONObject actualArmorSet = armorSet;
-				if (armorSet == null) {
-					actualArmorSet = new JSONObject(armorSets);
-					armorSets.put(newName, actualArmorSet);
+
+			if (armorSet == null) {
+				final JSONObject actualArmorSet = new JSONObject(armorSets);
+				actualArmorSet.put("Name", newName);
+				armorSets.add(actualArmorSet);
+				actualArmorSet.notifyListeners(null);
+				stage.close();
+			} else if (!newName.equals(armorSet.getStringOrDefault("Name", null))) {
+				if (isNameUsed(armorSets, newName)) {
+					final Alert alert = new Alert(AlertType.WARNING);
+					alert.setTitle("Name bereits vergeben");
+					alert.setHeaderText("Rüstungskombinationen müssen eindeutig benannt sein.");
+					alert.setContentText("Die Rüstungskombination konnte nicht gespeichert werden.");
+					alert.getButtonTypes().setAll(ButtonType.OK);
 				} else {
-					final String oldName = armorSets.keyOf(armorSet);
-					final int index = Util.getIndex(armorSets, oldName);
-					armorSets.removeKey(oldName);
-					Util.insertAt(armorSets, newName, actualArmorSet, index);
+					final String oldName = armorSet.getString("Name");
+					armorSet.put("Name", newName);
 					HeroUtil.foreachInventoryItem(hero, item -> item.containsKey("Kategorien") && item.getArr("Kategorien").contains("Rüstung"),
 							(item, extraInventory) -> {
 								final JSONArray sets = item.getArrOrDefault("Rüstungskombinationen", new JSONArray(null));
@@ -90,14 +90,9 @@ public class ArmorSetDialog {
 									sets.add(newName);
 								}
 							});
-					if (oldName.equals(hero.getObj("Kampf").getStringOrDefault("Rüstung", null))) {
-						final JSONObject fight = hero.getObj("Kampf");
-						fight.put("Rüstung", newName);
-						fight.notifyListeners(null);
-					}
+					armorSet.notifyListeners(null);
+					stage.close();
 				}
-				actualArmorSet.notifyListeners(null);
-				stage.close();
 			}
 		});
 
@@ -107,6 +102,20 @@ public class ArmorSetDialog {
 		cancelButton.setCancelButton(true);
 
 		stage.show();
+	}
+
+	private boolean isNameUsed(final JSONArray armorSets, final String name) {
+		for (int i = 0; i < armorSets.size(); ++i) {
+			if (name.equals(armorSets.getObj(i).getStringOrDefault("Name", null))) return true;
+		}
+		return false;
+	}
+
+	private String nextFreeName(final JSONArray armorSets) {
+		if (!isNameUsed(armorSets, "Neue Rüstungskombination")) return "Neue Rüstungskombination";
+		for (int i = 1; true; ++i) {
+			if (!isNameUsed(armorSets, "Neue Rüstungskombination " + i)) return "Neue Rüstungskombination" + i;
+		}
 	}
 
 }
