@@ -38,6 +38,8 @@ import dsatool.util.Tuple;
 import dsatool.util.Util;
 import heroes.ui.HeroTabController;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.event.Event;
@@ -303,11 +305,13 @@ public class TalentGroupController {
 				spellAttributesColumn.setCellValueFactory(new PropertyValueFactory<Spell, String>("attributes"));
 				++i;
 				final TableColumn<Talent, Boolean> spellPrimaryColumn = (TableColumn<Talent, Boolean>) table.getColumns().get(i);
-				spellPrimaryColumn.setCellValueFactory(new PropertyValueFactory<Talent, Boolean>("primarySpell"));
-				spellPrimaryColumn.setCellFactory(CheckBoxTableCell.forTableColumn(spellPrimaryColumn));
-				spellPrimaryColumn.setOnEditCommit((final CellEditEvent<Talent, Boolean> t) -> {
-					((Spell) t.getRowValue()).setPrimarySpell(t.getNewValue());
+				spellPrimaryColumn.setCellValueFactory((c) -> {
+					final Spell spell = (Spell) c.getValue();
+					final BooleanProperty property = new SimpleBooleanProperty(spell.isPrimarySpell());
+					property.addListener((o, oldV, newV) -> spell.setPrimarySpell(newV));
+					return property;
 				});
+				spellPrimaryColumn.setCellFactory(CheckBoxTableCell.forTableColumn(spellPrimaryColumn));
 				spellPrimaryColumn.editableProperty().bind(HeroTabController.isEditable);
 				++i;
 				break;
@@ -316,13 +320,12 @@ public class TalentGroupController {
 		}
 
 		final TableColumn<Talent, Boolean> primaryColumn = (TableColumn<Talent, Boolean>) table.getColumns().get(i);
-		primaryColumn.setCellValueFactory(new PropertyValueFactory<Talent, Boolean>("primaryTalent"));
-		primaryColumn.setCellFactory(CheckBoxTableCell.forTableColumn(primaryColumn));
-		primaryColumn.setOnEditCommit((final CellEditEvent<Talent, Boolean> t) -> {
-			if (t.getRowValue() != null) {
-				t.getRowValue().setPrimaryTalent(t.getNewValue());
-			}
+		primaryColumn.setCellValueFactory((c) -> {
+			final BooleanProperty property = new SimpleBooleanProperty(c.getValue().isPrimaryTalent());
+			property.addListener((o, oldV, newV) -> c.getValue().setPrimaryTalent(newV));
+			return property;
 		});
+		primaryColumn.setCellFactory(CheckBoxTableCell.forTableColumn(primaryColumn));
 		primaryColumn.editableProperty().bind(HeroTabController.isEditable);
 		++i;
 
