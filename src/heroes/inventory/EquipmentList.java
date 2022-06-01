@@ -16,7 +16,6 @@
 package heroes.inventory;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -497,8 +496,8 @@ public class EquipmentList {
 				final JSONArray categories = item.getArr("Kategorien");
 				boolean found = false;
 				if (categories != null) {
-					for (final String category : Arrays.asList("Kleidung", "Nahkampfwaffe", "Fernkampfwaffe", "Schild", "Parierwaffe", "Rüstung",
-							"Wertgegenstand", "Alchemikum", "Artefakt", "Bannschwert"))
+					for (final String category : List.of("Kleidung", "Nahkampfwaffe", "Fernkampfwaffe", "Schild", "Parierwaffe", "Rüstung", "Wertgegenstand",
+							"Alchemikum", "Artefakt", "Bannschwert"))
 						if (categories.contains(category)) {
 							found = true;
 						}

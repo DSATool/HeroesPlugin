@@ -16,7 +16,6 @@
 package heroes.talents;
 
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -180,18 +179,18 @@ public class TalentGroupController {
 
 			contextMenu.getItems().addAll(editItem, enhanceItem);
 
-			if (!Arrays.asList("Nahkampftalente", "Fernkampftalente").contains(name)) {
+			if (!List.of("Nahkampftalente", "Fernkampftalente").contains(name)) {
 				final MenuItem rollItem = new MenuItem("Talentprobe");
 				rollItem.setOnAction(o -> {
 					final Talent item = row.getItem();
-					new TalentRollDialog(pane.getScene().getWindow(), item.getName(), item instanceof Spell ? ((Spell) item).getRepresentation() : null,
+					new TalentRollDialog(pane.getScene().getWindow(), item.getName(), item instanceof final Spell s ? s.getRepresentation() : null,
 							new JSONObject[] { hero });
 				});
 				final MenuItem rollGroupItem = new MenuItem("Gruppenprobe");
 				rollGroupItem.setOnAction(o -> {
 					final Talent item = row.getItem();
 					final List<JSONObject> characters = ResourceManager.getAllResources("characters/");
-					new TalentRollDialog(pane.getScene().getWindow(), item.getName(), item instanceof Spell ? ((Spell) item).getRepresentation() : null,
+					new TalentRollDialog(pane.getScene().getWindow(), item.getName(), item instanceof final Spell s ? s.getRepresentation() : null,
 							characters.toArray(new JSONObject[characters.size()]));
 				});
 				contextMenu.getItems().addAll(rollItem, rollGroupItem);

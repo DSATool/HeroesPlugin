@@ -112,10 +112,10 @@ public class TalentEnhancementDialog {
 			final int usedSes = Math.min(ses.getValue(), target.getValue() - startValue);
 			final JSONArray history = hero.getArr("Historie");
 			final JSONObject historyEntry = new JSONObject(history);
-			if (talent instanceof Spell) {
+			if (talent instanceof final Spell s) {
 				historyEntry.put("Typ", "Zauber");
-				historyEntry.put("Zauber", talent.getName());
-				historyEntry.put("Repräsentation", ((Spell) talent).getRepresentation());
+				historyEntry.put("Zauber", s.getName());
+				historyEntry.put("Repräsentation", s.getRepresentation());
 			} else {
 				historyEntry.put("Typ", "Talent");
 				historyEntry.put("Talent", talent.getName());

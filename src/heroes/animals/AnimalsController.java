@@ -28,7 +28,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.Control;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.VBox;
@@ -123,7 +122,7 @@ public class AnimalsController extends HeroTabController {
 			items.add(i, newController.getControl());
 			GUIUtil.dragDropReorder(newController.getControl(), moved -> {
 				final int index = animalsBox.getChildren().indexOf(moved);
-				final JSONObject current = (JSONObject) ((Control) moved).getUserData();
+				final JSONObject current = (JSONObject) moved.getUserData();
 				animals.remove(current);
 				animals.add(index, current);
 				animals.notifyListeners(null);
@@ -133,8 +132,8 @@ public class AnimalsController extends HeroTabController {
 
 		if (controllers.size() > 1) {
 			for (final Node item : items) {
-				if (item instanceof TitledPane) {
-					((TitledPane) item).setExpanded(false);
+				if (item instanceof final TitledPane tp) {
+					tp.setExpanded(false);
 				}
 			}
 		}

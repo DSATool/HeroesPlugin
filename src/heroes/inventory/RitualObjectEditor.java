@@ -209,12 +209,12 @@ public class RitualObjectEditor {
 				if (choice == null) {
 					final Label l = new Label();
 					createGraphic(l, () -> "", s -> {});
-				} else if (choice instanceof Integer) {
-					final ReactiveSpinner<Integer> r = new ReactiveSpinner<>(1, 99, (Integer) choice);
+				} else if (choice instanceof final Integer i) {
+					final ReactiveSpinner<Integer> r = new ReactiveSpinner<>(1, 99, i);
 					r.setEditable(true);
 					createGraphic(r, r::getValue, s -> r.getValueFactory().setValue((Integer) s));
-				} else if (choice instanceof String) {
-					final TextField t = new TextField((String) choice);
+				} else if (choice instanceof final String str) {
+					final TextField t = new TextField(str);
 					createGraphic(t, t::getText, s -> t.setText((String) s));
 				}
 			}

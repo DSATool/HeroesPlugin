@@ -29,8 +29,8 @@ public class UiUtil {
 			} else {
 				if (item instanceof Integer || item instanceof Long) {
 					setText(item.toString());
-				} else if (item instanceof Double) {
-					setText(Integer.toString(((Double) item).intValue()));
+				} else if (item instanceof final Double d) {
+					setText(Integer.toString(d.intValue()));
 				}
 			}
 		}

@@ -149,7 +149,7 @@ public class FightController extends HeroTabController {
 			stack.getChildren().add(stack.getChildren().size() - 1, armor);
 			GUIUtil.dragDropReorder(armor, moved -> {
 				final int index = stack.getChildren().indexOf(moved) - 4;
-				final JSONArray current = (JSONArray) ((TitledPane) moved).getUserData();
+				final JSONArray current = (JSONArray) moved.getUserData();
 				armorSets.remove(current);
 				armorSets.add(index, current);
 				armorSets.notifyListeners(null);

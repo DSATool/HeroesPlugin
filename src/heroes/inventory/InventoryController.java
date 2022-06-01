@@ -52,7 +52,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Control;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
@@ -893,7 +892,7 @@ public class InventoryController extends HeroTabController {
 
 			GUIUtil.dragDropReorder(list.getControl(), moved -> {
 				final int index = inventoryBox.getChildren().indexOf(moved) - 11;
-				final JSONObject current = (JSONObject) ((Control) moved).getUserData();
+				final JSONObject current = (JSONObject) moved.getUserData();
 				inventories.remove(current);
 				inventories.add(index, current);
 				inventories.notifyListeners(null);
