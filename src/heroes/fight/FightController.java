@@ -15,6 +15,8 @@
  */
 package heroes.fight;
 
+import java.util.List;
+
 import dsa41basis.fight.CloseCombatWeapon;
 import dsa41basis.fight.DefensiveWeapon;
 import dsa41basis.fight.RangedWeapon;
@@ -25,6 +27,7 @@ import dsatool.resources.ResourceManager;
 import dsatool.ui.GraphicTableCell;
 import dsatool.ui.IntegerSpinnerTableCell;
 import dsatool.ui.ReactiveSpinner;
+import dsatool.ui.RenameDialog;
 import dsatool.util.ErrorLogger;
 import heroes.ui.HeroTabController;
 import heroes.util.UiUtil;
@@ -124,7 +127,8 @@ public class FightController extends HeroTabController {
 
 	@FXML
 	private void addArmorSet() {
-		new ArmorSetDialog(pane.getScene().getWindow(), hero, hero.getObj("Kampf").getArr("Rüstungskombinationen"), null);
+		new RenameDialog(pane.getScene().getWindow(), "Rüstungskombination", "Rüstungkombinationen", hero.getObj("Kampf").getArr("Rüstungskombinationen"), null,
+				(oldName, newName) -> {}, List.of("Rüstung"));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -149,7 +153,7 @@ public class FightController extends HeroTabController {
 			stack.getChildren().add(stack.getChildren().size() - 1, armor);
 			GUIUtil.dragDropReorder(armor, moved -> {
 				final int index = stack.getChildren().indexOf(moved) - 4;
-				final JSONArray current = (JSONArray) moved.getUserData();
+				final JSONObject current = (JSONObject) moved.getUserData();
 				armorSets.remove(current);
 				armorSets.add(index, current);
 				armorSets.notifyListeners(null);

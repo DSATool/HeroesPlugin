@@ -15,10 +15,13 @@
  */
 package heroes.fight;
 
+import java.util.List;
+
 import dsa41basis.fight.Armor;
 import dsa41basis.util.HeroUtil;
 import dsatool.gui.GUIUtil;
 import dsatool.resources.Settings;
+import dsatool.ui.RenameDialog;
 import dsatool.util.ErrorLogger;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -75,6 +78,8 @@ public class ArmorList {
 		} catch (final Exception e) {
 			ErrorLogger.logError(e);
 		}
+
+		pane.setUserData(armorSet);
 
 		pane.setText(armorSet != null ? armorSet.getStringOrDefault("Name", "Unbenannte Rüstungskombination") : "Rüstung");
 
@@ -188,7 +193,7 @@ public class ArmorList {
 
 			pane.setOnMouseClicked(e -> {
 				if (e.getButton().equals(MouseButton.PRIMARY) && e.getClickCount() == 2) {
-					new ArmorSetDialog(pane.getScene().getWindow(), hero, armorSets, armorSet);
+					rename(hero, armorSets, armorSet);
 				}
 			});
 
@@ -206,7 +211,7 @@ public class ArmorList {
 			}
 
 			final MenuItem editItem = new MenuItem("Bearbeiten");
-			editItem.setOnAction(event -> new ArmorSetDialog(pane.getScene().getWindow(), hero, armorSets, armorSet));
+			editItem.setOnAction(event -> rename(hero, armorSets, armorSet));
 			contextMenu.getItems().add(editItem);
 
 			final int index = armorSets.indexOf(armorSet);
@@ -258,6 +263,22 @@ public class ArmorList {
 
 	public Control getControl() {
 		return pane;
+	}
+
+	private void rename(final JSONObject hero, final JSONArray armorSets, final JSONObject armorSet) {
+		new RenameDialog(pane.getScene().getWindow(), "Rüstungskombination", "Rüstungkombinationen", armorSets, armorSet,
+				(oldName, newName) -> {
+					if (oldName != null) {
+						HeroUtil.foreachInventoryItem(hero, item -> item.containsKey("Kategorien") && item.getArr("Kategorien").contains("Rüstung"),
+								(item, extraInventory) -> {
+									final JSONArray sets = item.getArrOrDefault("Rüstungskombinationen", new JSONArray(null));
+									if (sets.contains(oldName)) {
+										sets.remove(oldName);
+										sets.add(newName);
+									}
+								});
+					}
+				}, List.of("Rüstung"));
 	}
 
 }
