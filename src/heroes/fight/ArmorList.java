@@ -136,16 +136,17 @@ public class ArmorList {
 
 			final ContextMenu contextMenu = new ContextMenu();
 
-			final JSONObject armorSets = fight.getObjOrDefault("Rüstungskombinationen", null);
+			final JSONArray armorSets = fight.getArrOrDefault("Rüstungskombinationen", null);
 			if (armorSets != null && armorSets.size() > (armorSet == null ? 0 : 1)) {
 				final Menu setsItem = new Menu("Hinzufügen zu");
-				for (final String set : armorSets.keySet()) {
-					if (armorSet == null || !set.equals(armorSet.getString("Name"))) {
-						final MenuItem addItem = new MenuItem(set);
+				for (final JSONObject set : armorSets.getObjs()) {
+					final String name = set.getStringOrDefault("Name", "Unbennante Rüstungskombination");
+					if (armorSet == null || !name.equals(armorSet.getString("Name"))) {
+						final MenuItem addItem = new MenuItem(name);
 						addItem.setOnAction(event -> {
 							final JSONObject item = row.getItem().getItem();
 							final JSONArray sets = item.getArr("Rüstungskombinationen");
-							sets.add(set);
+							sets.add(name);
 							item.notifyListeners(null);
 						});
 						setsItem.getItems().add(addItem);
@@ -239,6 +240,7 @@ public class ArmorList {
 				armorSets.remove(armorSet);
 				HeroUtil.foreachInventoryItem(hero, item -> item.containsKey("Kategorien") && item.getArr("Kategorien").contains("Rüstung"),
 						(item, extraInventory) -> item.getArrOrDefault("Rüstungskombinationen", new JSONArray(null)).remove(armorSet.getString("Name")));
+				hero.notifyListeners(null);
 			});
 			contextMenu.getItems().add(deleteItem);
 
