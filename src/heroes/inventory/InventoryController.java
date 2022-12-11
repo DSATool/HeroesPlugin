@@ -29,7 +29,6 @@ import dsa41basis.inventory.Clothing;
 import dsa41basis.inventory.InventoryItem;
 import dsa41basis.inventory.Potion;
 import dsa41basis.inventory.RitualObject;
-import dsa41basis.inventory.Valuable;
 import dsa41basis.util.DSAUtil;
 import dsa41basis.util.HeroUtil;
 import dsatool.gui.GUIUtil;
@@ -216,11 +215,11 @@ public class InventoryController extends HeroTabController {
 	@FXML
 	private Button valuablesAddButton;
 	@FXML
-	private TableColumn<Valuable, String> valuablesNameColumn;
+	private TableColumn<InventoryItem, String> valuablesNameColumn;
 	@FXML
-	private TableColumn<Valuable, String> valuablesNotesColumn;
+	private TableColumn<InventoryItem, String> valuablesNotesColumn;
 	@FXML
-	private TableView<Valuable> valuablesTable;
+	private TableView<InventoryItem> valuablesTable;
 	@FXML
 	private TextField newValuableField;
 
@@ -551,7 +550,7 @@ public class InventoryController extends HeroTabController {
 		});
 
 		valuablesNotesColumn.setCellFactory(o -> {
-			final TableCell<Valuable, String> cell = new GraphicTableCell<>(false) {
+			final TableCell<InventoryItem, String> cell = new GraphicTableCell<>(false) {
 				@Override
 				protected void createGraphic() {
 					final TextField t = new TextField();
@@ -615,7 +614,7 @@ public class InventoryController extends HeroTabController {
 					case "Schild", "Parierwaffe" -> new DefensiveWeaponEditor(window, (DefensiveWeapon) item);
 					case "Rüstung" -> new ArmorEditor(window, (Armor) item);
 					case "Ritualobjekt" -> new RitualObjectEditor(window, hero, (RitualObject) item);
-					case "Wertgegenstand" -> new ValuableEditor(window, (Valuable) item);
+					case "Wertgegenstand" -> new ItemEditor(window, item);
 					case "Alchemikum" -> new PotionEditor(window, (Potion) item);
 					case "Artefakt" -> new ArtifactEditor(window, (Artifact) item);
 					case "Kleidung" -> new ClothingEditor(window, (Clothing) item);
@@ -772,7 +771,7 @@ public class InventoryController extends HeroTabController {
 				}
 				if (categories.contains("Wertgegenstand")) {
 					final JSONObject actual = item.getObjOrDefault("Wertgegenstand", item);
-					valuablesTable.getItems().add(new Valuable(actual, item));
+					valuablesTable.getItems().add(new InventoryItem(actual, item));
 				}
 				if (categories.contains("Alchemikum")) {
 					final JSONObject actual = item.getObjOrDefault("Alchemikum", item);

@@ -42,6 +42,8 @@ public class ItemEditor {
 	@FXML
 	private ReactiveSpinner<Double> weight;
 	@FXML
+	private ReactiveSpinner<Double> value;
+	@FXML
 	private Hyperlink books;
 	@FXML
 	private Button cancelButton;
@@ -59,17 +61,19 @@ public class ItemEditor {
 
 		final Stage stage = new Stage();
 		stage.setTitle("Bearbeiten");
-		stage.setScene(new Scene(root, 290, 113));
+		stage.setScene(new Scene(root, 290, 140));
 		stage.initModality(Modality.WINDOW_MODAL);
 		stage.setResizable(false);
 		stage.initOwner(window);
 
 		name.setText(item.getName());
+		value.getValueFactory().setValue(item.getValue());
 		weight.getValueFactory().setValue(item.getWeight());
 		notes.setText(item.getNotes());
 
 		okButton.setOnAction(event -> {
 			item.setName(name.getText());
+			item.setValue(value.getValue());
 			item.setWeight(weight.getValue());
 			item.setNotes(notes.getText());
 			stage.close();

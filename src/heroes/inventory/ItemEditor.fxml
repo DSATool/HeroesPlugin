@@ -14,6 +14,10 @@
       <TextField fx:id="name" prefWidth="200" />
    </HBox>
    <HBox spacing="2" alignment="CENTER_LEFT" >
+      <Label text="Wert (S): " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+      <ReactiveSpinner fx:id="value" dmin="0.0" dmax="99999.99" editable="true" prefWidth="90" />
+   </HBox>
+   <HBox spacing="2" alignment="CENTER_LEFT" >
       <Label text="Gewicht: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
       <ReactiveSpinner fx:id="weight" dmin="0.0" dmax="999.95" initialValue="0.0" amountToStepBy="0.05" editable="true" prefWidth="80" />
    </HBox>
