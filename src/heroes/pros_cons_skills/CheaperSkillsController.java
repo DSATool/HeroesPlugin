@@ -36,7 +36,8 @@ public class CheaperSkillsController extends ProsOrConsController {
 		super(parent, "Verbilligte Sonderfertigkeiten", "Sonderfertigkeit", true, null, "Verbilligte Sonderfertigkeiten", new SimpleBooleanProperty(true));
 
 		valueColumn.setText("Verbilligungen");
-		valueColumn.setPrefWidth(100);
+		valueColumn.setMinWidth(100);
+		valueColumn.setMaxWidth(100);
 		valueColumn.setCellValueFactory(new PropertyValueFactory<ProOrCon, Integer>("numCheaper"));
 		valueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(1, 9));
 		valueColumn.setOnEditCommit(t -> {
