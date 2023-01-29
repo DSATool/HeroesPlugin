@@ -625,7 +625,7 @@ public class InventoryController extends HeroTabController {
 			row.setOnMouseClicked(event -> {
 				if (MouseButton.PRIMARY.equals(event.getButton()) && event.getClickCount() == 2) {
 					EventTarget target = event.getTarget();
-					while (!(target instanceof TableCell)) {
+					while (!(target instanceof TableCell) && target != null) {
 						target = ((Node) target).getParent();
 					}
 					if (target == null || !((TableCell<?, ?>) target).getTableColumn().isEditable()) {
@@ -867,9 +867,6 @@ public class InventoryController extends HeroTabController {
 		items = possessions.getArr("Ausrüstung");
 
 		inventoryBox.getChildren().remove(ritualObjectPane);
-		if (HeroUtil.isMagical(hero)) {
-			inventoryBox.getChildren().add(inventoryBox.getChildren().size() - 2, ritualObjectPane);
-		}
 
 		refreshTables();
 
@@ -877,6 +874,10 @@ public class InventoryController extends HeroTabController {
 
 		if (inventoryBox.getChildren().size() > 11) {
 			inventoryBox.getChildren().remove(11, inventoryBox.getChildren().size() - 1);
+		}
+
+		if (HeroUtil.isMagical(hero)) {
+			inventoryBox.getChildren().add(inventoryBox.getChildren().size() - 6, ritualObjectPane);
 		}
 
 		final JSONArray inventories = possessions.getArrOrDefault("Inventare", null);
