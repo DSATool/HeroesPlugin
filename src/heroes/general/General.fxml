@@ -68,7 +68,7 @@
          </GridPane>
       </TitledPane>
       <TitledPane text="Aussehen" >
-         <GridPane hgap="2" vgap="2" >
+         <GridPane hgap="5" vgap="2" >
             <columnConstraints>
                <ColumnConstraints hgrow="NEVER" />
                <ColumnConstraints hgrow="ALWAYS" />
@@ -81,7 +81,7 @@
                <Label text="Geburtstag:" />
                <HBox spacing="2" GridPane.columnIndex="1" GridPane.columnSpan="3" >
                   <GridPane.margin><Insets top="2" right="0" bottom="0" left="0"/></GridPane.margin>
-                  <ReactiveSpinner fx:id="birthday" imin="1" imax="30" initialValue="1" prefWidth="55" editable="true">
+                  <ReactiveSpinner fx:id="birthday" imin="1" imax="30" initialValue="1" prefWidth="65" editable="true">
                      <styleClass>
                         <String fx:value="disabled-opaque" />
                      </styleClass>
@@ -105,15 +105,15 @@
                   </ReactiveSpinner>
                <Label text="Gewicht:" GridPane.rowIndex="1" GridPane.columnIndex="4" />
                <ReactiveSpinner fx:id="weight" imin="0" imax="500" initialValue="75" maxWidth="173" GridPane.rowIndex="1" GridPane.columnIndex="5" editable="true">
-                     <styleClass>
-                        <String fx:value="disabled-opaque" />
-                     </styleClass>
-                  </ReactiveSpinner>
-               <Label text="Augenfarbe:" GridPane.rowIndex="2" />
+                  <styleClass>
+                     <String fx:value="disabled-opaque" />
+                  </styleClass>
+               </ReactiveSpinner>
+               <Label text="Augenfarbe:" GridPane.rowIndex="2" minWidth="85" />
                <ReactiveComboBox fx:id="eyecolor" editable="true" styleClass="disabled-opaque" GridPane.rowIndex="2" GridPane.columnIndex="1" />
-               <Label fx:id="haircolorLabel" text="Haarfarbe:" GridPane.rowIndex="2" GridPane.columnIndex="2" />
+               <Label fx:id="haircolorLabel" text="Haarfarbe:" GridPane.rowIndex="2" GridPane.columnIndex="2" minWidth="70" />
                <ReactiveComboBox fx:id="haircolor" editable="true" styleClass="disabled-opaque" GridPane.rowIndex="2" GridPane.columnIndex="3" />
-               <Label fx:id="skincolorLabel" text="Hautfarbe:" GridPane.rowIndex="2" GridPane.columnIndex="4" />
+               <Label fx:id="skincolorLabel" text="Hautfarbe:" GridPane.rowIndex="2" GridPane.columnIndex="4" minWidth="70" />
                <ReactiveComboBox fx:id="skincolor" editable="true" styleClass="disabled-opaque" GridPane.rowIndex="2" GridPane.columnIndex="5" />
             </children>
          </GridPane>
@@ -128,9 +128,9 @@
                   </styleClass>
                   <columns>
                      <TableColumn fx:id="attributesNameColumn" text="Eigenschaft" minWidth="100" resizable="false" sortable="false" />
-                     <TableColumn fx:id="attributesValueColumn" text="Wert" minWidth="60" maxWidth="60" resizable="false" sortable="false" editable="true" />
-                     <TableColumn fx:id="attributesModifierColumn" text="Mod." minWidth="60" maxWidth="60" resizable="false" sortable="false" editable="true" />
-                     <TableColumn fx:id="attributesCurrentColumn" text="Akt." minWidth="50" maxWidth="50" resizable="false" sortable="false" />               
+                     <TableColumn fx:id="attributesValueColumn" text="Wert" minWidth="65" maxWidth="65" resizable="false" sortable="false" editable="true" style="-fx-alignment: CENTER;" />
+                     <TableColumn fx:id="attributesModifierColumn" text="Mod." minWidth="70" maxWidth="70" resizable="false" sortable="false" editable="true" style="-fx-alignment: CENTER;" />
+                     <TableColumn fx:id="attributesCurrentColumn" text="Akt." minWidth="50" maxWidth="50" resizable="false" sortable="false" style="-fx-alignment: CENTER;" />               
                   </columns>
                </TableView>
             </VBox>
@@ -142,8 +142,8 @@
                   </styleClass>
                   <columns>
                      <TableColumn fx:id="derivedNameColumn" text="Basiswert" minWidth="100" resizable="false" sortable="false" />
-                     <TableColumn fx:id="derivedModifierColumn" text="Mod." minWidth="60" maxWidth="60" resizable="false" sortable="false" editable="true" />
-                     <TableColumn fx:id="derivedCurrentColumn" text="Akt." minWidth="50" maxWidth="50" resizable="false" sortable="false" />               
+                     <TableColumn fx:id="derivedModifierColumn" text="Mod." minWidth="70" maxWidth="70" resizable="false" sortable="false" editable="true" style="-fx-alignment: CENTER;" />
+                     <TableColumn fx:id="derivedCurrentColumn" text="Akt." minWidth="50" maxWidth="50" resizable="false" sortable="false" style="-fx-alignment: CENTER;" />               
                   </columns>
                </TableView>
             </VBox>
@@ -156,10 +156,10 @@
                <String fx:value="remove-horizontal-scrollbar" />
             </styleClass>
             <columns>
-               <TableColumn fx:id="energiesNameColumn" text="Energie" minWidth="100" maxWidth="100" resizable="false" sortable="false" />
-               <TableColumn fx:id="energiesPermanentColumn" text="Perm." minWidth="60" maxWidth="60" resizable="false" sortable="false" editable="true" />
-               <TableColumn fx:id="energiesBoughtColumn" text="Kauf" minWidth="60" maxWidth="60" resizable="false" sortable="false" editable="true" />
-               <TableColumn fx:id="energiesModifierColumn" text="Mod." minWidth="60" maxWidth="60" resizable="false" sortable="false" editable="true" />
+               <TableColumn fx:id="energiesNameColumn" text="Energie" minWidth="110" maxWidth="110" resizable="false" sortable="false" />
+               <TableColumn fx:id="energiesPermanentColumn" text="Perm." minWidth="70" maxWidth="70" resizable="false" sortable="false" editable="true" style="-fx-alignment: CENTER;" />
+               <TableColumn fx:id="energiesBoughtColumn" text="Kauf" minWidth="65" maxWidth="65" resizable="false" sortable="false" editable="true" style="-fx-alignment: CENTER;" />
+               <TableColumn fx:id="energiesModifierColumn" text="Mod." minWidth="70" maxWidth="70" resizable="false" sortable="false" editable="true" style="-fx-alignment: CENTER;" />
                <TableColumn fx:id="energiesCurrentColumn" text="Aktuell" minWidth="100" resizable="false" sortable="false" />              
             </columns>
          </TableView>

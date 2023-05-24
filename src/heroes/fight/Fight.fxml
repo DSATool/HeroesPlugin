@@ -25,7 +25,7 @@
                <TableColumn fx:id="closeCombatNameColumn" text="Waffe" minWidth="100" prefWidth="300" styleClass="left-aligned" style="-fx-alignment: CENTER-LEFT;" />
                <TableColumn fx:id="closeCombatTypeColumn" text="Typ" minWidth="100" prefWidth="120" resizable="false" editable="true" />
                <TableColumn fx:id="closeCombatEBEColumn" text="eBE" minWidth="40" maxWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
-               <TableColumn fx:id="closeCombatTPColumn" text="TP" minWidth="70" maxWidth="70" resizable="false" style="-fx-alignment: CENTER;" />
+               <TableColumn fx:id="closeCombatTPColumn" text="TP" minWidth="75" maxWidth="75" resizable="false" style="-fx-alignment: CENTER;" />
                <TableColumn fx:id="closeCombatATColumn" text="AT" minWidth="40" maxWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
                <TableColumn fx:id="closeCombatPAColumn" text="PA" minWidth="40" maxWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
                <TableColumn fx:id="closeCombatIniColumn" text="INI" minWidth="40" maxWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
@@ -50,7 +50,7 @@
                <TableColumn fx:id="rangedCombatTPColumn" text="TP" minWidth="70" maxWidth="70" resizable="false" style="-fx-alignment: CENTER;" />
                <TableColumn fx:id="rangedCombatATColumn" text="AT" minWidth="40" maxWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
                <TableColumn fx:id="rangedCombatLoadColumn" text="Laden" minWidth="50" maxWidth="50" resizable="false" style="-fx-alignment: CENTER;" />
-               <TableColumn fx:id="rangedCombatDistanceColumn" text="Reichweiten" minWidth="120" maxWidth="120" resizable="false" style="-fx-alignment: CENTER;" />
+               <TableColumn fx:id="rangedCombatDistanceColumn" text="Reichweiten" minWidth="125" maxWidth="125" resizable="false" style="-fx-alignment: CENTER;" />
                <TableColumn fx:id="rangedCombatDistanceTPColumn" text="TP+" minWidth="100" maxWidth="100" resizable="false" style="-fx-alignment: CENTER;" />
                <TableColumn fx:id="rangedCombatAmmunitionColumn" text="Munition" minWidth="70" maxWidth="70" resizable="false" editable="true" style="-fx-alignment: CENTER;" />
             </columns>

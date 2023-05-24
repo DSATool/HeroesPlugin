@@ -31,15 +31,15 @@
             <ColumnConstraints hgrow="ALWAYS" />
          </columnConstraints>
          <children>
-            <Label text="Name:" minWidth="35" />
+            <Label text="Name:" minWidth="45" />
             <TextField fx:id="name" minWidth="95" GridPane.columnIndex="1" />
             <Label text=" Rasse:" GridPane.columnIndex="2" />
             <TextField fx:id="race" minWidth="95" GridPane.columnIndex="3" />
-            <Label text=" Ausbildung:" minWidth="67" GridPane.columnIndex="4" />
+            <Label text=" Ausbildung:" minWidth="85" GridPane.columnIndex="4" />
             <TextField fx:id="training" minWidth="95" GridPane.columnIndex="5" GridPane.columnSpan="3" />
             <Label text="Farbe:" GridPane.rowIndex="1" />
             <TextField fx:id="color" minWidth="95" GridPane.rowIndex="1" GridPane.ColumnIndex="1" />
-            <Label text=" Geschlecht:" minWidth="64" GridPane.rowIndex="1" GridPane.ColumnIndex="2" />
+            <Label text=" Geschlecht:" minWidth="85" GridPane.rowIndex="1" GridPane.ColumnIndex="2" />
             <ReactiveComboBox fx:id="gender" minWidth="95" GridPane.rowIndex="1" GridPane.ColumnIndex="3" >
                <styleClass>
                   <String fx:value="disabled-opaque" />
@@ -51,7 +51,7 @@
                   <String fx:value="disabled-opaque" />
                </styleClass>
             </ReactiveSpinner>
-            <Label text="Gewicht:" minWidth="46" GridPane.rowIndex="1" GridPane.ColumnIndex="6" />
+            <Label text="Gewicht:" minWidth="60" GridPane.rowIndex="1" GridPane.ColumnIndex="6" />
             <ReactiveSpinner fx:id="weight" imin="0" imax="99999" editable="true" minWidth="65" GridPane.rowIndex="1" GridPane.ColumnIndex="7" >
                <styleClass>
                   <String fx:value="disabled-opaque" />
@@ -74,6 +74,10 @@
          </TableView>
          <VBox fx:id="statsAndAttacksBox" spacing="2" HBox.hgrow="ALWAYS" >
             <TableView fx:id="statsTable" editable="true" fixedCellSize="28" >
+	            <styleClass>
+	               <String fx:value="remove-vertical-scrollbar" />
+	               <String fx:value="remove-horizontal-scrollbar" />
+	            </styleClass>
                <columns>
                   <TableColumn fx:id="statsNameColumn" text="Eigenschaft" minWidth="100" sortable="false" styleClass="left-aligned" style="-fx-alignment: CENTER-LEFT;" />
                   <TableColumn fx:id="statsValueColumn" text="Wert" minWidth="60" maxWidth="60" resizable="false" sortable="false" style="-fx-alignment: CENTER;" editable="true" />

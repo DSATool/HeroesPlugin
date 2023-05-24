@@ -42,9 +42,9 @@
                </placeholder>
                <columns>
                   <TableColumn fx:id="closeCombatNameColumn" text="Waffe" minWidth="100" resizable="false" editable="false" />
-                  <TableColumn fx:id="closeCombatTPColumn" text="TP" minWidth="70" maxWidth="70" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="closeCombatTPColumn" text="TP" minWidth="75" maxWidth="75" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
                   <TableColumn fx:id="closeCombatTPKKColumn" text="TP/KK" minWidth="50" maxWidth="50" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
-                  <TableColumn fx:id="closeCombatWeightColumn" text="Gewicht" minWidth="50" maxWidth="50" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="closeCombatWeightColumn" text="Gew." minWidth="50" maxWidth="50" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
                   <TableColumn fx:id="closeCombatLengthColumn" text="Länge" minWidth="50" maxWidth="50" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
                   <TableColumn fx:id="closeCombatBFColumn" text="BF" minWidth="50" maxWidth="50" resizable="false" editable="true" style="-fx-alignment: CENTER;" />
                   <TableColumn fx:id="closeCombatINIColumn" text="INI" minWidth="50" maxWidth="50" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
@@ -80,9 +80,9 @@
                <columns>
                   <TableColumn fx:id="rangedNameColumn" text="Waffe" minWidth="100" resizable="false" editable="false" />
                   <TableColumn fx:id="rangedTPColumn" text="TP" minWidth="70" maxWidth="70" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
-                  <TableColumn fx:id="rangedDistancesColumn" text="Entfernung" minWidth="120" maxWidth="120" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="rangedDistancesColumn" text="Entfernung" minWidth="125" maxWidth="125" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
                   <TableColumn fx:id="rangedDistanceTPColumn" text="TP/Entf." minWidth="120" maxWidth="120" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
-                  <TableColumn fx:id="rangedWeightColumn" text="Gewicht" minWidth="50" maxWidth="50" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="rangedWeightColumn" text="Gew." minWidth="50" maxWidth="50" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
                   <TableColumn fx:id="rangedLoadColumn" text="Laden" minWidth="50" maxWidth="50" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
                </columns>
             </TableView>
@@ -115,7 +115,7 @@
                   <TableColumn fx:id="shieldsWMColumn" text="WM" minWidth="50" maxWidth="50" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
                   <TableColumn fx:id="shieldsIniColumn" text="Ini" minWidth="50" maxWidth="50" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
                   <TableColumn fx:id="shieldsBFColumn" text="BF" minWidth="50" maxWidth="50" resizable="false" editable="true" style="-fx-alignment: CENTER;" />
-                  <TableColumn fx:id="shieldsWeightColumn" text="Gewicht" minWidth="50" maxWidth="50" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="shieldsWeightColumn" text="Gew." minWidth="50" maxWidth="50" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
                </columns>
             </TableView>
             <HBox spacing="2" >
@@ -147,7 +147,7 @@
                   <TableColumn fx:id="defensiveWeaponsWMColumn" text="WM" minWidth="50" maxWidth="50" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
                   <TableColumn fx:id="defensiveWeaponsIniColumn" text="Ini" minWidth="50" maxWidth="50" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
                   <TableColumn fx:id="defensiveWeaponsBFColumn" text="BF" minWidth="50" maxWidth="50" resizable="false" editable="true" style="-fx-alignment: CENTER;" />
-                  <TableColumn fx:id="defensiveWeaponsWeightColumn" text="Gewicht" minWidth="50" maxWidth="50" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="defensiveWeaponsWeightColumn" text="Gew." minWidth="50" maxWidth="50" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
                </columns>
             </TableView>
             <HBox spacing="2" >
@@ -186,7 +186,7 @@
                   <TableColumn fx:id="armorRlegColumn" text="RBein" minWidth="60" maxWidth="60" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
                   <TableColumn fx:id="armorRsColumn" text="RS" minWidth="40" maxWidth="40" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
                   <TableColumn fx:id="armorBeColumn" text="BE" minWidth="40" maxWidth="40" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
-                  <TableColumn fx:id="armorWeightColumn" text="Gewicht" minWidth="50" maxWidth="50" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="armorWeightColumn" text="Gew." minWidth="50" maxWidth="50" resizable="false" editable="false" style="-fx-alignment: CENTER;" />
                </columns>
             </TableView>
             <HBox spacing="2" >
