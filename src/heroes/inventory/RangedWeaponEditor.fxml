@@ -31,9 +31,18 @@
       <ReactiveSpinner fx:id="tpTypeDice" imin="1" imax="99" editable="true" prefWidth="55" />
       <Label text="+" />
       <ReactiveSpinner fx:id="tpAdditional" imin="-99" imax="99" editable="true" prefWidth="60" />
-      <Label text="(A)" />
+   </HBox>
+   <HBox spacing="2" alignment="CENTER_LEFT" >
+      <Label text="" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+      <Label text="mTP" />
+      <CheckBox fx:id="tpMagic" />
+      <Label text=" gTP" />
+      <CheckBox fx:id="tpCleric" />
+      <Label text=" kTP" />
+      <CheckBox fx:id="tpCold" />
+      <Label text=" TP(A)" />
       <CheckBox fx:id="tpStamina" />
-      <Label text="*" />
+      <Label text=" TP*" />
       <CheckBox fx:id="tpWound" />
    </HBox>
    <HBox spacing="2" alignment="CENTER_LEFT" >

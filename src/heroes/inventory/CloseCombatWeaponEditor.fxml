@@ -29,18 +29,27 @@
       <Label text="W" />
       <ReactiveSpinner fx:id="tpTypeDice" imin="1" imax="99" editable="true" prefWidth="55" />
       <Label text="+" />
-      <ReactiveSpinner fx:id="tpAdditional" imin="-99" imax="99" editable="true" prefWidth="55" />
-      <Label text="(A)" />
+      <ReactiveSpinner fx:id="tpAdditional" imin="-99" imax="99" editable="true" prefWidth="60" />
+   </HBox>
+   <HBox spacing="2" alignment="CENTER_LEFT" >
+      <Label text="" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+      <Label text="mTP" />
+      <CheckBox fx:id="tpMagic" />
+      <Label text=" gTP" />
+      <CheckBox fx:id="tpCleric" />
+      <Label text=" kTP" />
+      <CheckBox fx:id="tpCold" />
+      <Label text=" TP(A)" />
       <CheckBox fx:id="tpStamina" />
-      <Label text="*" />
+      <Label text=" TP*" />
       <CheckBox fx:id="tpWound" />
    </HBox>
    <HBox spacing="2" alignment="CENTER_LEFT" >
       <Label text="TP/KK: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
       <CheckBox fx:id="noTpkk" />
-      <ReactiveSpinner fx:id="tpkkThreshold" imin="1" imax="99" editable="true" prefWidth="55" />
+      <ReactiveSpinner fx:id="tpkkThreshold" imin="1" imax="99" editable="true" prefWidth="60" />
       <Label text="/" />
-      <ReactiveSpinner fx:id="tpkkStep" imin="1" imax="99" editable="true" prefWidth="55" />
+      <ReactiveSpinner fx:id="tpkkStep" imin="1" imax="99" editable="true" prefWidth="60" />
    </HBox>
    <HBox spacing="2" alignment="CENTER_LEFT" >
       <Label text="Gewicht: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />

@@ -76,6 +76,12 @@ public class RangedWeaponEditor {
 	@FXML
 	private CheckBox tpWound;
 	@FXML
+	private CheckBox tpMagic;
+	@FXML
+	private CheckBox tpCleric;
+	@FXML
+	private CheckBox tpCold;
+	@FXML
 	private ReactiveSpinner<Integer> tpNumDice;
 	@FXML
 	private ReactiveSpinner<Integer> tpTypeDice;
@@ -126,8 +132,8 @@ public class RangedWeaponEditor {
 
 		stage = new Stage();
 		stage.setTitle("Bearbeiten");
-		stage.setScene(new Scene(root, 440, 420));
-		stage.setHeight(420);
+		stage.setScene(new Scene(root, 440, 438));
+		stage.setHeight(438);
 		stage.initModality(Modality.WINDOW_MODAL);
 		stage.setResizable(false);
 		stage.initOwner(window);
@@ -144,6 +150,9 @@ public class RangedWeaponEditor {
 		tpTypeDice.getValueFactory().setValue(tpValues._2);
 		tpAdditional.getValueFactory().setValue(tpValues._3);
 		final String tp = weapon.getTp();
+		tpMagic.setSelected(tp.contains("m"));
+		tpCleric.setSelected(tp.contains("g"));
+		tpCold.setSelected(tp.contains("k"));
 		tpStamina.setSelected(tp.contains("A"));
 		tpWound.setSelected(tp.contains("*"));
 		final Tuple5<Integer, Integer, Integer, Integer, Integer> distances = weapon.getDistanceRaw();
@@ -213,7 +222,8 @@ public class RangedWeaponEditor {
 			weapon.setName(name.getText());
 			weapon.setItemType(type.getText());
 			weapon.setTalents(talents.getCheckModel().getCheckedItems());
-			weapon.setTp(tpTypeDice.getValue(), tpNumDice.getValue(), tpAdditional.getValue(), tpWound.isSelected(), tpStamina.isSelected());
+			weapon.setTp(tpTypeDice.getValue(), tpNumDice.getValue(), tpAdditional.getValue(), tpWound.isSelected(), tpStamina.isSelected(),
+					tpMagic.isSelected(), tpCleric.isSelected(), tpCold.isSelected());
 			weapon.setDistances(distanceVeryClose.getValue(), distanceClose.getValue(), distanceMedium.getValue(), distanceFar.getValue(),
 					distanceVeryFar.getValue());
 			weapon.setDistanceTPs(distanceTPVeryClose.getValue(), distanceTPClose.getValue(), distanceTPMedium.getValue(), distanceTPFar.getValue(),
@@ -246,7 +256,7 @@ public class RangedWeaponEditor {
 
 	private void setAmmunitionVisible(final boolean bulletTypes) {
 		if (bulletTypes) {
-			stage.setHeight(420 + (ammunitionTypes.size() - 1) * 25);
+			stage.setHeight(438 + (ammunitionTypes.size() - 1) * 25);
 			bulletBox.setVisible(true);
 			bulletBox.setManaged(true);
 			ammunitionBox.setVisible(false);

@@ -65,6 +65,12 @@ public class CloseCombatWeaponEditor {
 	@FXML
 	private CheckBox tpWound;
 	@FXML
+	private CheckBox tpMagic;
+	@FXML
+	private CheckBox tpCleric;
+	@FXML
+	private CheckBox tpCold;
+	@FXML
 	private ReactiveSpinner<Integer> pa;
 	@FXML
 	private ReactiveSpinner<Integer> tpNumDice;
@@ -112,7 +118,7 @@ public class CloseCombatWeaponEditor {
 
 		final Stage stage = new Stage();
 		stage.setTitle("Bearbeiten");
-		stage.setScene(new Scene(root, 290, 367));
+		stage.setScene(new Scene(root, 310, 385));
 		stage.initModality(Modality.WINDOW_MODAL);
 		stage.setResizable(false);
 		stage.initOwner(window);
@@ -129,6 +135,9 @@ public class CloseCombatWeaponEditor {
 		tpTypeDice.getValueFactory().setValue(tpValues._2);
 		tpAdditional.getValueFactory().setValue(tpValues._3);
 		final String tp = weapon.getTp();
+		tpMagic.setSelected(tp.contains("m"));
+		tpCleric.setSelected(tp.contains("g"));
+		tpCold.setSelected(tp.contains("k"));
 		tpStamina.setSelected(tp.contains("A"));
 		tpWound.setSelected(tp.contains("*"));
 		final Tuple<Integer, Integer> tpkkValues = weapon.getTpkkRaw();
@@ -171,7 +180,8 @@ public class CloseCombatWeaponEditor {
 			weapon.setName(name.getText());
 			weapon.setItemType(type.getText());
 			weapon.setTalents(talents.getCheckModel().getCheckedItems());
-			weapon.setTp(tpTypeDice.getValue(), tpNumDice.getValue(), tpAdditional.getValue(), tpWound.isSelected(), tpStamina.isSelected());
+			weapon.setTp(tpTypeDice.getValue(), tpNumDice.getValue(), tpAdditional.getValue(), tpWound.isSelected(), tpStamina.isSelected(),
+					tpMagic.isSelected(), tpCleric.isSelected(), tpCold.isSelected());
 			weapon.setTPKK(noTpkk.isSelected() ? tpkkThreshold.getValue() : Integer.MIN_VALUE, noTpkk.isSelected() ? tpkkStep.getValue() : Integer.MIN_VALUE);
 			weapon.setWeight(weight.getValue());
 			weapon.setLength(length.getValue());
