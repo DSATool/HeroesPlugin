@@ -110,7 +110,7 @@ public class RitualObjectEditor {
 
 		final Stage stage = new Stage();
 		stage.setTitle("Bearbeiten");
-		stage.setScene(new Scene(root, 290, 485 + ("Stabzauber".equals(ritualGroupName) ? 27 : 0) + (ritualGroup.containsKey("Material") ? 25 : 0)));
+		stage.setScene(new Scene(root, 310, 485 + ("Stabzauber".equals(ritualGroupName) ? 27 : 0) + (ritualGroup.containsKey("Material") ? 25 : 0)));
 		stage.initModality(Modality.WINDOW_MODAL);
 		stage.setResizable(false);
 		stage.initOwner(window);

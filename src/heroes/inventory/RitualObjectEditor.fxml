@@ -26,7 +26,7 @@
    </HBox>
    <HBox fx:id="volumeBox" spacing="2" alignment="CENTER_LEFT" >
       <Label text="Volumen: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-      <ReactiveSpinner fx:id="volume" imin="1" imax="99" editable="true" prefWidth="55" />
+      <ReactiveSpinner fx:id="volume" imin="1" imax="99" editable="true" prefWidth="65" />
    </HBox>
    <HBox spacing="2" alignment="TOP_LEFT" >
       <Label text="Typ: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />

@@ -22,7 +22,7 @@
    </HBox>
    <HBox spacing="2" alignment="CENTER_LEFT" >
       <Label text="Qualität: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-      <ComboBox fx:id="quality" prefWidth="55" >
+      <ComboBox fx:id="quality" prefWidth="60" >
          <items>
             <FXCollections fx:factory="observableArrayList">
                <String fx:value="" />

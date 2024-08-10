@@ -72,7 +72,7 @@ public class DefensiveWeaponEditor {
 
 		final Stage stage = new Stage();
 		stage.setTitle("Bearbeiten");
-		stage.setScene(new Scene(root, 290, 220));
+		stage.setScene(new Scene(root, 310, 220));
 		stage.initModality(Modality.WINDOW_MODAL);
 		stage.setResizable(false);
 		stage.initOwner(window);
