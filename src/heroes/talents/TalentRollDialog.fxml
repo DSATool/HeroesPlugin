@@ -16,9 +16,9 @@
    </HBox>
    <HBox spacing="2" alignment="CENTER" >
       <Label text="Eigenschaften:" alignment="BOTTOM_LEFT" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-      <ReactiveComboBox fx:id="attribute1" prefWidth="65" />
-      <ReactiveComboBox fx:id="attribute2" prefWidth="65" />
-      <ReactiveComboBox fx:id="attribute3" prefWidth="65" />
+      <ReactiveComboBox fx:id="attribute1" prefWidth="70" />
+      <ReactiveComboBox fx:id="attribute2" prefWidth="70" />
+      <ReactiveComboBox fx:id="attribute3" prefWidth="70" />
       <Label prefWidth="40" />
    </HBox>
    <HBox spacing="2" >

@@ -79,7 +79,7 @@ public class TalentRollDialog {
 
 		final Stage stage = new Stage();
 		stage.setTitle("Talentprobe: " + talentName);
-		stage.setScene(new Scene(root, 400, 85 + heroes.length * 27));
+		stage.setScene(new Scene(root, 450, 85 + heroes.length * 27));
 		stage.initModality(Modality.WINDOW_MODAL);
 		stage.setResizable(false);
 		stage.initOwner(window);

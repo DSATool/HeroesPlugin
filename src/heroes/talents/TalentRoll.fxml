@@ -6,8 +6,8 @@
 
 <HBox spacing="2" alignment="CENTER" xmlns:fx="http://javafx.com/fxml" >
    <Label fx:id="name" alignment="BOTTOM_LEFT" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-   <ReactiveSpinner fx:id="dice1" imin="1" imax="20" editable="true" prefWidth="65" />
-   <ReactiveSpinner fx:id="dice2" imin="1" imax="20" editable="true" prefWidth="65" />
-   <ReactiveSpinner fx:id="dice3" imin="1" imax="20" editable="true" prefWidth="65" />
+   <ReactiveSpinner fx:id="dice1" imin="1" imax="20" editable="true" prefWidth="70" />
+   <ReactiveSpinner fx:id="dice2" imin="1" imax="20" editable="true" prefWidth="70" />
+   <ReactiveSpinner fx:id="dice3" imin="1" imax="20" editable="true" prefWidth="70" />
    <Label fx:id="result" alignment="BOTTOM_RIGHT" prefWidth="40" />
 </HBox>

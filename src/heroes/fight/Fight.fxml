@@ -23,7 +23,7 @@
             </placeholder>
             <columns>
                <TableColumn fx:id="closeCombatNameColumn" text="Waffe" minWidth="100" prefWidth="300" styleClass="left-aligned" style="-fx-alignment: CENTER-LEFT;" />
-               <TableColumn fx:id="closeCombatTypeColumn" text="Typ" minWidth="100" prefWidth="120" resizable="false" editable="true" />
+               <TableColumn fx:id="closeCombatTypeColumn" text="Typ" minWidth="100" prefWidth="225" resizable="false" editable="true" />
                <TableColumn fx:id="closeCombatEBEColumn" text="eBE" minWidth="40" maxWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
                <TableColumn fx:id="closeCombatTPColumn" text="TP" minWidth="75" maxWidth="75" resizable="false" style="-fx-alignment: CENTER;" />
                <TableColumn fx:id="closeCombatATColumn" text="AT" minWidth="40" maxWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
@@ -45,7 +45,7 @@
             </placeholder>
             <columns>
                <TableColumn fx:id="rangedCombatNameColumn" text="Waffe" minWidth="100" prefWidth="200" styleClass="left-aligned" style="-fx-alignment: CENTER-LEFT;" />
-               <TableColumn fx:id="rangedCombatTypeColumn" text="Typ" minWidth="100" prefWidth="120" resizable="false" editable="true" />
+               <TableColumn fx:id="rangedCombatTypeColumn" text="Typ" minWidth="100" prefWidth="160" resizable="false" editable="true" />
                <TableColumn fx:id="rangedCombatEBEColumn" text="eBE" minWidth="40" maxWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
                <TableColumn fx:id="rangedCombatTPColumn" text="TP" minWidth="70" maxWidth="70" resizable="false" style="-fx-alignment: CENTER;" />
                <TableColumn fx:id="rangedCombatATColumn" text="AT" minWidth="40" maxWidth="40" resizable="false" style="-fx-alignment: CENTER;" />
