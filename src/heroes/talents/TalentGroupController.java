@@ -23,7 +23,6 @@ import java.util.Set;
 
 import dsa41basis.hero.FightTalent;
 import dsa41basis.hero.LanguageTalent;
-import dsa41basis.hero.PhysicalTalent;
 import dsa41basis.hero.Spell;
 import dsa41basis.hero.Talent;
 import dsa41basis.util.DSAUtil;
@@ -113,7 +112,7 @@ public class TalentGroupController {
 
 		GUIUtil.autosizeTable(table);
 
-		nameColumn.setCellValueFactory(new PropertyValueFactory<Talent, String>("displayName"));
+		nameColumn.setCellValueFactory(new PropertyValueFactory<>("displayName"));
 		nameColumn.setCellFactory(c -> new GraphicTableCell<>(false) {
 			@Override
 			protected void createGraphic() {
@@ -218,7 +217,7 @@ public class TalentGroupController {
 				final TableColumn<Talent, Integer> atColumn = (TableColumn<Talent, Integer>) table.getColumns().get(i);
 				atColumn.editableProperty().bind(HeroTabController.isEditable);
 				final TableColumn<Talent, Integer> paColumn = (TableColumn<Talent, Integer>) table.getColumns().get(i + 1);
-				paColumn.setCellValueFactory(new PropertyValueFactory<Talent, Integer>("pa"));
+				paColumn.setCellValueFactory(new PropertyValueFactory<>("pa"));
 				paColumn.setCellFactory(
 						IntegerSpinnerTableCell.<Talent> forTableColumn(0, 0, 1, false, (final IntegerSpinnerTableCell<Talent> cell, final Boolean empty) -> {
 							if (empty) return new Tuple<>(0, 0);
@@ -242,7 +241,7 @@ public class TalentGroupController {
 				paColumn.editableProperty().bind(HeroTabController.isEditable);
 			case "Fernkampftalente":
 				final TableColumn<Talent, Integer> rangedAtColumn = (TableColumn<Talent, Integer>) table.getColumns().get(i);
-				rangedAtColumn.setCellValueFactory(new PropertyValueFactory<Talent, Integer>("at"));
+				rangedAtColumn.setCellValueFactory(new PropertyValueFactory<>("at"));
 				rangedAtColumn.setCellFactory(
 						IntegerSpinnerTableCell.<Talent> forTableColumn(0, 0, 1, false, (final IntegerSpinnerTableCell<Talent> cell, final Boolean empty) -> {
 							if (empty) return new Tuple<>(0, 0);
@@ -260,12 +259,12 @@ public class TalentGroupController {
 				++i;
 				++i;
 				final TableColumn fightBeColumn = table.getColumns().get(i);
-				fightBeColumn.setCellValueFactory(new PropertyValueFactory<FightTalent, String>("be"));
+				fightBeColumn.setCellValueFactory(new PropertyValueFactory<>("be"));
 				++i;
 				break;
 			case "Körperliche Talente":
 				final TableColumn beColumn = table.getColumns().get(i);
-				beColumn.setCellValueFactory(new PropertyValueFactory<PhysicalTalent, String>("be"));
+				beColumn.setCellValueFactory(new PropertyValueFactory<>("be"));
 				++i;
 			case "Gesellschaftliche Talente":
 			case "Natur-Talente":
@@ -274,12 +273,12 @@ public class TalentGroupController {
 			case "Gaben":
 			case "Liturgiekenntnis":
 				final TableColumn attributesColumn = table.getColumns().get(i);
-				attributesColumn.setCellValueFactory(new PropertyValueFactory<Talent, String>("attributes"));
+				attributesColumn.setCellValueFactory(new PropertyValueFactory<>("attributes"));
 				++i;
 				break;
 			case "Sprachen und Schriften":
 				final TableColumn<Talent, String> mlsltlColumn = (TableColumn<Talent, String>) table.getColumns().get(i);
-				mlsltlColumn.setCellValueFactory(new PropertyValueFactory<Talent, String>("mlsltl"));
+				mlsltlColumn.setCellValueFactory(new PropertyValueFactory<>("mlsltl"));
 				mlsltlColumn.setCellFactory(ComboBoxTableCell.forTableColumn("", "MS", "ZS", "LS"));
 				mlsltlColumn.setOnEditCommit((final CellEditEvent<Talent, String> t) -> {
 					((LanguageTalent) t.getRowValue()).setMlsltl(t.getNewValue());
@@ -287,21 +286,21 @@ public class TalentGroupController {
 				mlsltlColumn.editableProperty().bind(HeroTabController.isEditable);
 				++i;
 				final TableColumn complexityColumn = table.getColumns().get(i);
-				complexityColumn.setCellValueFactory(new PropertyValueFactory<LanguageTalent, Integer>("complexity"));
+				complexityColumn.setCellValueFactory(new PropertyValueFactory<>("complexity"));
 				++i;
 				final TableColumn langAttributesColumn = table.getColumns().get(i);
-				langAttributesColumn.setCellValueFactory(new PropertyValueFactory<LanguageTalent, String>("attributes"));
+				langAttributesColumn.setCellValueFactory(new PropertyValueFactory<>("attributes"));
 				++i;
 				break;
 			case "Zauber":
 				final TableColumn representationColumn = table.getColumns().get(i);
-				representationColumn.setCellValueFactory(new PropertyValueFactory<Spell, String>("representation"));
+				representationColumn.setCellValueFactory(new PropertyValueFactory<>("representation"));
 				++i;
 				final TableColumn spellComplexityColumn = table.getColumns().get(i);
-				spellComplexityColumn.setCellValueFactory(new PropertyValueFactory<Spell, String>("complexity"));
+				spellComplexityColumn.setCellValueFactory(new PropertyValueFactory<>("complexity"));
 				++i;
 				final TableColumn spellAttributesColumn = table.getColumns().get(i);
-				spellAttributesColumn.setCellValueFactory(new PropertyValueFactory<Spell, String>("attributes"));
+				spellAttributesColumn.setCellValueFactory(new PropertyValueFactory<>("attributes"));
 				++i;
 				final TableColumn<Talent, Boolean> spellPrimaryColumn = (TableColumn<Talent, Boolean>) table.getColumns().get(i);
 				spellPrimaryColumn.setCellValueFactory((c) -> {
@@ -329,7 +328,7 @@ public class TalentGroupController {
 		++i;
 
 		final TableColumn<Talent, Integer> sesColumn = (TableColumn<Talent, Integer>) table.getColumns().get(i);
-		sesColumn.setCellValueFactory(new PropertyValueFactory<Talent, Integer>("ses"));
+		sesColumn.setCellValueFactory(new PropertyValueFactory<>("ses"));
 		sesColumn.setCellFactory(o -> new IntegerSpinnerTableCell(0, 9));
 		sesColumn.setOnEditCommit((final CellEditEvent<Talent, Integer> t) -> {
 			if (t.getRowValue() != null) {
@@ -339,7 +338,7 @@ public class TalentGroupController {
 		++i;
 
 		final TableColumn<Talent, Integer> valueColumn = (TableColumn<Talent, Integer>) table.getColumns().get(i);
-		valueColumn.setCellValueFactory(new PropertyValueFactory<Talent, Integer>("value"));
+		valueColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
 		valueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99) {
 			@Override
 			public void updateItem(final Integer item, final boolean empty) {
