@@ -56,9 +56,9 @@
             <HBox spacing="2" >
                <ReactiveComboBox fx:id="closeCombatList" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
                <Button fx:id="closeCombatAddButton" onAction="#addItem" minWidth="25" prefHeight="25" prefWidth="25" text="&#xE145;" >
-                  <padding><Insets top="0" right="0" bottom="0" left="0"/></padding>
+                  <padding><Insets top="0" right="0" bottom="-5" left="0"/></padding>
                   <font>
-                     <Font name="Material Icons" size="20.0" />
+                     <Font name="Material Symbols Outlined" size="20.0" />
                   </font>
                   <tooltip>
                      <Tooltip text="Hinzufügen" />
@@ -89,9 +89,9 @@
             <HBox spacing="2" >
                <ReactiveComboBox fx:id="rangedList" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
                <Button fx:id="rangedAddButton" onAction="#addItem" minWidth="25" prefHeight="25" prefWidth="25" text="&#xE145;" >
-                  <padding><Insets top="0" right="0" bottom="0" left="0"/></padding>
+                  <padding><Insets top="0" right="0" bottom="-5" left="0"/></padding>
                   <font>
-                     <Font name="Material Icons" size="20.0" />
+                     <Font name="Material Symbols Outlined" size="20.0" />
                   </font>
                   <tooltip>
                      <Tooltip text="Hinzufügen" />
@@ -121,9 +121,9 @@
             <HBox spacing="2" >
                <ReactiveComboBox fx:id="shieldsList" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
                <Button fx:id="shieldsAddButton" onAction="#addItem" minWidth="25" prefHeight="25" prefWidth="25" text="&#xE145;" >
-                  <padding><Insets top="0" right="0" bottom="0" left="0"/></padding>
+                  <padding><Insets top="0" right="0" bottom="-5" left="0"/></padding>
                   <font>
-                     <Font name="Material Icons" size="20.0" />
+                     <Font name="Material Symbols Outlined" size="20.0" />
                   </font>
                   <tooltip>
                      <Tooltip text="Hinzufügen" />
@@ -153,9 +153,9 @@
             <HBox spacing="2" >
                <ReactiveComboBox fx:id="defensiveWeaponsList" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
                <Button fx:id="defensiveWeaponsAddButton" onAction="#addItem" minWidth="25" prefHeight="25" prefWidth="25" text="&#xE145;" >
-                  <padding><Insets top="0" right="0" bottom="0" left="0"/></padding>
+                  <padding><Insets top="0" right="0" bottom="-5" left="0"/></padding>
                   <font>
-                     <Font name="Material Icons" size="20.0" />
+                     <Font name="Material Symbols Outlined" size="20.0" />
                   </font>
                   <tooltip>
                      <Tooltip text="Hinzufügen" />
@@ -192,9 +192,9 @@
             <HBox spacing="2" >
                <ReactiveComboBox fx:id="armorList" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
                <Button fx:id="armorAddButton" onAction="#addItem" minWidth="25" prefHeight="25" prefWidth="25" text="&#xE145;" >
-                  <padding><Insets top="0" right="0" bottom="0" left="0"/></padding>
+                  <padding><Insets top="0" right="0" bottom="-5" left="0"/></padding>
                   <font>
-                     <Font name="Material Icons" size="20.0" />
+                     <Font name="Material Symbols Outlined" size="20.0" />
                   </font>
                   <tooltip>
                      <Tooltip text="Hinzufügen" />
@@ -221,9 +221,9 @@
             <HBox spacing="2" >
                <ReactiveComboBox fx:id="ritualObjectList" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
                <Button fx:id="ritualObjectAddButton" onAction="#addItem" minWidth="25" prefHeight="25" prefWidth="25" text="&#xE145;" >
-                  <padding><Insets top="0" right="0" bottom="0" left="0"/></padding>
+                  <padding><Insets top="0" right="0" bottom="-5" left="0"/></padding>
                   <font>
-                     <Font name="Material Icons" size="20.0" />
+                     <Font name="Material Symbols Outlined" size="20.0" />
                   </font>
                   <tooltip>
                      <Tooltip text="Hinzufügen" />
@@ -250,9 +250,9 @@
             <HBox spacing="2" >
                <TextField fx:id="newValuableField" onAction="#addValuable" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
                <Button fx:id="valuablesAddButton" onAction="#addValuable" minWidth="25" prefHeight="25" prefWidth="25" text="&#xE145;" >
-                  <padding><Insets top="0" right="0" bottom="0" left="0"/></padding>
+                  <padding><Insets top="0" right="0" bottom="-5" left="0"/></padding>
                   <font>
-                     <Font name="Material Icons" size="20.0" />
+                     <Font name="Material Symbols Outlined" size="20.0" />
                   </font>
                   <tooltip>
                      <Tooltip text="Hinzufügen" />
@@ -281,9 +281,9 @@
             <HBox spacing="2" >
                <ReactiveComboBox fx:id="potionsList" editable="true" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
                <Button fx:id="potionsAddButton" onAction="#addItem" minWidth="25" prefHeight="25" prefWidth="25" text="&#xE145;" >
-                  <padding><Insets top="0" right="0" bottom="0" left="0"/></padding>
+                  <padding><Insets top="0" right="0" bottom="-5" left="0"/></padding>
                   <font>
-                     <Font name="Material Icons" size="20.0" />
+                     <Font name="Material Symbols Outlined" size="20.0" />
                   </font>
                   <tooltip>
                      <Tooltip text="Hinzufügen" />
@@ -310,9 +310,9 @@
             <HBox spacing="2" >
                <TextField fx:id="newArtifactField" onAction="#addArtifact" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
                <Button fx:id="artifactAddButton" onAction="#addArtifact" minWidth="25" prefHeight="25" prefWidth="25" text="&#xE145;" >
-                  <padding><Insets top="0" right="0" bottom="0" left="0"/></padding>
+                  <padding><Insets top="0" right="0" bottom="-5" left="0"/></padding>
                   <font>
-                     <Font name="Material Icons" size="20.0" />
+                     <Font name="Material Symbols Outlined" size="20.0" />
                   </font>
                   <tooltip>
                      <Tooltip text="Hinzufügen" />
@@ -339,9 +339,9 @@
             <HBox spacing="2" >
                <ReactiveComboBox fx:id="clothingList" editable="true" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
                <Button fx:id="clothingAddButton" onAction="#addItem" minWidth="25" prefHeight="25" prefWidth="25" text="&#xE145;" >
-                  <padding><Insets top="0" right="0" bottom="0" left="0"/></padding>
+                  <padding><Insets top="0" right="0" bottom="-5" left="0"/></padding>
                   <font>
-                     <Font name="Material Icons" size="20.0" />
+                     <Font name="Material Symbols Outlined" size="20.0" />
                   </font>
                   <tooltip>
                      <Tooltip text="Hinzufügen" />

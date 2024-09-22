@@ -14,31 +14,31 @@
 <?import dsatool.ui.ReactiveComboBox?>
 
 <TitledPane fx:id="pane" xmlns:fx="http://javafx.com/fxml">
-	<VBox fillWidth="true" style="-fx-padding: -1, 0, -1, 0;" >
-	   <TableView fx:id="equipmentTable" editable="true" fixedCellSize="26" >
-	      <styleClass>
-	         <String fx:value="remove-vertical-scrollbar" />
-	         <String fx:value="remove-horizontal-scrollbar" />
-	      </styleClass>
-	      <placeholder>
-	         <Label minHeight="0" />
-	      </placeholder>
-	      <columns>
-	         <TableColumn fx:id="equipmentNameColumn" text="Gegenstand" minWidth="100" prefWidth="200" editable="true" />
-	         <TableColumn fx:id="equipmentNotesColumn" text="Anmerkungen" minWidth="100" prefWidth="200" resizable="false" editable="true" />
-	      </columns>
-	   </TableView>
-	   <HBox spacing="2" >
-	      <ReactiveComboBox fx:id="equipmentList" editable="true" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-	      <Button fx:id="equipmentAddButton" onAction="#addItem" prefHeight="25" prefWidth="25" text="&#xE145;" >
-	         <padding><Insets top="0" right="0" bottom="0" left="0"/></padding>
-	         <font>
-	            <Font name="Material Icons" size="20.0" />
-	         </font>
-	         <tooltip>
-	            <Tooltip text="Hinzufügen" />
-	         </tooltip>
-	      </Button>
-	   </HBox>
-	</VBox>
+   <VBox fillWidth="true" style="-fx-padding: -1, 0, -1, 0;" >
+      <TableView fx:id="equipmentTable" editable="true" fixedCellSize="26" >
+         <styleClass>
+            <String fx:value="remove-vertical-scrollbar" />
+            <String fx:value="remove-horizontal-scrollbar" />
+         </styleClass>
+         <placeholder>
+            <Label minHeight="0" />
+         </placeholder>
+         <columns>
+            <TableColumn fx:id="equipmentNameColumn" text="Gegenstand" minWidth="100" prefWidth="200" editable="true" />
+            <TableColumn fx:id="equipmentNotesColumn" text="Anmerkungen" minWidth="100" prefWidth="200" resizable="false" editable="true" />
+         </columns>
+      </TableView>
+      <HBox spacing="2" >
+         <ReactiveComboBox fx:id="equipmentList" editable="true" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+         <Button fx:id="equipmentAddButton" onAction="#addItem" prefHeight="25" prefWidth="25" text="&#xE145;" >
+            <padding><Insets top="0" right="0" bottom="-5" left="0"/></padding>
+            <font>
+               <Font name="Material Symbols Outlined" size="20.0" />
+            </font>
+            <tooltip>
+               <Tooltip text="Hinzufügen" />
+            </tooltip>
+         </Button>
+      </HBox>
+   </VBox>
 </TitledPane>

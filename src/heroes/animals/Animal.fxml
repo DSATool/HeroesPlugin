@@ -107,9 +107,9 @@
             <HBox spacing="2" >
                <ReactiveComboBox fx:id="proConsList" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
                <Button fx:id="proConsAddButton" onAction="#addProCon" minWidth="25" prefHeight="25" prefWidth="25" text="&#xE145;" >
-                  <padding><Insets top="0" right="0" bottom="0" left="0"/></padding>
+                  <padding><Insets top="0" right="0" bottom="-5" left="0"/></padding>
                   <font>
-                    <Font name="Material Icons" size="20.0" />
+                     <Font name="Material Symbols Outlined" size="20.0" />
                   </font>
                   <tooltip>
                      <Tooltip text="Hinzufügen" />
@@ -133,9 +133,9 @@
             <HBox spacing="2" >
                <ReactiveComboBox fx:id="ritualsList" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
                <Button fx:id="ritualsAddButton" onAction="#addRitual" minWidth="25" prefHeight="25" prefWidth="25" text="&#xE145;" >
-                  <padding><Insets top="0" right="0" bottom="0" left="0"/></padding>
+                  <padding><Insets top="0" right="0" bottom="-5" left="0"/></padding>
                   <font>
-                     <Font name="Material Icons" size="20.0" />
+                     <Font name="Material Symbols Outlined" size="20.0" />
                   </font>
                   <tooltip>
                      <Tooltip text="Hinzufügen" />
@@ -160,9 +160,9 @@
             <HBox spacing="2" >
                <ReactiveComboBox fx:id="skillsList" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
                <Button fx:id="skillsAddButton" onAction="#addSkill" minWidth="25" prefHeight="25" prefWidth="25" text="&#xE145;" >
-                  <padding><Insets top="0" right="0" bottom="0" left="0"/></padding>
+                  <padding><Insets top="0" right="0" bottom="-5" left="0"/></padding>
                   <font>
-                     <Font name="Material Icons" size="20.0" />
+                     <Font name="Material Symbols Outlined" size="20.0" />
                   </font>
                   <tooltip>
                      <Tooltip text="Hinzufügen" />
