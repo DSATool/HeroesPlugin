@@ -47,6 +47,7 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import jsonant.event.JSONListener;
@@ -227,8 +228,14 @@ public class ProsOrConsController {
 				@SuppressWarnings("all")
 				final TableRow<ProOrCon> row = getTableRow();
 				row.getStyleClass().remove("invalid");
+				row.setTooltip(null);
 				if (!empty && !valid) {
 					row.getStyleClass().add("invalid");
+					final Tooltip tooltip = new Tooltip();
+					tooltip.setOnShowing(o -> {
+						tooltip.setText(row.getItem().getInvalidReason(true));
+					});
+					row.setTooltip(tooltip);
 				}
 			}
 		});
