@@ -111,7 +111,7 @@ public class ProsOrConsController {
 			variantColumn.setVisible(false);
 		}
 
-		nameColumn.setCellValueFactory(new PropertyValueFactory<ProOrCon, String>("displayName"));
+		nameColumn.setCellValueFactory(new PropertyValueFactory<>("displayName"));
 		nameColumn.setCellFactory(c -> new TextFieldTableCell<>() {
 			@Override
 			public void updateItem(final String item, final boolean empty) {
@@ -124,7 +124,7 @@ public class ProsOrConsController {
 			}
 		});
 
-		descColumn.setCellValueFactory(new PropertyValueFactory<ProOrCon, String>("description"));
+		descColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
 		descColumn.setCellFactory(c -> new GraphicTableCell<>(false) {
 			@Override
 			protected void createGraphic() {
@@ -158,7 +158,7 @@ public class ProsOrConsController {
 			}
 		});
 
-		variantColumn.setCellValueFactory(new PropertyValueFactory<ProOrCon, String>("variant"));
+		variantColumn.setCellValueFactory(new PropertyValueFactory<>("variant"));
 		variantColumn.setCellFactory(c -> new GraphicTableCell<>(false) {
 			@Override
 			protected void createGraphic() {
@@ -192,7 +192,7 @@ public class ProsOrConsController {
 			}
 		});
 
-		valueColumn.setCellValueFactory(new PropertyValueFactory<ProOrCon, Integer>("value"));
+		valueColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
 		valueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 9999) {
 			@Override
 			public void startEdit() {
@@ -219,7 +219,7 @@ public class ProsOrConsController {
 			}
 		});
 
-		validColumn.setCellValueFactory(new PropertyValueFactory<ProOrCon, Boolean>("valid"));
+		validColumn.setCellValueFactory(new PropertyValueFactory<>("valid"));
 		validColumn.setCellFactory(tableColumn -> new TableCell<>() {
 			@Override
 			public void updateItem(final Boolean valid, final boolean empty) {
