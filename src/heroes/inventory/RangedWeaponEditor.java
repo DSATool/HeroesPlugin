@@ -191,6 +191,8 @@ public class RangedWeaponEditor {
 			label.setMaxWidth(Double.POSITIVE_INFINITY);
 			HBox.setHgrow(label, Priority.ALWAYS);
 			final ReactiveSpinner<Integer> spinner = new ReactiveSpinner<>(0, 9999, ammunition.getObj(type).getIntOrDefault("Gesamt", 0));
+			spinner.setEditable(true);
+			spinner.setPrefWidth(80);
 			spinner.valueProperty().addListener((o, oldV, newV) -> {
 				if (newV == 0) {
 					ammunition.removeKey(type);
