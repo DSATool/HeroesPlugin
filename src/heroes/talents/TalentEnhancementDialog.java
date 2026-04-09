@@ -102,7 +102,9 @@ public class TalentEnhancementDialog {
 		});
 		ap.valueProperty().addListener((o, oldV, newV) -> {
 			if ("Lehrmeister".equals(method.getValue())) {
-				cost.getValueFactory().setValue(talent instanceof Spell ? newV * 5 : newV * 7 / 10.0);
+				cost.getValueFactory().setValue(
+						(talent instanceof Spell ? newV * Settings.getSettingIntOrDefault(500, "Steigerung", "Lehrmeisterkosten:Zauber")
+								: newV * Settings.getSettingIntOrDefault(500, "Steigerung", "Lehrmeisterkosten:Talente")) / 100.0);
 			} else {
 				cost.getValueFactory().setValue(0.0);
 			}

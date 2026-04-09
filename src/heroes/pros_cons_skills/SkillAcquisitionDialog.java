@@ -205,8 +205,11 @@ public class SkillAcquisitionDialog {
 
 		final JSONObject group = (JSONObject) skill.getProOrCon().getParent();
 		if (group == ResourceManager.getResource("data/Sonderfertigkeiten").getObj("Magische Sonderfertigkeiten") ||
-				group == ResourceManager.getResource("data/Rituale") || group == ResourceManager.getResource("data/Schamanenrituale"))
-			return ap.getValue() * 5;
-		return ap.getValue() * 0.7;
+				group.getParent() == ResourceManager.getResource("data/Rituale") || group == ResourceManager.getResource("data/Schamanenrituale"))
+			return ap.getValue() * Settings.getSettingIntOrDefault(500, "Steigerung", "Lehrmeisterkosten:Sonderfertigkeiten:Magisch") / 100.0;
+		if (group == ResourceManager.getResource("data/Sonderfertigkeiten").getObj("Klerikale Sonderfertigkeiten")
+				|| group.getParent() == ResourceManager.getResource("data/Liturgien"))
+			return ap.getValue() * Settings.getSettingIntOrDefault(70, "Steigerung", "Lehrmeisterkosten:Sonderfertigkeiten:Klerikal") / 100.0;
+		return ap.getValue() * Settings.getSettingIntOrDefault(70, "Steigerung", "Lehrmeisterkosten:Sonderfertigkeiten") / 100.0;
 	}
 }
