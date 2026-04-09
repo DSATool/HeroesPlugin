@@ -214,7 +214,7 @@ public class GeneralController extends HeroTabController {
 			ErrorLogger.logError(e);
 		}
 
-		final JSONObject general = ResourceManager.getResource("data/Allgemein");
+		final JSONObject general = ResourceManager.getResource("settings/Allgemein");
 		if (general.containsKey("Zeit")) {
 			final JSONObject time = general.getObj("Zeit");
 			time.addLocalListener(timeListener);
@@ -290,7 +290,7 @@ public class GeneralController extends HeroTabController {
 				t.getRowValue().setManualModifier(t.getNewValue());
 			}
 		});
-		derivedCurrentColumn.setCellValueFactory(new PropertyValueFactory<DerivedValue, Integer>("current"));
+		derivedCurrentColumn.setCellValueFactory(new PropertyValueFactory<>("current"));
 
 		derivedValuesTable.setRowFactory(t -> {
 			final TableRow<DerivedValue> row = new TableRow<>();
@@ -456,19 +456,19 @@ public class GeneralController extends HeroTabController {
 			final JSONObject bio = hero.getObj("Biografie");
 			bio.put("Geburtstag", birthday.getValue());
 			bio.notifyListeners(heroBioListener);
-			setAge(ResourceManager.getResource("data/Allgemein").getObj("Zeit"));
+			setAge(ResourceManager.getResource("settings/Allgemein").getObj("Zeit"));
 		}));
 		birthmonth.getSelectionModel().selectedIndexProperty().addListener(Util.changeListener(() -> update, newV -> {
 			final JSONObject bio = hero.getObj("Biografie");
 			bio.put("Geburtsmonat", birthmonth.getSelectionModel().getSelectedIndex() + 1);
 			bio.notifyListeners(heroBioListener);
-			setAge(ResourceManager.getResource("data/Allgemein").getObj("Zeit"));
+			setAge(ResourceManager.getResource("settings/Allgemein").getObj("Zeit"));
 		}));
 		birthyear.valueProperty().addListener(Util.changeListener(() -> update, newV -> {
 			final JSONObject bio = hero.getObj("Biografie");
 			bio.put("Geburtsjahr", birthyear.getValue());
 			bio.notifyListeners(heroBioListener);
-			setAge(ResourceManager.getResource("data/Allgemein").getObj("Zeit"));
+			setAge(ResourceManager.getResource("settings/Allgemein").getObj("Zeit"));
 		}));
 		gender.getSelectionModel().selectedIndexProperty().addListener(Util.changeListener(() -> update, newV -> {
 			final JSONObject bio = hero.getObj("Biografie");
@@ -521,7 +521,7 @@ public class GeneralController extends HeroTabController {
 		birthmonth.getSelectionModel().clearAndSelect(bio.getIntOrDefault("Geburtsmonat", 1) - 1);
 		birthyear.getValueFactory().setValue(bio.getIntOrDefault("Geburtsjahr", 1000));
 
-		setAge(ResourceManager.getResource("data/Allgemein").getObj("Zeit"));
+		setAge(ResourceManager.getResource("settings/Allgemein").getObj("Zeit"));
 
 		gender.getSelectionModel().clearAndSelect("weiblich".equals(bio.getString("Geschlecht")) ? 1 : 0);
 
