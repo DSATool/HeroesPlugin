@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import dsa41basis.hero.ProOrCon;
 import dsa41basis.hero.ProOrCon.ChoiceOrTextEnum;
 import dsa41basis.util.HeroUtil;
+import dsatool.gui.GUIUtil;
 import dsatool.resources.ResourceManager;
 import dsatool.resources.Settings;
 import dsatool.ui.ReactiveSpinner;
@@ -28,13 +29,11 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import jsonant.value.JSONArray;
@@ -88,12 +87,8 @@ public class SkillAcquisitionDialog {
 			costBox.setManaged(false);
 		}
 
-		final Stage stage = new Stage();
-		stage.setTitle("Sonderfertigkeit erwerben");
-		stage.setScene(new Scene(root, 300, 157 - (hasChoice ? 0 : 27) - (hasText ? 0 : 27) - (includeCost ? 0 : 27)));
-		stage.initModality(Modality.WINDOW_MODAL);
-		stage.setResizable(false);
-		stage.initOwner(window);
+		final Stage stage = GUIUtil.setupStage(root, 300, 200 - (hasChoice ? 0 : 27) - (hasText ? 0 : 27) - (includeCost ? 0 : 27), "Sonderfertigkeit erwerben",
+				window, true);
 
 		if (!hasChoice || !hasText) {
 			variantBox.setManaged(false);

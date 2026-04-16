@@ -16,17 +16,16 @@
 package heroes.animals;
 
 import dsa41basis.inventory.InventoryItem;
+import dsatool.gui.GUIUtil;
 import dsatool.ui.ReactiveSpinner;
 import dsatool.util.ErrorLogger;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import jsonant.value.JSONObject;
@@ -82,13 +81,7 @@ public class HorseArmorEditor {
 			ErrorLogger.logError(e);
 		}
 
-		final Stage stage = new Stage();
-		stage.setTitle("Bearbeiten");
-		stage.setScene(new Scene(root, 335, 170));
-		stage.initModality(Modality.WINDOW_MODAL);
-		stage.setResizable(false);
-		stage.initOwner(window);
-		stage.setHeight(170);
+		final Stage stage = GUIUtil.setupStage(root, 335, 175, "Bearbeiten", window, true);
 
 		horseArmor.selectedProperty().addListener((o, oldV, newV) -> {
 			headBox.setVisible(newV);
@@ -97,7 +90,7 @@ public class HorseArmorEditor {
 			backBox.setVisible(newV);
 			legsBox.setVisible(newV);
 			beBox.setVisible(newV);
-			stage.setHeight(newV ? 330 : 170);
+			stage.setHeight(newV ? 342 : 175);
 		});
 
 		final JSONObject actual = item.getBaseItem();

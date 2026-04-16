@@ -16,16 +16,15 @@
 package heroes.inventory;
 
 import dsa41basis.util.HeroUtil;
+import dsatool.gui.GUIUtil;
 import dsatool.ui.ReactiveSpinner;
 import dsatool.util.ErrorLogger;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import jsonant.value.JSONArray;
@@ -60,12 +59,7 @@ public class PotionPurchaseDialog {
 			ErrorLogger.logError(e);
 		}
 
-		final Stage stage = new Stage();
-		stage.setTitle("Kaufen");
-		stage.setScene(new Scene(root, 290, 140));
-		stage.initModality(Modality.WINDOW_MODAL);
-		stage.setResizable(false);
-		stage.initOwner(window);
+		final Stage stage = GUIUtil.setupStage(root, 290, 180, "Kaufen", window, true);
 
 		name.setText(item.getStringOrDefault("Name", ""));
 		quality.setValue(item.getStringOrDefault("Qualität", "C"));

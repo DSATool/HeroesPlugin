@@ -23,6 +23,7 @@ import dsa41basis.inventory.InventoryItem;
 import dsa41basis.util.DSAUtil;
 import dsa41basis.util.HeroUtil;
 import dsatool.gui.GUIUtil;
+import dsatool.gui.ThemedAlert;
 import dsatool.resources.ResourceManager;
 import dsatool.ui.GraphicTableCell;
 import dsatool.util.ErrorLogger;
@@ -451,7 +452,7 @@ public class EquipmentList {
 
 			final MenuItem deleteItem = new MenuItem("Löschen");
 			deleteItem.setOnAction(event -> {
-				final Alert alert = new Alert(AlertType.WARNING);
+				final Alert alert = new ThemedAlert(AlertType.WARNING);
 				alert.setTitle("Inventar löschen");
 				alert.setHeaderText("Die Ausrüstungsgegenstände werden in das Standardinventar verschoben.");
 				alert.setContentText("Soll das Inventar " + name + " wirklich gelöscht werden?");

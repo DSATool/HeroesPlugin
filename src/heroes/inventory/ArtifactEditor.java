@@ -29,7 +29,6 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
@@ -40,7 +39,6 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import jsonant.value.JSONArray;
@@ -148,12 +146,7 @@ public class ArtifactEditor {
 			ErrorLogger.logError(e);
 		}
 
-		final Stage stage = new Stage();
-		stage.setTitle("Bearbeiten");
-		stage.setScene(new Scene(root, 380, 370));
-		stage.initModality(Modality.WINDOW_MODAL);
-		stage.setResizable(false);
-		stage.initOwner(window);
+		final Stage stage = GUIUtil.setupStage(root, 380, 390, "Bearbeiten", window, true);
 
 		final JSONObject triggers = ResourceManager.getResource("data/Artefakt_Ausloeser");
 

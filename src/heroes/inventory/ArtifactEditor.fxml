@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import dsatool.ui.ReactiveSpinner?>
 
-<VBox fx:id="root" style="-fx-padding: 2, 2, 2, 2;" spacing="2" xmlns:fx="http://javafx.com/fxml" >
+<VBox fx:id="root" style="-fx-padding: 4;" spacing="2" xmlns:fx="http://javafx.com/fxml" >
    <HBox spacing="2" alignment="CENTER_LEFT" >
       <Label text="Name: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
       <TextField fx:id="name" prefWidth="200" />
@@ -47,7 +47,7 @@
    </HBox>
    <HBox spacing="2" alignment="CENTER_LEFT" >
       <Label text="" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-      <TextField fx:id="triggerDesc" prefWidth="200" />
+      <TextField fx:id="triggerDesc" prefWidth="217" />
    </HBox>
    <Label text="Wirkende Sprüche: " maxWidth="Infinity" HBox.hgrow="ALWAYS" />
    <TableView fx:id="spellTable" editable="true" fixedCellSize="25" >

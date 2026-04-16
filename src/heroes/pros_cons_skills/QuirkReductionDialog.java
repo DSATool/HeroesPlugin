@@ -18,16 +18,15 @@ package heroes.pros_cons_skills;
 import java.time.LocalDate;
 
 import dsa41basis.hero.ProOrCon;
+import dsatool.gui.GUIUtil;
 import dsatool.ui.ReactiveSpinner;
 import dsatool.util.ErrorLogger;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import jsonant.value.JSONArray;
@@ -62,12 +61,7 @@ public class QuirkReductionDialog {
 			ErrorLogger.logError(e);
 		}
 
-		final Stage stage = new Stage();
-		stage.setTitle("Schlechte Eigenschaft senken");
-		stage.setScene(new Scene(root, 250, 148));
-		stage.initModality(Modality.WINDOW_MODAL);
-		stage.setResizable(false);
-		stage.initOwner(window);
+		final Stage stage = GUIUtil.setupStage(root, 250, 193, "Senken", window, true);
 
 		target.valueProperty().addListener((o, oldV, newV) -> ap.getValueFactory().setValue(getCalculatedAP(quirk, hero)));
 		ses.valueProperty().addListener((o, oldV, newV) -> ap.getValueFactory().setValue(getCalculatedAP(quirk, hero)));

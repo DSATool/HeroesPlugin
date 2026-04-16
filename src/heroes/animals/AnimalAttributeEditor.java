@@ -16,15 +16,14 @@
 package heroes.animals;
 
 import dsa41basis.hero.Attribute;
+import dsatool.gui.GUIUtil;
 import dsatool.ui.ReactiveSpinner;
 import dsatool.util.ErrorLogger;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
@@ -53,12 +52,7 @@ public class AnimalAttributeEditor {
 			ErrorLogger.logError(e);
 		}
 
-		final Stage stage = new Stage();
-		stage.setTitle("Bearbeiten");
-		stage.setScene(new Scene(root, 330, needsStart ? 82 : 56));
-		stage.initModality(Modality.WINDOW_MODAL);
-		stage.setResizable(false);
-		stage.initOwner(window);
+		final Stage stage = GUIUtil.setupStage(root, 330, needsStart ? 125 : 98, "Bearbeiten", window, true);
 
 		if (!needsStart) {
 			root.getChildren().remove(startBox);

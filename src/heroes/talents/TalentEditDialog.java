@@ -17,16 +17,15 @@ package heroes.talents;
 
 import dsa41basis.hero.Talent;
 import dsa41basis.util.HeroUtil;
+import dsatool.gui.GUIUtil;
 import dsatool.util.ErrorLogger;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import jsonant.value.JSONObject;
@@ -54,12 +53,7 @@ public class TalentEditDialog {
 			ErrorLogger.logError(e);
 		}
 
-		final Stage stage = new Stage();
-		stage.setTitle("Talent bearbeiten");
-		stage.setScene(new Scene(root, 250, 75));
-		stage.initModality(Modality.WINDOW_MODAL);
-		stage.setResizable(false);
-		stage.initOwner(window);
+		final Stage stage = GUIUtil.setupStage(root, 250, 115, "Talent bearbeiten", window, true);
 
 		okButton.setOnAction(event -> {
 			actualTalent.setVariant(variant.getValue());

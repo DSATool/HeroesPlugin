@@ -20,6 +20,7 @@ import java.util.Map;
 
 import dsa41basis.util.DSAUtil;
 import dsa41basis.util.HeroUtil;
+import dsatool.gui.GUIUtil;
 import dsatool.resources.ResourceManager;
 import dsatool.ui.ReactiveSpinner;
 import dsatool.util.ErrorLogger;
@@ -28,15 +29,12 @@ import dsatool.util.Tuple3;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.SelectionModel;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import jsonant.value.JSONArray;
@@ -77,12 +75,7 @@ public class TalentRollDialog {
 			ErrorLogger.logError(e);
 		}
 
-		final Stage stage = new Stage();
-		stage.setTitle("Talentprobe: " + talentName);
-		stage.setScene(new Scene(root, 450, 85 + heroes.length * 27));
-		stage.initModality(Modality.WINDOW_MODAL);
-		stage.setResizable(false);
-		stage.initOwner(window);
+		final Stage stage = GUIUtil.setupStage(root, 450, 130 + heroes.length * 28, "Talentprobe: " + talentName, window, true);
 
 		okButton.setOnAction(e -> stage.close());
 		okButton.setDefaultButton(true);
@@ -193,24 +186,22 @@ public class TalentRollDialog {
 		interpretationLabel.setStyle("");
 		if (interpretation == null) {
 			interpretationLabel.setText("—");
-			interpretationLabel.setTextFill(Color.RED);
+			interpretationLabel.setStyle("-fx-text-fill: -fx-color-invalid;");
 		} else if (ones >= 2) {
 			interpretationLabel.setText("*" + Integer.toString(interpretation) + "*");
-			interpretationLabel.setTextFill(Color.GREEN);
-			interpretationLabel.setStyle("-fx-font-weight: bold");
+			interpretationLabel.setStyle("-fx-text-fill: -fx-color-valid; -fx-font-weight: bold;");
 		} else if (twenties >= 2) {
 			interpretationLabel.setText("Patzer");
-			interpretationLabel.setTextFill(Color.RED);
-			interpretationLabel.setStyle("-fx-font-weight: bold");
+			interpretationLabel.setStyle("-fx-text-fill: -fx-color-invalid; -fx-font-weight: bold;");
 		} else if (interpretation == 0) {
 			interpretationLabel.setText("1");
-			interpretationLabel.setTextFill(Color.DARKORANGE);
+			interpretationLabel.setStyle("-fx-text-fill: -fx-color-warning;");
 		} else if (interpretation < 0) {
 			interpretationLabel.setText(Integer.toString(interpretation));
-			interpretationLabel.setTextFill(Color.RED);
+			interpretationLabel.setStyle("-fx-text-fill: -fx-color-invalid;");
 		} else {
 			interpretationLabel.setText(Integer.toString(interpretation));
-			interpretationLabel.setTextFill(Color.GREEN);
+			interpretationLabel.setStyle("-fx-text-fill: -fx-color-valid;");
 		}
 	}
 }

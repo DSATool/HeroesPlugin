@@ -17,15 +17,14 @@ package heroes.general;
 
 import dsa41basis.hero.DerivedValue;
 import dsa41basis.hero.Energy;
+import dsatool.gui.GUIUtil;
 import dsatool.ui.ReactiveSpinner;
 import dsatool.util.ErrorLogger;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
@@ -58,12 +57,7 @@ public class DerivedValueEditor {
 			root.getChildren().remove(seBox);
 		}
 
-		final Stage stage = new Stage();
-		stage.setTitle("Bearbeiten");
-		stage.setScene(new Scene(root, 330, needsSEs ? 82 : 56));
-		stage.initModality(Modality.WINDOW_MODAL);
-		stage.setResizable(false);
-		stage.initOwner(window);
+		final Stage stage = GUIUtil.setupStage(root, 330, needsSEs ? 125 : 97, "Bearbeiten", window, true);
 
 		if (needsSEs) {
 			ses.getValueFactory().setValue(((Energy) value).getSes());

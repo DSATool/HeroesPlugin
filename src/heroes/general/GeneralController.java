@@ -23,6 +23,7 @@ import dsa41basis.ui.hero.SingleRollDialog;
 import dsa41basis.util.DSAUtil;
 import dsa41basis.util.HeroUtil;
 import dsatool.gui.GUIUtil;
+import dsatool.gui.ThemedAlert;
 import dsatool.resources.ResourceManager;
 import dsatool.ui.ColoredProgressBarTableCell;
 import dsatool.ui.IntegerSpinnerTableCell;
@@ -345,7 +346,7 @@ public class GeneralController extends HeroTabController {
 			energiesEnhanceItem.setOnAction(o -> {
 				final HeroEnergy value = row.getItem();
 				if ("Karmaenergie".equals(value.getName())) {
-					final Alert alert = new Alert(AlertType.WARNING);
+					final Alert alert = new ThemedAlert(AlertType.WARNING);
 					alert.setTitle("Zukauf nicht möglich");
 					alert.setHeaderText("Karmaenergie kann nicht zugekauft werden");
 					alert.setContentText("Nutze die Karmalqueste, um mehr Karmaenegie zu erhalten");

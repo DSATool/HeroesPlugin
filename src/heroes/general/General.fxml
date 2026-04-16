@@ -98,13 +98,13 @@
                <Label text="Geschlecht:" GridPane.rowIndex="1" />
                <ReactiveComboBox fx:id="gender" styleClass="disabled-opaque" GridPane.rowIndex="1" GridPane.columnIndex="1" />
                <Label text="Größe:" GridPane.rowIndex="1" GridPane.columnIndex="2" />
-               <ReactiveSpinner fx:id="size" imin="0" imax="500" initialValue="175" maxWidth="173" GridPane.rowIndex="1" GridPane.columnIndex="3" editable="true">
+               <ReactiveSpinner fx:id="size" imin="0" imax="500" initialValue="175" maxWidth="179" GridPane.rowIndex="1" GridPane.columnIndex="3" editable="true">
                      <styleClass>
                         <String fx:value="disabled-opaque" />
                      </styleClass>
                   </ReactiveSpinner>
                <Label text="Gewicht:" GridPane.rowIndex="1" GridPane.columnIndex="4" />
-               <ReactiveSpinner fx:id="weight" imin="0" imax="500" initialValue="75" maxWidth="173" GridPane.rowIndex="1" GridPane.columnIndex="5" editable="true">
+               <ReactiveSpinner fx:id="weight" imin="0" imax="500" initialValue="75" maxWidth="179" GridPane.rowIndex="1" GridPane.columnIndex="5" editable="true">
                   <styleClass>
                      <String fx:value="disabled-opaque" />
                   </styleClass>

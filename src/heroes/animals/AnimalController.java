@@ -23,6 +23,7 @@ import dsa41basis.ui.hero.BasicValuesController;
 import dsa41basis.ui.hero.BasicValuesController.CharacterType;
 import dsa41basis.util.DSAUtil;
 import dsatool.gui.GUIUtil;
+import dsatool.gui.ThemedAlert;
 import dsatool.resources.ResourceManager;
 import dsatool.ui.GraphicTableCell;
 import dsatool.ui.IntegerSpinnerTableCell;
@@ -50,7 +51,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
@@ -286,7 +286,7 @@ public class AnimalController {
 
 		final MenuItem deleteItem = new MenuItem("Löschen");
 		deleteItem.setOnAction(e -> {
-			final Alert deleteConfirmation = new Alert(AlertType.CONFIRMATION);
+			final Alert deleteConfirmation = new ThemedAlert(AlertType.CONFIRMATION);
 			deleteConfirmation.setTitle("Tier löschen?");
 			deleteConfirmation.setHeaderText("Tier " + animal.getObj("Biografie").getString("Name") + " löschen?");
 			deleteConfirmation.setContentText("Das Tier kann danach nicht wiederhergestellt werden!");
@@ -723,7 +723,7 @@ public class AnimalController {
 
 			GUIUtil.dragDropReorder(list.getControl(), moved -> {
 				final int index = stack.getChildren().indexOf(moved) - 5;
-				final JSONObject current = (JSONObject) ((Control) moved).getUserData();
+				final JSONObject current = (JSONObject) moved.getUserData();
 				inventories.remove(current);
 				inventories.add(index, current);
 				inventories.notifyListeners(null);

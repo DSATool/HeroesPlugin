@@ -34,7 +34,6 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -47,7 +46,6 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import jsonant.value.JSONArray;
@@ -134,14 +132,7 @@ public class WeaponMasteryDialog {
 
 		final JSONObject rangedCombatTalents = ResourceManager.getResource("data/Talente").getObj("Fernkampftalente");
 
-		final Stage stage = new Stage();
-		stage.setTitle("Waffenmeister bearbeiten");
-		stage.setScene(new Scene(root, 300, 390));
-		stage.initModality(Modality.WINDOW_MODAL);
-		stage.setResizable(false);
-		stage.initOwner(window);
-
-		stage.setHeight(390);
+		final Stage stage = GUIUtil.setupStage(root, 300, 360, "Waffenmeister bearbeiten", window, true);
 
 		talent.setItems(FXCollections.observableArrayList(skill.getFirstChoiceItems(false)));
 
@@ -150,14 +141,14 @@ public class WeaponMasteryDialog {
 				if (!rangedCombatTalents.containsKey(oldV)) {
 					initRangedCombat(actual);
 					if (oldV != null) {
-						stage.setHeight(stage.getHeight() - 27);
+						stage.setHeight(stage.getHeight() - 28);
 					}
 				}
 			} else {
 				if (oldV == null || rangedCombatTalents.containsKey(oldV)) {
 					initCloseCombat(actual);
 					if (oldV != null) {
-						stage.setHeight(stage.getHeight() + 27);
+						stage.setHeight(stage.getHeight() + 28);
 					}
 				}
 			}

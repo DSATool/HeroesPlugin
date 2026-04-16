@@ -16,17 +16,16 @@
 package heroes.fight;
 
 import dsa41basis.fight.RangedWeapon;
+import dsatool.gui.GUIUtil;
 import dsatool.resources.ResourceManager;
 import dsatool.ui.ReactiveSpinner;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import jsonant.value.JSONObject;
@@ -76,23 +75,18 @@ public class AmmunitionDialog {
 			root.getChildren().add(row);
 		}
 
-		final Stage stage = new Stage();
-		stage.setTitle("Munition für " + weapon.getName());
-		stage.setScene(new Scene(root, 330, 55 + 27 * ammunitionTypes.size()));
-		stage.initModality(Modality.WINDOW_MODAL);
-		stage.setResizable(false);
-		stage.initOwner(window);
+		final Stage stage = GUIUtil.setupStage(root, 340, 92 + 28 * ammunitionTypes.size(), "Munition für " + weapon.getName(), window, true);
 
 		final HBox buttonRow = new HBox(2);
 		buttonRow.setAlignment(Pos.BOTTOM_RIGHT);
 		final Button okButton = new Button("Ok");
-		okButton.setPrefWidth(75);
+		okButton.setPrefWidth(85);
 		okButton.setOnAction(e -> {
 			weapon.setAmmunition(ammunition);
 			stage.close();
 		});
 		final Button cancelButton = new Button("Abbrechen");
-		cancelButton.setPrefWidth(75);
+		cancelButton.setPrefWidth(85);
 		cancelButton.setOnAction(e -> stage.close());
 		buttonRow.getChildren().addAll(okButton, cancelButton);
 		root.getChildren().add(buttonRow);

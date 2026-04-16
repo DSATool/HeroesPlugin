@@ -19,6 +19,7 @@ import org.controlsfx.control.CheckComboBox;
 
 import dsa41basis.fight.RangedWeapon;
 import dsa41basis.inventory.BooksEditor;
+import dsatool.gui.GUIUtil;
 import dsatool.resources.ResourceManager;
 import dsatool.ui.ReactiveSpinner;
 import dsatool.util.ErrorLogger;
@@ -29,7 +30,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -39,7 +39,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import jsonant.value.JSONObject;
@@ -130,13 +129,7 @@ public class RangedWeaponEditor {
 			ErrorLogger.logError(e);
 		}
 
-		stage = new Stage();
-		stage.setTitle("Bearbeiten");
-		stage.setScene(new Scene(root, 440, 438));
-		stage.setHeight(438);
-		stage.initModality(Modality.WINDOW_MODAL);
-		stage.setResizable(false);
-		stage.initOwner(window);
+		stage = GUIUtil.setupStage(root, 440, 455, "Bearbeiten", window, true);
 
 		name.setText(weapon.getName());
 		type.setText(weapon.getItemType());
@@ -258,13 +251,13 @@ public class RangedWeaponEditor {
 
 	private void setAmmunitionVisible(final boolean bulletTypes) {
 		if (bulletTypes) {
-			stage.setHeight(438 + (ammunitionTypes.size() - 1) * 25);
+			stage.setHeight(455 + (ammunitionTypes.size() - 1) * 28);
 			bulletBox.setVisible(true);
 			bulletBox.setManaged(true);
 			ammunitionBox.setVisible(false);
 			ammunitionBox.setManaged(false);
 		} else {
-			stage.setHeight(420);
+			stage.setHeight(455);
 			bulletBox.setVisible(false);
 			bulletBox.setManaged(false);
 			ammunitionBox.setVisible(true);
