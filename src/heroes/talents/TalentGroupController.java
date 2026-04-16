@@ -36,6 +36,7 @@ import dsatool.util.Tuple;
 import dsatool.util.Util;
 import heroes.ui.HeroTabController;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.IntegerBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
@@ -415,6 +416,10 @@ public class TalentGroupController {
 
 	public Node getControl() {
 		return pane;
+	}
+
+	public IntegerBinding numTalents() {
+		return Bindings.size(table.getItems());
 	}
 
 	private void refreshTable() {

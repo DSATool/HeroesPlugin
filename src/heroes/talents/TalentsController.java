@@ -27,6 +27,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TitledPane;
 import javafx.scene.layout.VBox;
 import jsonant.event.JSONListener;
 import jsonant.value.JSONObject;
@@ -79,11 +80,14 @@ public class TalentsController extends HeroTabController {
 			final TalentGroupController groupController = new TalentGroupController(pane, talentGroup, talentGroups.getObj(talentGroup),
 					talents.getObj(talentGroup));
 			talentControllers.add(groupController);
+			final TitledPane control = (TitledPane) groupController.getControl();
 			switch (talentGroup) {
-				case "Ritualkenntnis" -> ritualKnowledge = groupController.getControl();
-				case "Liturgiekenntnis" -> liturgyKnowledge = groupController.getControl();
+				case "Ritualkenntnis" -> ritualKnowledge = control;
+				case "Liturgiekenntnis" -> liturgyKnowledge = control;
 			}
-			talentsBox.getChildren().add(groupController.getControl());
+			talentsBox.getChildren().add(control);
+
+			control.setExpanded(groupController.numTalents().intValue() != 0);
 		}
 
 		super.init();
@@ -111,6 +115,10 @@ public class TalentsController extends HeroTabController {
 	protected void update() {
 		for (final TalentGroupController controller : talentControllers) {
 			controller.setHero(hero);
+			final TitledPane control = (TitledPane) controller.getControl();
+			control.setAnimated(false);
+			control.setExpanded(controller.numTalents().intValue() != 0);
+			control.setAnimated(true);
 		}
 		if (pane != null) {
 			updateVisibility();
