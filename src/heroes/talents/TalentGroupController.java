@@ -90,14 +90,15 @@ public class TalentGroupController {
 
 		fxmlLoader.setController(this);
 
-		final URL gui = switch (name) {
-			case "Nahkampftalente", "Fernkampftalente" -> getClass().getResource("FightTalents.fxml");
-			case "Körperliche Talente" -> getClass().getResource("PhysicalTalents.fxml");
-			case "Sprachen und Schriften" -> getClass().getResource("LanguageTalents.fxml");
-			case "Ritualkenntnis" -> getClass().getResource("SimpleTalents.fxml");
-			case "Zauber" -> getClass().getResource("Spells.fxml");
-			default -> getClass().getResource("RegularTalents.fxml");
-		};
+		final URL gui = getClass().getResource(switch (name) {
+			case "Nahkampftalente", "Fernkampftalente" -> "FightTalents.fxml";
+			case "Körperliche Talente" -> "PhysicalTalents.fxml";
+			case "Sprachen und Schriften" -> "LanguageTalents.fxml";
+			case "Ritualkenntnis" -> "SimpleTalents.fxml";
+			case "Zauber" -> "Spells.fxml";
+			case "Meta-Talente" -> "MetaTalents.fxml";
+			default -> "RegularTalents.fxml";
+		});
 
 		try {
 			fxmlLoader.load(gui.openStream());
@@ -161,23 +162,25 @@ public class TalentGroupController {
 
 			final ContextMenu contextMenu = new ContextMenu();
 
-			final MenuItem editItem = new MenuItem("Bearbeiten");
-			editItem.setOnAction(o -> {
-				final Talent item = row.getItem();
-				new TalentEditDialog(pane.getScene().getWindow(), item);
-			});
-			editItem.visibleProperty().bind(Bindings.createBooleanBinding(() -> {
-				final Talent talent = row.getItem();
-				return talent != null && (talent.getTalent().containsKey("Auswahl") || talent.getTalent().containsKey("Freitext"));
-			}, row.itemProperty()));
+			if (!"Meta-Talente".equals(name)) {
+				final MenuItem editItem = new MenuItem("Bearbeiten");
+				editItem.setOnAction(o -> {
+					final Talent item = row.getItem();
+					new TalentEditDialog(pane.getScene().getWindow(), item);
+				});
+				editItem.visibleProperty().bind(Bindings.createBooleanBinding(() -> {
+					final Talent talent = row.getItem();
+					return talent != null && (talent.getTalent().containsKey("Auswahl") || talent.getTalent().containsKey("Freitext"));
+				}, row.itemProperty()));
 
-			final MenuItem enhanceItem = new MenuItem("Steigern");
-			enhanceItem.setOnAction(o -> {
-				final Talent item = row.getItem();
-				new TalentEnhancementDialog(pane.getScene().getWindow(), item, hero, item.getValue() == Integer.MIN_VALUE ? 0 : item.getValue() + 1);
-			});
+				final MenuItem enhanceItem = new MenuItem("Steigern");
+				enhanceItem.setOnAction(o -> {
+					final Talent item = row.getItem();
+					new TalentEnhancementDialog(pane.getScene().getWindow(), item, hero, item.getValue() == Integer.MIN_VALUE ? 0 : item.getValue() + 1);
+				});
 
-			contextMenu.getItems().addAll(editItem, enhanceItem);
+				contextMenu.getItems().addAll(editItem, enhanceItem);
+			}
 
 			if (!List.of("Nahkampftalente", "Fernkampftalente").contains(name)) {
 				final MenuItem rollItem = new MenuItem("Talentprobe");
@@ -196,17 +199,19 @@ public class TalentGroupController {
 				contextMenu.getItems().addAll(rollItem, rollGroupItem);
 			}
 
-			final MenuItem deleteItem = new MenuItem("Löschen");
-			deleteItem.setOnAction(o -> {
-				final Talent item = row.getItem();
-				item.removeTalent();
-			});
-			deleteItem.visibleProperty().bind(Bindings.createBooleanBinding(() -> {
-				final Talent talent = row.getItem();
-				return talent != null && !talent.getTalent().getBoolOrDefault("Basis", false)
-						&& (HeroTabController.isEditable.get() || talent.getValue() == Integer.MIN_VALUE && talent.getSes() == 0);
-			}, row.itemProperty(), HeroTabController.isEditable));
-			contextMenu.getItems().add(deleteItem);
+			if (!"Meta-Talente".equals(name)) {
+				final MenuItem deleteItem = new MenuItem("Löschen");
+				deleteItem.setOnAction(o -> {
+					final Talent item = row.getItem();
+					item.removeTalent();
+				});
+				deleteItem.visibleProperty().bind(Bindings.createBooleanBinding(() -> {
+					final Talent talent = row.getItem();
+					return talent != null && !talent.getTalent().getBoolOrDefault("Basis", false)
+							&& (HeroTabController.isEditable.get() || talent.getValue() == Integer.MIN_VALUE && talent.getSes() == 0);
+				}, row.itemProperty(), HeroTabController.isEditable));
+				contextMenu.getItems().add(deleteItem);
+			}
 
 			row.setContextMenu(contextMenu);
 
@@ -318,25 +323,27 @@ public class TalentGroupController {
 				break;
 		}
 
-		final TableColumn<Talent, Boolean> primaryColumn = (TableColumn<Talent, Boolean>) table.getColumns().get(i);
-		primaryColumn.setCellValueFactory((c) -> {
-			final BooleanProperty property = new SimpleBooleanProperty(c.getValue().isPrimaryTalent());
-			property.addListener((o, oldV, newV) -> c.getValue().setPrimaryTalent(newV));
-			return property;
-		});
-		primaryColumn.setCellFactory(CheckBoxTableCell.forTableColumn(primaryColumn));
-		primaryColumn.editableProperty().bind(HeroTabController.isEditable);
-		++i;
+		if (!"Meta-Talente".equals(name)) {
+			final TableColumn<Talent, Boolean> primaryColumn = (TableColumn<Talent, Boolean>) table.getColumns().get(i);
+			primaryColumn.setCellValueFactory((c) -> {
+				final BooleanProperty property = new SimpleBooleanProperty(c.getValue().isPrimaryTalent());
+				property.addListener((o, oldV, newV) -> c.getValue().setPrimaryTalent(newV));
+				return property;
+			});
+			primaryColumn.setCellFactory(CheckBoxTableCell.forTableColumn(primaryColumn));
+			primaryColumn.editableProperty().bind(HeroTabController.isEditable);
+			++i;
 
-		final TableColumn<Talent, Integer> sesColumn = (TableColumn<Talent, Integer>) table.getColumns().get(i);
-		sesColumn.setCellValueFactory(new PropertyValueFactory<>("ses"));
-		sesColumn.setCellFactory(o -> new IntegerSpinnerTableCell(0, 9));
-		sesColumn.setOnEditCommit((final CellEditEvent<Talent, Integer> t) -> {
-			if (t.getRowValue() != null) {
-				t.getRowValue().setSes(t.getNewValue());
-			}
-		});
-		++i;
+			final TableColumn<Talent, Integer> sesColumn = (TableColumn<Talent, Integer>) table.getColumns().get(i);
+			sesColumn.setCellValueFactory(new PropertyValueFactory<>("ses"));
+			sesColumn.setCellFactory(o -> new IntegerSpinnerTableCell(0, 9));
+			sesColumn.setOnEditCommit((final CellEditEvent<Talent, Integer> t) -> {
+				if (t.getRowValue() != null) {
+					t.getRowValue().setSes(t.getNewValue());
+				}
+			});
+			++i;
+		}
 
 		final TableColumn<Talent, Integer> valueColumn = (TableColumn<Talent, Integer>) table.getColumns().get(i);
 		valueColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
@@ -409,7 +416,7 @@ public class TalentGroupController {
 			if ("Sprachen und Schriften".equals(name)) {
 				group = group.getObj(talents.getObj(talentName).getBoolOrDefault("Schrift", false) ? "Schriften" : "Sprachen");
 			}
-			newTalent = Talent.getTalent(talentName, group, talent, null, actual);
+			newTalent = Talent.getTalent(talentName, group, talent, hero, null, actual);
 		}
 		newTalent.insertTalent(false);
 	}
@@ -423,14 +430,18 @@ public class TalentGroupController {
 	}
 
 	private void refreshTable() {
-		talentsList.getItems().clear();
+		if (talentsList != null) {
+			talentsList.getItems().clear();
+		}
 		table.getItems().clear();
 
 		final JSONObject actualGroup = "Zauber".equals(name) ? hero.getObjOrDefault("Zauber", null) : hero.getObj("Talente").getObjOrDefault(name, null);
 
 		DSAUtil.foreach(talent -> true, (talentName, talent) -> {
 			final List<JSONObject> actualTalents;
-			if (actualGroup == null) {
+			if ("Meta-Talente".equals(name)) {
+				actualTalents = Collections.singletonList(new JSONObject(null));
+			} else if (actualGroup == null) {
 				actualTalents = null;
 			} else if (!"Zauber".equals(name) && actualGroup.containsKey(talentName) && (talent.containsKey("Auswahl") || talent.containsKey("Freitext"))) {
 				actualTalents = new LinkedList<>();
@@ -453,22 +464,10 @@ public class TalentGroupController {
 
 			for (final JSONObject actualTalent : actualTalents) {
 				switch (name) {
-					case "Nahkampftalente":
-					case "Fernkampftalente":
-					case "Körperliche Talente":
-					case "Gesellschaftliche Talente":
-					case "Natur-Talente":
-					case "Wissenstalente":
-					case "Handwerkstalente":
-					case "Gaben":
-					case "Liturgiekenntnis":
-					case "Ritualkenntnis":
-						table.getItems().add(Talent.getTalent(talentName, talentGroup, talent, actualTalent, actualGroup));
-						break;
 					case "Sprachen und Schriften":
 						table.getItems()
 								.add(Talent.getTalent(talentName, talentGroup.getObj(talent.getBoolOrDefault("Schrift", false) ? "Schriften" : "Sprachen"),
-										talent, actualTalent, actualGroup));
+										talent, hero, actualTalent, actualGroup));
 						break;
 					case "Zauber":
 						boolean notFound = false;
@@ -492,17 +491,25 @@ public class TalentGroupController {
 							talentsList.getItems().add(talentName);
 						}
 						break;
+					default:
+						final Talent item = Talent.getTalent(talentName, talentGroup, talent, hero, actualTalent, actualGroup);
+						if (!"Meta-Talente".equals(name) || item.getValue() != Integer.MIN_VALUE) {
+							table.getItems().add(item);
+						}
+						break;
 				}
 			}
 		}, talents);
 
-		if (talentsList.getItems().size() > 0) {
-			talentsList.setDisable(false);
-			talentsList.getSelectionModel().select(0);
-			addButton.setDisable(false);
-		} else {
-			talentsList.setDisable(true);
-			addButton.setDisable(true);
+		if (talentsList != null) {
+			if (talentsList.getItems().size() > 0) {
+				talentsList.setDisable(false);
+				talentsList.getSelectionModel().select(0);
+				addButton.setDisable(false);
+			} else {
+				talentsList.setDisable(true);
+				addButton.setDisable(true);
+			}
 		}
 	}
 
@@ -523,10 +530,12 @@ public class TalentGroupController {
 			actualGroups.put(name, actualGroup);
 		}
 
-		final TableColumn<Talent, Boolean> primaryColumn = (TableColumn<Talent, Boolean>) table.getColumns().get(table.getColumns().size() - 3);
-		final boolean needsPrimary = hero.getObj("Nachteile").containsKey("Elfische Weltsicht");
-		primaryColumn.setVisible(needsPrimary);
-		GUIUtil.autosizeTable(table);
+		if (!"Meta-Talente".equals(name)) {
+			final TableColumn<Talent, Boolean> primaryColumn = (TableColumn<Talent, Boolean>) table.getColumns().get(table.getColumns().size() - 3);
+			final boolean needsPrimary = hero.getObj("Nachteile").containsKey("Elfische Weltsicht");
+			primaryColumn.setVisible(needsPrimary);
+			GUIUtil.autosizeTable(table);
+		}
 
 		refreshTable();
 	}
@@ -536,7 +545,9 @@ public class TalentGroupController {
 		if (actual != null) {
 			actual.removeListener(listener);
 		}
-		talentsList.getItems().clear();
+		if (talentsList != null) {
+			talentsList.getItems().clear();
+		}
 		table.getItems().clear();
 	}
 }

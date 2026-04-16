@@ -74,9 +74,6 @@ public class TalentsController extends HeroTabController {
 		final JSONObject talentGroups = ResourceManager.getResource("data/Talentgruppen");
 		final JSONObject talents = ResourceManager.getResource("data/Talente");
 		for (final String talentGroup : talents.keySet()) {
-			if ("Meta-Talente".equals(talentGroup)) {
-				continue;
-			}
 			final TalentGroupController groupController = new TalentGroupController(pane, talentGroup, talentGroups.getObj(talentGroup),
 					talents.getObj(talentGroup));
 			talentControllers.add(groupController);
