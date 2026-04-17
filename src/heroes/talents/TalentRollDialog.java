@@ -30,6 +30,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.SelectionModel;
@@ -47,6 +48,8 @@ public class TalentRollDialog {
 	private Button okButton;
 	@FXML
 	private ReactiveSpinner<Integer> modification;
+	@FXML
+	private CheckBox additionalTime;
 	@FXML
 	private ComboBox<String> specialization;
 	@FXML
@@ -123,7 +126,12 @@ public class TalentRollDialog {
 				final FXMLLoader heroLoader = new FXMLLoader();
 				final HBox heroBox = heroLoader.load(getClass().getResource("TalentRoll.fxml").openStream());
 				final Tuple3<Integer, Integer, Integer> roll = DSAUtil.talentRoll();
-				((Label) heroBox.getChildren().get(0)).setText(hero.getObj("Biografie").getStringOrDefault("Vorname", "Unbenannt"));
+				final String name = hero.getObj("Biografie").getStringOrDefault("Vorname", "Unbenannt");
+				final SelectionModel<String> selection = specialization.getSelectionModel();
+				final int taw = (int) (HeroUtil.getTaW(hero, talentName, selection.getSelectedIndex() == 0 ? null : selection.getSelectedItem()) + 0.5);
+				final String tawString = taw == Integer.MIN_VALUE ? "-" : Integer.toString(taw);
+				final String heroText = name + " (" + tawString + ")";
+				((Label) heroBox.getChildren().get(0)).setText(heroText);
 				for (int i = 1; i <= 3; ++i) {
 					final ReactiveSpinner<Integer> attribute = (ReactiveSpinner<Integer>) heroBox.getChildren().get(i);
 					attribute.getValueFactory().setValue((Integer) roll.get(i));
@@ -143,13 +151,14 @@ public class TalentRollDialog {
 			}
 		};
 
+		specialization.getSelectionModel().selectedIndexProperty().addListener(updateListener);
+
+		modification.valueProperty().addListener(updateListener);
+		additionalTime.selectedProperty().addListener(updateListener);
+
 		attribute1.valueProperty().addListener(updateListener);
 		attribute2.valueProperty().addListener(updateListener);
 		attribute3.valueProperty().addListener(updateListener);
-
-		modification.valueProperty().addListener(updateListener);
-
-		specialization.getSelectionModel().selectedIndexProperty().addListener(updateListener);
 
 		stage.show();
 	}
@@ -174,14 +183,24 @@ public class TalentRollDialog {
 		final SelectionModel<String> selection = specialization.getSelectionModel();
 		final Integer interpretation;
 		if (representation != null) {
-			interpretation = HeroUtil.interpretSpellRoll(hero, talentName, representation,
-					selection.getSelectedIndex() == 0 ? null : selection.getSelectedItem(),
-					new String[] { attribute1.getValue(), attribute2.getValue(), attribute3.getValue() }, new Tuple3<>(roll[0], roll[1], roll[2]),
-					-modification.getValue());
+			final int zfw = HeroUtil.getZfW(hero, talentName, representation, selection.getSelectedIndex() == 0 ? null : selection.getSelectedItem());
+			int mod = -modification.getValue();
+			if (additionalTime.isSelected()) {
+				if (representation == "Mag") {
+					mod += 4;
+				} else {
+					mod += 3;
+				}
+			}
+			interpretation = HeroUtil.interpretTalentRoll(hero, new String[] { attribute1.getValue(), attribute2.getValue(), attribute3.getValue() }, zfw,
+					new Tuple3<>(roll[0], roll[1], roll[2]), mod);
 		} else {
-			interpretation = HeroUtil.interpretTalentRoll(hero, talentName, selection.getSelectedIndex() == 0 ? null : selection.getSelectedItem(),
-					new String[] { attribute1.getValue(), attribute2.getValue(), attribute3.getValue() }, new Tuple3<>(roll[0], roll[1], roll[2]),
-					-modification.getValue());
+			double taw = HeroUtil.getTaW(hero, talentName, selection.getSelectedIndex() == 0 ? null : selection.getSelectedItem());
+			if (additionalTime.isSelected() && (int) taw != Integer.MIN_VALUE) {
+				taw *= 1.5;
+			}
+			interpretation = HeroUtil.interpretTalentRoll(hero, new String[] { attribute1.getValue(), attribute2.getValue(), attribute3.getValue() },
+					(int) (taw + 0.5), new Tuple3<>(roll[0], roll[1], roll[2]), -modification.getValue());
 		}
 		interpretationLabel.setStyle("");
 		if (interpretation == null) {
