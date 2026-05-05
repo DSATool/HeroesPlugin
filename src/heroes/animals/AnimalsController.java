@@ -63,6 +63,10 @@ public class AnimalsController extends HeroTabController {
 		biography.put("Name", type);
 		biography.put("Typ", type);
 		animal.put("Biografie", biography);
+		if ("Vertrautentier".equals(type)) {
+			final JSONObject skills = animal.getObj("Fertigkeiten");
+			skills.put("Zwiegespräch", new JSONObject(skills));
+		}
 		animals.add(animal);
 		animals.notifyListeners(null);
 	}
