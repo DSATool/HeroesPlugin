@@ -65,7 +65,7 @@ public class ItemEditor {
 		weight.getValueFactory().setValue(item.getWeight());
 		notes.setText(item.getNotes());
 
-		okButton.setOnAction(event -> {
+		okButton.setOnAction(_ -> {
 			item.setName(name.getText());
 			item.setValue(value.getValue());
 			item.setWeight(weight.getValue());
@@ -73,9 +73,9 @@ public class ItemEditor {
 			stage.close();
 		});
 
-		books.setOnAction(event -> new BooksEditor(stage, item));
+		books.setOnAction(_ -> new BooksEditor(stage, item));
 
-		cancelButton.setOnAction(event -> stage.close());
+		cancelButton.setOnAction(_ -> stage.close());
 
 		okButton.setDefaultButton(true);
 		cancelButton.setCancelButton(true);

@@ -41,7 +41,7 @@ public class SpellsController extends HeroTabController {
 	public SpellsController(final TabPane tabPane) {
 		super(tabPane);
 		this.tabPane = tabPane;
-		listener = o -> setTab();
+		listener = _ -> setTab();
 	}
 
 	private void createPane() {

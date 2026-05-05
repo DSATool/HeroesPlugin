@@ -53,7 +53,7 @@ public class InventoryDialog {
 
 		name.setText(inventory != null ? inventory.getStringOrDefault("Name", "Neues Inventar") : "Neues Inventar");
 
-		okButton.setOnAction(event -> {
+		okButton.setOnAction(_ -> {
 			JSONObject actualInventory = inventory;
 			if (inventory == null) {
 				actualInventory = new JSONObject(inventories);
@@ -65,7 +65,7 @@ public class InventoryDialog {
 			stage.close();
 		});
 
-		cancelButton.setOnAction(event -> stage.close());
+		cancelButton.setOnAction(_ -> stage.close());
 
 		okButton.setDefaultButton(true);
 		cancelButton.setCancelButton(true);

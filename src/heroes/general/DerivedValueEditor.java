@@ -64,7 +64,7 @@ public class DerivedValueEditor {
 		}
 		modifier.getValueFactory().setValue(value.getModifier());
 
-		okButton.setOnAction(event -> {
+		okButton.setOnAction(_ -> {
 			if (needsSEs) {
 				((Energy) value).setSes(ses.getValue());
 			}
@@ -72,7 +72,7 @@ public class DerivedValueEditor {
 			stage.close();
 		});
 
-		cancelButton.setOnAction(event -> stage.close());
+		cancelButton.setOnAction(_ -> stage.close());
 
 		stage.show();
 	}

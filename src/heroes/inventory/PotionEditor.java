@@ -72,7 +72,7 @@ public class PotionEditor {
 		weight.getValueFactory().setValue(potion.getWeight());
 		notes.setText(potion.getNotes());
 
-		okButton.setOnAction(event -> {
+		okButton.setOnAction(_ -> {
 			potion.setName(name.getText());
 			potion.setEffect(effect.getText());
 			potion.setQuality(quality.getValue());
@@ -82,9 +82,9 @@ public class PotionEditor {
 			stage.close();
 		});
 
-		books.setOnAction(event -> new BooksEditor(stage, potion));
+		books.setOnAction(_ -> new BooksEditor(stage, potion));
 
-		cancelButton.setOnAction(event -> stage.close());
+		cancelButton.setOnAction(_ -> stage.close());
 
 		okButton.setDefaultButton(true);
 		cancelButton.setCancelButton(true);

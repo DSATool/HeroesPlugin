@@ -57,14 +57,14 @@ public class AttributeEditor {
 		modifier.getValueFactory().setValue(attribute.getModifier());
 		start.getValueFactory().setValue(attribute.getStart());
 
-		okButton.setOnAction(event -> {
+		okButton.setOnAction(_ -> {
 			attribute.setSes(ses.getValue());
 			attribute.setModifier(modifier.getValue());
 			attribute.setStart(start.getValue());
 			stage.close();
 		});
 
-		cancelButton.setOnAction(event -> stage.close());
+		cancelButton.setOnAction(_ -> stage.close());
 
 		stage.show();
 	}

@@ -65,7 +65,7 @@ public class ClothingEditor {
 		weight.getValueFactory().setValue(clothing.getWeight());
 		notes.setText(clothing.getNotes());
 
-		okButton.setOnAction(event -> {
+		okButton.setOnAction(_ -> {
 			clothing.setName(name.getText());
 			clothing.setKs(ks.getValue());
 			clothing.setWeight(weight.getValue());
@@ -73,9 +73,9 @@ public class ClothingEditor {
 			stage.close();
 		});
 
-		books.setOnAction(event -> new BooksEditor(stage, clothing));
+		books.setOnAction(_ -> new BooksEditor(stage, clothing));
 
-		cancelButton.setOnAction(event -> stage.close());
+		cancelButton.setOnAction(_ -> stage.close());
 
 		okButton.setDefaultButton(true);
 		cancelButton.setCancelButton(true);

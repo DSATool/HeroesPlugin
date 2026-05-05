@@ -70,7 +70,7 @@ public class EquipmentList {
 		if (possessor == inventory) {
 			location.setSelected(true);
 		} else {
-			location.setOnAction(e -> {
+			location.setOnAction(_ -> {
 				final JSONValue parent = item.getParent();
 				parent.remove(item);
 				parent.notifyListeners(null);
@@ -97,7 +97,7 @@ public class EquipmentList {
 			initLocationItem(item, possessor, hero.getObj("Besitz"), defaultInventoryItem, location, locationGroup);
 			heroLocationItem.getItems().add(defaultInventoryItem);
 
-			DSAUtil.foreach(o -> true, inventory -> {
+			DSAUtil.foreach(_ -> true, inventory -> {
 				final RadioMenuItem inventoryItem = new RadioMenuItem(inventory.getStringOrDefault("Name", "Unbenanntes Inventar"));
 				initLocationItem(item, possessor, inventory, inventoryItem, location, locationGroup);
 				heroLocationItem.getItems().add(inventoryItem);
@@ -122,7 +122,7 @@ public class EquipmentList {
 				initLocationItem(item, possessor, animal, defaultInventoryItem, location, locationGroup);
 				heroLocationItem.getItems().add(defaultInventoryItem);
 
-				DSAUtil.foreach(o -> true, inventory -> {
+				DSAUtil.foreach(_ -> true, inventory -> {
 					final RadioMenuItem inventoryItem = new RadioMenuItem(inventory.getStringOrDefault("Name", "Unbenanntes Inventar"));
 					initLocationItem(item, possessor, inventory, inventoryItem, location, locationGroup);
 					heroLocationItem.getItems().add(inventoryItem);
@@ -158,7 +158,7 @@ public class EquipmentList {
 
 	private final JSONObject ritualGroups = ResourceManager.getResource("data/Ritualgruppen");
 
-	private final JSONListener itemListener = o -> updateEquipment();
+	private final JSONListener itemListener = _ -> updateEquipment();
 	private JSONObject hero;
 	private JSONArray actualEquipment;
 	private final JSONObject equipment;
@@ -179,7 +179,7 @@ public class EquipmentList {
 		this.isBaseInventory = isBaseInventory;
 
 		final JSONObject ritualGroups = ResourceManager.getResource("data/Ritualgruppen");
-		DSAUtil.foreach(group -> group.getString("Ritualobjekt") != null, (name, group) -> {
+		DSAUtil.foreach(group -> group.getString("Ritualobjekt") != null, (name, _) -> {
 			ritualObjectGroups.add(name);
 		}, ritualGroups);
 
@@ -228,7 +228,7 @@ public class EquipmentList {
 
 		equipmentTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-		equipmentNameColumn.setCellFactory(o -> {
+		equipmentNameColumn.setCellFactory(_ -> {
 			final TableCell<InventoryItem, String> cell = new GraphicTableCell<>(false) {
 				@Override
 				protected void createGraphic() {
@@ -262,7 +262,7 @@ public class EquipmentList {
 			item.notifyListeners(null);
 		});
 
-		equipmentNotesColumn.setCellFactory(o -> {
+		equipmentNotesColumn.setCellFactory(_ -> {
 			final TableCell<InventoryItem, String> cell = new GraphicTableCell<>(false) {
 				@Override
 				protected void createGraphic() {
@@ -336,13 +336,13 @@ public class EquipmentList {
 			});
 
 			final MenuItem editItem = new MenuItem("Bearbeiten");
-			editItem.setOnAction(event -> edit.run());
+			editItem.setOnAction(_ -> edit.run());
 
 			final Menu addItem = new Menu("Hinzufügen zu ...");
 			for (int i = 0; i < categoryNames.length; ++i) {
 				final MenuItem addCatItem = new MenuItem(categoryLongNames[i]);
 				final String categoryName = categoryNames[i];
-				addCatItem.setOnAction(event -> {
+				addCatItem.setOnAction(_ -> {
 					final JSONObject item = row.getItem().getBaseItem();
 					JSONArray categories = item.getArr("Kategorien");
 					if (categories == null) {
@@ -376,10 +376,10 @@ public class EquipmentList {
 			}
 
 			final Menu location = new Menu("Ort");
-			contextMenu.setOnShowing(e -> updateLocationMenu(row.getItem().getBaseItem(), location, hero));
+			contextMenu.setOnShowing(_ -> updateLocationMenu(row.getItem().getBaseItem(), location, hero));
 
 			final MenuItem deleteItem = new MenuItem("Löschen");
-			deleteItem.setOnAction(event -> {
+			deleteItem.setOnAction(_ -> {
 				final JSONObject item = row.getItem().getBaseItem();
 				final JSONValue parent = item.getParent();
 				parent.remove(item);
@@ -395,7 +395,7 @@ public class EquipmentList {
 
 		updateEquipment();
 
-		DSAUtil.foreach(item -> true, (itemName, item) -> {
+		DSAUtil.foreach(_ -> true, (itemName, _) -> {
 			equipmentList.getItems().add(itemName);
 		}, equipment);
 
@@ -427,13 +427,13 @@ public class EquipmentList {
 			});
 
 			final MenuItem editItem = new MenuItem("Bearbeiten");
-			editItem.setOnAction(event -> new InventoryDialog(pane.getScene().getWindow(), inventories, inventory));
+			editItem.setOnAction(_ -> new InventoryDialog(pane.getScene().getWindow(), inventories, inventory));
 			contextMenu.getItems().add(editItem);
 
 			final int index = inventories.indexOf(inventory);
 			if (index > 0) {
 				final MenuItem upItem = new MenuItem("Nach oben");
-				upItem.setOnAction(event -> {
+				upItem.setOnAction(_ -> {
 					inventories.remove(inventory);
 					inventories.add(index - 1, inventory);
 					inventories.notifyListeners(null);
@@ -442,7 +442,7 @@ public class EquipmentList {
 			}
 			if (index < inventories.size() - 1) {
 				final MenuItem downItem = new MenuItem("Nach unten");
-				downItem.setOnAction(event -> {
+				downItem.setOnAction(_ -> {
 					inventories.remove(inventory);
 					inventories.add(index + 1, inventory);
 					inventories.notifyListeners(null);
@@ -451,7 +451,7 @@ public class EquipmentList {
 			}
 
 			final MenuItem deleteItem = new MenuItem("Löschen");
-			deleteItem.setOnAction(event -> {
+			deleteItem.setOnAction(_ -> {
 				final Alert alert = new ThemedAlert(AlertType.WARNING);
 				alert.setTitle("Inventar löschen");
 				alert.setHeaderText("Die Ausrüstungsgegenstände werden in das Standardinventar verschoben.");
@@ -459,7 +459,7 @@ public class EquipmentList {
 				alert.getButtonTypes().setAll(ButtonType.OK, ButtonType.CANCEL);
 				final Optional<ButtonType> result = alert.showAndWait();
 				if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-					DSAUtil.foreach(o -> true, item -> {
+					DSAUtil.foreach(_ -> true, item -> {
 						defaultInventory.add(item.clone(defaultInventory));
 					}, inventory.getArr("Ausrüstung"));
 					inventories.remove(inventory);
@@ -493,7 +493,7 @@ public class EquipmentList {
 		if (isBaseInventory) {
 			final JSONObject ritualGroups = ResourceManager.getResource("data/Ritualgruppen");
 
-			HeroUtil.foreachInventoryItem(hero, item -> true, (item, fromExtraInventory) -> {
+			HeroUtil.foreachInventoryItem(hero, _ -> true, (item, fromExtraInventory) -> {
 				final JSONArray categories = item.getArr("Kategorien");
 				boolean found = false;
 				if (categories != null) {
@@ -515,7 +515,7 @@ public class EquipmentList {
 				}
 			});
 		} else {
-			HeroUtil.foreachInventoryItem(true, item -> true, (item, unused) -> {
+			HeroUtil.foreachInventoryItem(true, _ -> true, (item, _) -> {
 				final InventoryItem newItem = new InventoryItem(item, item);
 				equipmentTable.getItems().add(newItem);
 			}, actualEquipment);

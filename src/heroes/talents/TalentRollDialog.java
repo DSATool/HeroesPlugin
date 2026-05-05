@@ -80,7 +80,7 @@ public class TalentRollDialog {
 
 		final Stage stage = GUIUtil.setupStage(root, 450, 130 + heroes.length * 28, "Talentprobe: " + talentName, window, true);
 
-		okButton.setOnAction(e -> stage.close());
+		okButton.setOnAction(_ -> stage.close());
 		okButton.setDefaultButton(true);
 
 		final Tuple<JSONObject, JSONObject> talent;
@@ -135,7 +135,7 @@ public class TalentRollDialog {
 				for (int i = 1; i <= 3; ++i) {
 					final ReactiveSpinner<Integer> attribute = (ReactiveSpinner<Integer>) heroBox.getChildren().get(i);
 					attribute.getValueFactory().setValue((Integer) roll.get(i));
-					attribute.valueProperty().addListener((o, oldVal, newVal) -> updateInterpretation(hero));
+					attribute.valueProperty().addListener((_, _, _) -> updateInterpretation(hero));
 				}
 				root.getChildren().add(root.getChildren().size() - 1, heroBox);
 				heroBoxes.put(hero, heroBox);
@@ -145,7 +145,7 @@ public class TalentRollDialog {
 			}
 		}
 
-		final ChangeListener<? super Object> updateListener = (o, oldVal, newVal) -> {
+		final ChangeListener<? super Object> updateListener = (_, _, _) -> {
 			for (final JSONObject hero : heroes) {
 				updateInterpretation(hero);
 			}

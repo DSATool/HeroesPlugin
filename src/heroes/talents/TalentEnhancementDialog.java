@@ -89,12 +89,12 @@ public class TalentEnhancementDialog {
 
 		basis = talent.getTalent().getBoolOrDefault("Basis", false);
 
-		target.valueProperty().addListener((o, oldV, newV) -> ap.getValueFactory().setValue(getCalculatedAP(talent, hero)));
-		ses.valueProperty().addListener((o, oldV, newV) -> ap.getValueFactory().setValue(getCalculatedAP(talent, hero)));
-		method.getSelectionModel().selectedItemProperty().addListener((o, oldV, newV) -> {
+		target.valueProperty().addListener((_, _, _) -> ap.getValueFactory().setValue(getCalculatedAP(talent, hero)));
+		ses.valueProperty().addListener((_, _, _) -> ap.getValueFactory().setValue(getCalculatedAP(talent, hero)));
+		method.getSelectionModel().selectedItemProperty().addListener((_, _, _) -> {
 			ap.getValueFactory().setValue(getCalculatedAP(talent, hero));
 		});
-		ap.valueProperty().addListener((o, oldV, newV) -> {
+		ap.valueProperty().addListener((_, _, newV) -> {
 			if ("Lehrmeister".equals(method.getValue())) {
 				cost.getValueFactory().setValue(
 						(talent instanceof Spell ? newV * Settings.getSettingIntOrDefault(500, "Steigerung", "Lehrmeisterkosten:Zauber")
@@ -104,7 +104,7 @@ public class TalentEnhancementDialog {
 			}
 		});
 
-		okButton.setOnAction(event -> {
+		okButton.setOnAction(_ -> {
 			final int usedSes = Math.min(ses.getValue(), target.getValue() - startValue);
 			final JSONArray history = hero.getArr("Historie");
 			final JSONObject historyEntry = new JSONObject(history);
@@ -162,7 +162,7 @@ public class TalentEnhancementDialog {
 			stage.close();
 		});
 
-		cancelButton.setOnAction(e -> stage.close());
+		cancelButton.setOnAction(_ -> stage.close());
 
 		startValue = talent.getValue();
 		if (startValue == Integer.MIN_VALUE) {

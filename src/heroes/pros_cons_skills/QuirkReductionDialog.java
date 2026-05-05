@@ -63,10 +63,10 @@ public class QuirkReductionDialog {
 
 		final Stage stage = GUIUtil.setupStage(root, 250, 193, "Senken", window, true);
 
-		target.valueProperty().addListener((o, oldV, newV) -> ap.getValueFactory().setValue(getCalculatedAP(quirk, hero)));
-		ses.valueProperty().addListener((o, oldV, newV) -> ap.getValueFactory().setValue(getCalculatedAP(quirk, hero)));
+		target.valueProperty().addListener((_, _, _) -> ap.getValueFactory().setValue(getCalculatedAP(quirk, hero)));
+		ses.valueProperty().addListener((_, _, _) -> ap.getValueFactory().setValue(getCalculatedAP(quirk, hero)));
 
-		okButton.setOnAction(event -> {
+		okButton.setOnAction(_ -> {
 			final JSONArray history = hero.getArr("Historie");
 			final JSONObject historyEntry = new JSONObject(history);
 			historyEntry.put("Typ", "Schlechte Eigenschaft");
@@ -101,7 +101,7 @@ public class QuirkReductionDialog {
 			stage.close();
 		});
 
-		cancelButton.setOnAction(e -> stage.close());
+		cancelButton.setOnAction(_ -> stage.close());
 
 		nameLabel.setText(quirk.getName());
 		startLabel.setText(Integer.toString(quirk.getValue()));

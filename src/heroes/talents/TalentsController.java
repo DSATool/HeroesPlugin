@@ -43,7 +43,7 @@ public class TalentsController extends HeroTabController {
 	private Node ritualKnowledge;
 	private Node liturgyKnowledge;
 
-	private final JSONListener listener = o -> updateVisibility();
+	private final JSONListener listener = _ -> updateVisibility();
 
 	public TalentsController(final TabPane tabPane) {
 		super(tabPane);

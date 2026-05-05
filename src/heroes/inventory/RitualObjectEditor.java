@@ -113,7 +113,7 @@ public class RitualObjectEditor {
 		weight.getValueFactory().setValue(ritualObject.getWeight());
 		notes.setText(ritualObject.getNotes());
 
-		DSAUtil.foreach(group -> group.getString("Ritualobjekt") != null, (name, group) -> {
+		DSAUtil.foreach(group -> group.getString("Ritualobjekt") != null, (_, group) -> {
 			final String ritualObjectName = group.getString("Ritualobjekt");
 			final CheckBox check = new CheckBox(ritualObjectName);
 			typeBox.getChildren().add(check);
@@ -149,7 +149,7 @@ public class RitualObjectEditor {
 		ritualTable.getItems().setAll(ritualObject.getRituals());
 		updateList();
 
-		okButton.setOnAction(event -> {
+		okButton.setOnAction(_ -> {
 			ritualObject.setName(name.getText());
 			ritualObject.setWeight(weight.getValue());
 			ritualObject.setNotes(notes.getText());
@@ -175,9 +175,9 @@ public class RitualObjectEditor {
 			stage.close();
 		});
 
-		books.setOnAction(event -> new BooksEditor(stage, ritualObject));
+		books.setOnAction(_ -> new BooksEditor(stage, ritualObject));
 
-		cancelButton.setOnAction(event -> stage.close());
+		cancelButton.setOnAction(_ -> stage.close());
 
 		okButton.setDefaultButton(true);
 		cancelButton.setCancelButton(true);
@@ -196,13 +196,13 @@ public class RitualObjectEditor {
 	private void initializeRitualTable() {
 		GUIUtil.cellValueFactories(ritualTable, "name", "choice");
 
-		choiceColumn.setCellFactory(c -> new GraphicTableCell<>(false) {
+		choiceColumn.setCellFactory(_ -> new GraphicTableCell<>(false) {
 			@Override
 			protected void createGraphic() {
 				final Object choice = getTableView().getItems().get(getIndex()).getChoice();
 				if (choice == null) {
 					final Label l = new Label();
-					createGraphic(l, () -> "", s -> {});
+					createGraphic(l, () -> "", _ -> {});
 				} else if (choice instanceof final Integer i) {
 					final ReactiveSpinner<Integer> r = new ReactiveSpinner<>(1, 99, i);
 					r.setEditable(true);
@@ -219,13 +219,13 @@ public class RitualObjectEditor {
 			}
 		});
 
-		ritualTable.setRowFactory(t -> {
+		ritualTable.setRowFactory(_ -> {
 			final TableRow<Ritual> row = new TableRow<>();
 
 			final ContextMenu contextMenu = new ContextMenu();
 			final MenuItem contextMenuItem = new MenuItem("Löschen");
 			contextMenu.getItems().add(contextMenuItem);
-			contextMenuItem.setOnAction(o -> {
+			contextMenuItem.setOnAction(_ -> {
 				final Ritual item = row.getItem();
 				ritualTable.getItems().remove(item);
 				updateList();
@@ -248,7 +248,7 @@ public class RitualObjectEditor {
 		final JSONObject skills = hero.getObj("Sonderfertigkeiten");
 
 		final JSONObject ritualGroup = ResourceManager.getResource("data/Rituale").getObj(ritualGroupName);
-		DSAUtil.foreach(ritual -> true, (name, ritual) -> {
+		DSAUtil.foreach(_ -> true, (name, _) -> {
 			if (editing || skills.containsKey(name)) {
 				ritualList.getItems().add(name);
 			}

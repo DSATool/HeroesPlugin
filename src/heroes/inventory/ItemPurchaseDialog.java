@@ -60,7 +60,7 @@ public class ItemPurchaseDialog {
 		notes.setText(item.getStringOrDefault("Anmerkungen", ""));
 		cost.getValueFactory().setValue(item.getDoubleOrDefault("Preis", 0.0));
 
-		okButton.setOnAction(event -> {
+		okButton.setOnAction(_ -> {
 			item.put("Name", name.getText());
 			final String note = notes.getText();
 			if ("".equals(note)) {
@@ -76,7 +76,7 @@ public class ItemPurchaseDialog {
 			stage.close();
 		});
 
-		cancelButton.setOnAction(event -> stage.close());
+		cancelButton.setOnAction(_ -> stage.close());
 
 		okButton.setDefaultButton(true);
 		cancelButton.setCancelButton(true);

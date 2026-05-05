@@ -63,12 +63,12 @@ public class AmmunitionDialog {
 			final ReactiveSpinner<Integer> amount = new ReactiveSpinner<>(0, 999, ammunition.getObj(name).getIntOrDefault("Aktuell", 0));
 			amount.setPrefWidth(70);
 			amount.setEditable(true);
-			amount.valueProperty().addListener((o, oldV, newV) -> ammunition.getObj(name).put("Aktuell", newV));
+			amount.valueProperty().addListener((_, _, newV) -> ammunition.getObj(name).put("Aktuell", newV));
 
 			final ReactiveSpinner<Integer> max = new ReactiveSpinner<>(0, 999, ammunition.getObj(name).getIntOrDefault("Gesamt", 0));
 			max.setPrefWidth(70);
 			max.setEditable(true);
-			max.valueProperty().addListener((o, oldV, newV) -> ammunition.getObj(name).put("Gesamt", newV));
+			max.valueProperty().addListener((_, _, newV) -> ammunition.getObj(name).put("Gesamt", newV));
 
 			row.getChildren().addAll(nameLabel, amount, new Label("/"), max);
 			HBox.setHgrow(nameLabel, Priority.ALWAYS);
@@ -81,13 +81,13 @@ public class AmmunitionDialog {
 		buttonRow.setAlignment(Pos.BOTTOM_RIGHT);
 		final Button okButton = new Button("Ok");
 		okButton.setPrefWidth(85);
-		okButton.setOnAction(e -> {
+		okButton.setOnAction(_ -> {
 			weapon.setAmmunition(ammunition);
 			stage.close();
 		});
 		final Button cancelButton = new Button("Abbrechen");
 		cancelButton.setPrefWidth(85);
-		cancelButton.setOnAction(e -> stage.close());
+		cancelButton.setOnAction(_ -> stage.close());
 		buttonRow.getChildren().addAll(okButton, cancelButton);
 		root.getChildren().add(buttonRow);
 

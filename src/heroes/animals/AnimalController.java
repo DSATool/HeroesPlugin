@@ -234,7 +234,7 @@ public class AnimalController {
 	private final EquipmentList equipment;
 
 	private final JSONListener animalListener;
-	private final JSONListener inventoriesListener = o -> updateInventories();
+	private final JSONListener inventoriesListener = _ -> updateInventories();
 
 	public AnimalController(final JSONObject animal, final CharacterType type) {
 		final FXMLLoader fxmlLoader = new FXMLLoader();
@@ -267,7 +267,7 @@ public class AnimalController {
 		final int index = animals.indexOf(animal);
 		if (index > 0) {
 			final MenuItem upItem = new MenuItem("Nach oben");
-			upItem.setOnAction(event -> {
+			upItem.setOnAction(_ -> {
 				animals.remove(animal);
 				animals.add(index - 1, animal);
 				animals.notifyListeners(null);
@@ -276,7 +276,7 @@ public class AnimalController {
 		}
 		if (index < animals.size() - 1) {
 			final MenuItem downItem = new MenuItem("Nach unten");
-			downItem.setOnAction(event -> {
+			downItem.setOnAction(_ -> {
 				animals.remove(animal);
 				animals.add(index + 1, animal);
 				animals.notifyListeners(null);
@@ -285,7 +285,7 @@ public class AnimalController {
 		}
 
 		final MenuItem deleteItem = new MenuItem("Löschen");
-		deleteItem.setOnAction(e -> {
+		deleteItem.setOnAction(_ -> {
 			final Alert deleteConfirmation = new ThemedAlert(AlertType.CONFIRMATION);
 			deleteConfirmation.setTitle("Tier löschen?");
 			deleteConfirmation.setHeaderText("Tier " + animal.getObj("Biografie").getString("Name") + " löschen?");
@@ -323,7 +323,7 @@ public class AnimalController {
 
 		updateInventories();
 
-		animalListener = o -> {
+		animalListener = _ -> {
 			updateProCons();
 			updateSkills();
 			equipment.updateEquipment();
@@ -410,13 +410,13 @@ public class AnimalController {
 		GUIUtil.autosizeTable(attributesTable);
 		GUIUtil.cellValueFactories(attributesTable, "name", "value", "manualModifier", "current");
 
-		attributesValueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 999));
+		attributesValueColumn.setCellFactory(_ -> new IntegerSpinnerTableCell<>(0, 999));
 		attributesValueColumn.setOnEditCommit(t -> {
 			if (t.getRowValue() != null) {
 				t.getRowValue().setValue(t.getNewValue());
 			}
 		});
-		attributesModifierColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99));
+		attributesModifierColumn.setCellFactory(_ -> new IntegerSpinnerTableCell<>(-99, 99));
 		attributesModifierColumn.setOnEditCommit(t -> {
 			if (t.getRowValue() != null) {
 				t.getRowValue().setManualModifier(t.getNewValue());
@@ -439,13 +439,13 @@ public class AnimalController {
 			}
 		}
 
-		attributesTable.setRowFactory(t -> {
+		attributesTable.setRowFactory(_ -> {
 			final TableRow<AnimalAttribute> row = new TableRow<>();
 
 			final ContextMenu contextMenu = new ContextMenu();
 			final MenuItem attributesContextMenuItem = new MenuItem("Bearbeiten");
 			contextMenu.getItems().add(attributesContextMenuItem);
-			attributesContextMenuItem.setOnAction(o -> {
+			attributesContextMenuItem.setOnAction(_ -> {
 				final Attribute attribute = row.getItem();
 				new AnimalAttributeEditor(pane.getScene().getWindow(), attribute, type == CharacterType.MAGIC_ANIMAL);
 			});
@@ -458,7 +458,7 @@ public class AnimalController {
 	private void initBiography() {
 		final JSONObject biography = actualAnimal.getObj("Biografie");
 
-		final ChangeListener<Object> biographyListener = (o, oldV, newV) -> {
+		final ChangeListener<Object> biographyListener = (_, oldV, newV) -> {
 			if (oldV == newV || newV == null || oldV == null) return;
 			biography.put("Name", name.getText());
 			biography.put("Rasse", race.getText());
@@ -499,7 +499,7 @@ public class AnimalController {
 		GUIUtil.autosizeTable(proConsTable);
 		GUIUtil.cellValueFactories(proConsTable, "name", "description", "value");
 
-		proConNameColumn.setCellFactory(c -> new TextFieldTableCell<>() {
+		proConNameColumn.setCellFactory(_ -> new TextFieldTableCell<>() {
 			@Override
 			public void updateItem(final String item, final boolean empty) {
 				super.updateItem(item, empty);
@@ -510,7 +510,7 @@ public class AnimalController {
 			}
 		});
 
-		proConDescColumn.setCellFactory(c -> new GraphicTableCell<>(false) {
+		proConDescColumn.setCellFactory(_ -> new GraphicTableCell<>(false) {
 			@Override
 			protected void createGraphic() {
 				final TextField t = new TextField();
@@ -528,20 +528,20 @@ public class AnimalController {
 				t.getRowValue().setDescription(t.getNewValue());
 			}
 		});
-		proConValueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 9999));
+		proConValueColumn.setCellFactory(_ -> new IntegerSpinnerTableCell<>(0, 9999));
 		proConValueColumn.setOnEditCommit(t -> {
 			if (t.getRowValue() != null) {
 				t.getRowValue().setValue(t.getNewValue());
 			}
 		});
 
-		proConsTable.setRowFactory(t -> {
+		proConsTable.setRowFactory(_ -> {
 			final TableRow<ProConSkill> row = new TableRow<>();
 
 			final ContextMenu proConContextMenu = new ContextMenu();
 			final MenuItem proConDeleteItem = new MenuItem("Löschen");
 			proConContextMenu.getItems().add(proConDeleteItem);
-			proConDeleteItem.setOnAction(o -> {
+			proConDeleteItem.setOnAction(_ -> {
 				final JSONObject actual = actualAnimal.getObj("Eigenarten");
 				final ProConSkill item = row.getItem();
 				final String proOrConName = item.getName();
@@ -564,13 +564,13 @@ public class AnimalController {
 			GUIUtil.autosizeTable(ritualsTable);
 			ritualNameColumn.setCellValueFactory(p -> new ReadOnlyObjectWrapper<>(p.getValue()));
 
-			ritualsTable.setRowFactory(t -> {
+			ritualsTable.setRowFactory(_ -> {
 				final TableRow<String> row = new TableRow<>();
 
 				final ContextMenu ritualContextMenu = new ContextMenu();
 				final MenuItem ritualDeleteItem = new MenuItem("Löschen");
 				ritualContextMenu.getItems().add(ritualDeleteItem);
-				ritualDeleteItem.setOnAction(o -> {
+				ritualDeleteItem.setOnAction(_ -> {
 					final JSONObject actual = actualAnimal.getObj("Fertigkeiten");
 					final String item = row.getItem();
 					actual.removeKey(item);
@@ -588,7 +588,7 @@ public class AnimalController {
 		GUIUtil.autosizeTable(skillsTable);
 		GUIUtil.cellValueFactories(skillsTable, "name", "description");
 
-		skillNameColumn.setCellFactory(c -> new TextFieldTableCell<>() {
+		skillNameColumn.setCellFactory(_ -> new TextFieldTableCell<>() {
 			@Override
 			public void updateItem(final String item, final boolean empty) {
 				super.updateItem(item, empty);
@@ -599,7 +599,7 @@ public class AnimalController {
 			}
 		});
 
-		skillDescColumn.setCellFactory(c -> new GraphicTableCell<>(false) {
+		skillDescColumn.setCellFactory(_ -> new GraphicTableCell<>(false) {
 			@Override
 			protected void createGraphic() {
 				final TextField t = new TextField();
@@ -618,13 +618,13 @@ public class AnimalController {
 			}
 		});
 
-		skillsTable.setRowFactory(t -> {
+		skillsTable.setRowFactory(_ -> {
 			final TableRow<ProConSkill> row = new TableRow<>();
 
 			final ContextMenu skillContextMenu = new ContextMenu();
 			final MenuItem skillDeleteItem = new MenuItem("Löschen");
 			skillContextMenu.getItems().add(skillDeleteItem);
-			skillDeleteItem.setOnAction(o -> {
+			skillDeleteItem.setOnAction(_ -> {
 				final JSONObject actual = actualAnimal.getObj("Fertigkeiten");
 				final ProConSkill item = row.getItem();
 				final String skillName = item.getName();
@@ -655,13 +655,13 @@ public class AnimalController {
 		GUIUtil.autosizeTable(statsTable);
 		GUIUtil.cellValueFactories(statsTable, "name", "value", "bought", "manualModifier", "current");
 
-		statsValueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 999));
+		statsValueColumn.setCellFactory(_ -> new IntegerSpinnerTableCell<>(0, 999));
 		statsValueColumn.setOnEditCommit(t -> {
 			if (t.getRowValue() != null) {
 				t.getRowValue().setValue(t.getNewValue());
 			}
 		});
-		statsModifierColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99));
+		statsModifierColumn.setCellFactory(_ -> new IntegerSpinnerTableCell<>(-99, 99));
 		statsModifierColumn.setOnEditCommit(t -> {
 			if (t.getRowValue() != null) {
 				t.getRowValue().setManualModifier(t.getNewValue());
@@ -672,7 +672,7 @@ public class AnimalController {
 			statsTable.getItems().add(new AnimalAttribute(attribute, baseValues.getObj(attribute)));
 		}
 		if (type == CharacterType.MAGIC_ANIMAL) {
-			statsBoughtColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 99));
+			statsBoughtColumn.setCellFactory(_ -> new IntegerSpinnerTableCell<>(0, 99));
 			statsBoughtColumn.setOnEditCommit(t -> {
 				if (t.getRowValue() != null) {
 					t.getRowValue().setBought(t.getNewValue());
@@ -686,13 +686,13 @@ public class AnimalController {
 			statsTable.getItems().add(new AnimalAttribute("Fährtensuchen", baseValues.getObjOrDefault("Fährtensuchen", new JSONObject(baseValues))));
 		}
 
-		statsTable.setRowFactory(t -> {
+		statsTable.setRowFactory(_ -> {
 			final TableRow<AnimalAttribute> row = new TableRow<>();
 
 			final ContextMenu contextMenu = new ContextMenu();
 			final MenuItem attributesContextMenuItem = new MenuItem("Bearbeiten");
 			contextMenu.getItems().add(attributesContextMenuItem);
-			attributesContextMenuItem.setOnAction(o -> {
+			attributesContextMenuItem.setOnAction(_ -> {
 				final Attribute attribute = row.getItem();
 				new AnimalAttributeEditor(pane.getScene().getWindow(), attribute, false);
 			});
@@ -713,7 +713,7 @@ public class AnimalController {
 
 		final JSONArray inventories = actualAnimal.getArrOrDefault("Inventare", null);
 
-		DSAUtil.foreach(inventory -> true, inventory -> {
+		DSAUtil.foreach(_ -> true, inventory -> {
 			final EquipmentList list = new EquipmentList(false);
 
 			final String name = inventory.getStringOrDefault("Name", "Unbenanntes Inventar");

@@ -99,21 +99,21 @@ public class SkillAcquisitionDialog {
 			}
 		}
 
-		description.getSelectionModel().selectedItemProperty().addListener((o, oldV, newV) -> {
+		description.getSelectionModel().selectedItemProperty().addListener((_, _, newV) -> {
 			actualSkill.setDescription(newV == null ? "" : newV, false);
 			variant.setItems(FXCollections.observableArrayList(actualSkill.getSecondChoiceItems(true)));
 			variant.getSelectionModel().select(0);
 			ap.getValueFactory().setValue(actualSkill.getCost());
 		});
 
-		variant.getSelectionModel().selectedItemProperty().addListener((o, oldV, newV) -> {
+		variant.getSelectionModel().selectedItemProperty().addListener((_, _, newV) -> {
 			actualSkill.setVariant(newV == null ? "" : newV, false);
 			ap.getValueFactory().setValue(actualSkill.getCost());
 		});
 
-		ap.valueProperty().addListener((o, oldV, newV) -> cost.getValueFactory().setValue(getCalculatedCost(actualSkill)));
+		ap.valueProperty().addListener((_, _, _) -> cost.getValueFactory().setValue(getCalculatedCost(actualSkill)));
 
-		okButton.setOnAction(event -> {
+		okButton.setOnAction(_ -> {
 			final JSONObject bio = hero.getObj("Biografie");
 			bio.put("Abenteuerpunkte-Guthaben", bio.getIntOrDefault("Abenteuerpunkte-Guthaben", 0) - ap.getValue());
 			final JSONObject skills = hero.getObj("Sonderfertigkeiten");
@@ -175,7 +175,7 @@ public class SkillAcquisitionDialog {
 			stage.close();
 		});
 
-		cancelButton.setOnAction(e -> stage.close());
+		cancelButton.setOnAction(_ -> stage.close());
 
 		nameLabel.setText(actualSkill.getName());
 		description.setEditable(actualSkill.firstChoiceOrText() == ChoiceOrTextEnum.TEXT);

@@ -72,10 +72,10 @@ public class AttributeEnhancementDialog {
 		final JSONObject attributes = ResourceManager.getResource("data/Eigenschaften");
 		isMiserable = hero.getObj("Nachteile").containsKey(attributes.getObj(attribute.getName()).getString("Miserable Eigenschaft"));
 
-		target.valueProperty().addListener((o, oldV, newV) -> ap.getValueFactory().setValue(getCalculatedAP(attribute, hero)));
-		ses.valueProperty().addListener((o, oldV, newV) -> ap.getValueFactory().setValue(getCalculatedAP(attribute, hero)));
+		target.valueProperty().addListener((_, _, _) -> ap.getValueFactory().setValue(getCalculatedAP(attribute, hero)));
+		ses.valueProperty().addListener((_, _, _) -> ap.getValueFactory().setValue(getCalculatedAP(attribute, hero)));
 
-		okButton.setOnAction(event -> {
+		okButton.setOnAction(_ -> {
 			final int usedSes = Math.min(target.getValue() - attribute.getValue(), ses.getValue());
 			final JSONArray history = hero.getArr("Historie");
 			final JSONObject historyEntry = new JSONObject(history);
@@ -99,7 +99,7 @@ public class AttributeEnhancementDialog {
 			stage.close();
 		});
 
-		cancelButton.setOnAction(e -> stage.close());
+		cancelButton.setOnAction(_ -> stage.close());
 
 		nameLabel.setText(attributes.getObj(attribute.getName()).getString("Name"));
 		startLabel.setText(Integer.toString(attribute.getValue()));

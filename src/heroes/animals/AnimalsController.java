@@ -44,7 +44,7 @@ public class AnimalsController extends HeroTabController {
 	private JSONArray animals;
 	private final List<AnimalController> controllers = new ArrayList<>();
 
-	private final JSONListener animalsListener = o -> {
+	private final JSONListener animalsListener = _ -> {
 		update();
 	};
 

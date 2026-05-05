@@ -78,7 +78,7 @@ public class ProsOrConsController {
 	protected JSONObject hero;
 	protected final String category;
 	protected final BooleanProperty showAll;
-	private final JSONListener listener = o -> {
+	private final JSONListener listener = _ -> {
 		fillTable();
 		setVisibility();
 	};
@@ -113,7 +113,7 @@ public class ProsOrConsController {
 		}
 
 		nameColumn.setCellValueFactory(new PropertyValueFactory<>("displayName"));
-		nameColumn.setCellFactory(c -> new TextFieldTableCell<>() {
+		nameColumn.setCellFactory(_ -> new TextFieldTableCell<>() {
 			@Override
 			public void updateItem(final String item, final boolean empty) {
 				super.updateItem(item, empty);
@@ -126,7 +126,7 @@ public class ProsOrConsController {
 		});
 
 		descColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
-		descColumn.setCellFactory(c -> new GraphicTableCell<>(false) {
+		descColumn.setCellFactory(_ -> new GraphicTableCell<>(false) {
 			@Override
 			protected void createGraphic() {
 				final ObservableList<String> items = FXCollections
@@ -148,7 +148,7 @@ public class ProsOrConsController {
 						break;
 					case NONE:
 						final Label l = new Label();
-						createGraphic(l, () -> "", s -> {});
+						createGraphic(l, () -> "", _ -> {});
 						break;
 				}
 			}
@@ -160,7 +160,7 @@ public class ProsOrConsController {
 		});
 
 		variantColumn.setCellValueFactory(new PropertyValueFactory<>("variant"));
-		variantColumn.setCellFactory(c -> new GraphicTableCell<>(false) {
+		variantColumn.setCellFactory(_ -> new GraphicTableCell<>(false) {
 			@Override
 			protected void createGraphic() {
 				final ObservableList<String> items = FXCollections
@@ -182,7 +182,7 @@ public class ProsOrConsController {
 						break;
 					case NONE:
 						final Label l = new Label();
-						createGraphic(l, () -> "", s -> {});
+						createGraphic(l, () -> "", _ -> {});
 						break;
 				}
 			}
@@ -221,7 +221,7 @@ public class ProsOrConsController {
 		});
 
 		validColumn.setCellValueFactory(new PropertyValueFactory<>("valid"));
-		validColumn.setCellFactory(tableColumn -> new TableCell<>() {
+		validColumn.setCellFactory(_ -> new TableCell<>() {
 			@Override
 			public void updateItem(final Boolean valid, final boolean empty) {
 				super.updateItem(valid, empty);
@@ -232,7 +232,7 @@ public class ProsOrConsController {
 				if (!empty && !valid) {
 					row.getStyleClass().add("invalid");
 					final Tooltip tooltip = new Tooltip();
-					tooltip.setOnShowing(o -> {
+					tooltip.setOnShowing(_ -> {
 						tooltip.setText(row.getItem().getInvalidReason(true));
 					});
 					row.setTooltip(tooltip);
@@ -240,14 +240,14 @@ public class ProsOrConsController {
 			}
 		});
 
-		table.setRowFactory(t -> {
+		table.setRowFactory(_ -> {
 			final TableRow<ProOrCon> row = new TableRow<>();
 
 			final ContextMenu contextMenu = new ContextMenu();
 			if ("Verbilligte Sonderfertigkeiten".equals(name)) {
 				final MenuItem acquisitionItem = new MenuItem("Erwerben");
 				contextMenu.getItems().add(acquisitionItem);
-				acquisitionItem.setOnAction(o -> {
+				acquisitionItem.setOnAction(_ -> {
 					final ProOrCon skill = row.getItem();
 					final ProOrCon dummy = new ProOrCon(skill.getName(), hero, skill.getProOrCon(), skill.getActual().clone(null));
 					new SkillAcquisitionDialog(pane.getScene().getWindow(), dummy, hero);
@@ -255,7 +255,7 @@ public class ProsOrConsController {
 			}
 			if ("Nachteile".equals(name)) {
 				final MenuItem reductionItem = new MenuItem("Senken");
-				reductionItem.setOnAction(o -> {
+				reductionItem.setOnAction(_ -> {
 					final ProOrCon con = row.getItem();
 					new QuirkReductionDialog(pane.getScene().getWindow(), con, hero, con.getValue() - 1);
 				});
@@ -267,7 +267,7 @@ public class ProsOrConsController {
 			}
 			if ("Kampf-Sonderfertigkeiten".equals(name)) {
 				final MenuItem weaponMasteryItem = new MenuItem("Bearbeiten");
-				weaponMasteryItem.setOnAction(o -> new WeaponMasteryDialog(pane.getScene().getWindow(), row.getItem()));
+				weaponMasteryItem.setOnAction(_ -> new WeaponMasteryDialog(pane.getScene().getWindow(), row.getItem()));
 				weaponMasteryItem.visibleProperty().bind(Bindings.createBooleanBinding(() -> {
 					final ProOrCon skill = row.getItem();
 					return skill != null && "Waffenmeister".equals(skill.getName());
@@ -293,7 +293,7 @@ public class ProsOrConsController {
 			addButton.disableProperty().bind(Bindings.size(list.getItems()).isEqualTo(0));
 		}
 
-		showAll.addListener((o, oldV, newV) -> setVisibility());
+		showAll.addListener((_, _, _) -> setVisibility());
 	}
 
 	@FXML
@@ -327,7 +327,7 @@ public class ProsOrConsController {
 	}
 
 	protected EventHandler<ActionEvent> deleteAction(final TableRow<ProOrCon> row) {
-		return o -> {
+		return _ -> {
 			final ProOrCon item = row.getItem();
 			item.remove();
 			fillList();
@@ -339,7 +339,7 @@ public class ProsOrConsController {
 
 		final JSONObject actual = hero.getObj(category);
 
-		DSAUtil.foreach(proOrCon -> true, (proOrConName, proOrCon) -> {
+		DSAUtil.foreach(_ -> true, (proOrConName, proOrCon) -> {
 			if (!actual.containsKey(proOrConName) || proOrCon.containsKey("Auswahl") || proOrCon.containsKey("Freitext")) {
 				if (showAll.get() || RequirementsUtil.isRequirementFulfilled(hero, proOrCon.getObjOrDefault("Voraussetzungen", null), null, null, false)) {
 					list.getItems().add(new ProOrCon(proOrConName, hero, proOrCon, new JSONObject(null)).getDisplayName());

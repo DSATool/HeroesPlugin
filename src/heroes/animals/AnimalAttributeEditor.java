@@ -61,13 +61,13 @@ public class AnimalAttributeEditor {
 		modifier.getValueFactory().setValue(attribute.getModifier());
 		start.getValueFactory().setValue(attribute.getStart());
 
-		okButton.setOnAction(event -> {
+		okButton.setOnAction(_ -> {
 			attribute.setModifier(modifier.getValue());
 			attribute.setStart(needsStart ? start.getValue() : 0);
 			stage.close();
 		});
 
-		cancelButton.setOnAction(event -> stage.close());
+		cancelButton.setOnAction(_ -> stage.close());
 
 		stage.show();
 	}

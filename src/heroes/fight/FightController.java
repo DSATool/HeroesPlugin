@@ -119,7 +119,7 @@ public class FightController extends HeroTabController {
 	@FXML
 	private TableView<DefensiveWeapon> shieldsTable;
 
-	private final JSONListener listener = o -> fillTables();
+	private final JSONListener listener = _ -> fillTables();
 
 	public FightController(final TabPane tabPane) {
 		super(tabPane);
@@ -128,7 +128,7 @@ public class FightController extends HeroTabController {
 	@FXML
 	private void addArmorSet() {
 		new RenameDialog(pane.getScene().getWindow(), "Rüstungskombination", "Rüstungkombinationen", hero.getObj("Kampf").getArr("Rüstungskombinationen"), null,
-				(oldName, newName) -> {}, List.of("Rüstung"));
+				(_, _) -> {}, List.of("Rüstung"));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -166,7 +166,7 @@ public class FightController extends HeroTabController {
 		armorControl.visibleProperty().bind(hasArmor);
 		armorControl.managedProperty().bind(hasArmor);
 
-		HeroUtil.foreachInventoryItem(hero, item -> item.containsKey("Kategorien"), (item, extraInventory) -> {
+		HeroUtil.foreachInventoryItem(hero, item -> item.containsKey("Kategorien"), (item, _) -> {
 			final JSONArray categories = item.getArr("Kategorien");
 
 			if (categories.contains("Nahkampfwaffe")) {
@@ -242,7 +242,7 @@ public class FightController extends HeroTabController {
 		GUIUtil.autosizeTable(closeCombatTable);
 		GUIUtil.cellValueFactories(closeCombatTable, "name", "type", "ebe", "tp", "at", "pa", "ini", "dk", "bf");
 
-		closeCombatTable.setRowFactory(table -> {
+		closeCombatTable.setRowFactory(_ -> {
 			final TableRow<CloseCombatWeapon> row = new TableRow<>() {
 				@Override
 				public void updateItem(final CloseCombatWeapon weapon, final boolean empty) {
@@ -263,13 +263,13 @@ public class FightController extends HeroTabController {
 			final ContextMenu rowMenu = new ContextMenu();
 
 			final MenuItem atItem = new MenuItem("Attacke");
-			atItem.setOnAction(e -> {
+			atItem.setOnAction(_ -> {
 				final CloseCombatWeapon item = row.getItem();
 				new SingleRollDialog(pane.getScene().getWindow(), SingleRollDialog.Type.ATTACK, null, item);
 			});
 
 			final MenuItem paItem = new MenuItem("Parade");
-			paItem.setOnAction(e -> {
+			paItem.setOnAction(_ -> {
 				final CloseCombatWeapon item = row.getItem();
 				new SingleRollDialog(pane.getScene().getWindow(), SingleRollDialog.Type.DEFENSE, hero, item);
 			});
@@ -280,7 +280,7 @@ public class FightController extends HeroTabController {
 				if (item == null) return "";
 				return "In die " + (row.getItem().isSecondHand() != hero.getObj("Vorteile").containsKey("Linkshänder") ? "rechte Hand" : "linke Hand");
 			}, row.itemProperty(), Bindings.createBooleanBinding(() -> row.getItem() != null && row.getItem().isSecondHand(), row.itemProperty())));
-			changeHandItem.setOnAction(e -> {
+			changeHandItem.setOnAction(_ -> {
 				final CloseCombatWeapon item = row.getItem();
 				item.setSecondHand(!item.isSecondHand());
 			});
@@ -296,7 +296,7 @@ public class FightController extends HeroTabController {
 				if (item == null) return "";
 				return row.getItem().isSecondHand() ? "Seitenwaffe" : "Hauptwaffe";
 			}, row.itemProperty(), Bindings.createBooleanBinding(() -> row.getItem() != null && row.getItem().isSecondHand(), row.itemProperty())));
-			mainWeaponItem.setOnAction(e -> {
+			mainWeaponItem.setOnAction(_ -> {
 				final CloseCombatWeapon item = row.getItem();
 				if (!item.isMainWeapon()) {
 					unsetMainWeapon(item.isSecondHand());
@@ -310,13 +310,13 @@ public class FightController extends HeroTabController {
 			}, row.itemProperty(), Bindings.createBooleanBinding(() -> row.getItem() != null && row.getItem().getSpecial().contains("z"), row.itemProperty())));
 
 			rowMenu.getItems().addAll(atItem, paItem, changeHandItem, mainWeaponItem);
-			rowMenu.setOnShowing(e -> mainWeaponItem.setSelected(row.getItem() != null && row.getItem().isMainWeapon()));
+			rowMenu.setOnShowing(_ -> mainWeaponItem.setSelected(row.getItem() != null && row.getItem().isMainWeapon()));
 			row.setContextMenu(rowMenu);
 
 			return row;
 		});
 
-		closeCombatNameColumn.setCellFactory(p -> {
+		closeCombatNameColumn.setCellFactory(_ -> {
 			final TextFieldTableCell<CloseCombatWeapon, String> cell = new TextFieldTableCell<>() {
 				@Override
 				public void updateItem(final String item, final boolean empty) {
@@ -339,7 +339,7 @@ public class FightController extends HeroTabController {
 			return cell;
 		});
 
-		closeCombatTypeColumn.setCellFactory(p -> {
+		closeCombatTypeColumn.setCellFactory(_ -> {
 			final ComboBoxTableCell<CloseCombatWeapon, String> cell = new ComboBoxTableCell<>() {
 				@Override
 				public void updateItem(final String item, final boolean empty) {
@@ -350,9 +350,9 @@ public class FightController extends HeroTabController {
 						comboBox.itemsProperty().bind(getTableView().getItems().get(getIndex()).talentsProperty());
 						comboBox.setMaxWidth(Double.MAX_VALUE);
 						comboBox.getSelectionModel().select(item);
-						comboBox.getSelectionModel().selectedItemProperty().addListener((ov, oldValue, newValue) -> {
-							if (newValue != null) {
-								getTableView().getItems().get(getIndex()).setType(newValue);
+						comboBox.getSelectionModel().selectedItemProperty().addListener((_, _, newV) -> {
+							if (newV != null) {
+								getTableView().getItems().get(getIndex()).setType(newV);
 							}
 						});
 						setGraphic(comboBox);
@@ -365,7 +365,7 @@ public class FightController extends HeroTabController {
 		closeCombatEBEColumn.setCellFactory(UiUtil.signedIntegerCellFactory);
 		closeCombatPAColumn.setCellFactory(UiUtil.integerCellFactory);
 		closeCombatIniColumn.setCellFactory(UiUtil.signedIntegerCellFactory);
-		closeCombatBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12));
+		closeCombatBFColumn.setCellFactory(_ -> new IntegerSpinnerTableCell<>(-12, 12));
 		closeCombatBFColumn.setOnEditCommit(t -> {
 			if (t.getRowValue() != null) {
 				t.getRowValue().setBf(t.getNewValue());
@@ -381,7 +381,7 @@ public class FightController extends HeroTabController {
 		GUIUtil.autosizeTable(rangedCombatTable);
 		GUIUtil.cellValueFactories(rangedCombatTable, "name", "type", "ebe", "tp", "at", "load", "distance", "distancetp", "ammunition");
 
-		rangedCombatTable.setRowFactory(table -> {
+		rangedCombatTable.setRowFactory(_ -> {
 			final TableRow<RangedWeapon> row = new TableRow<>() {
 				@Override
 				public void updateItem(final RangedWeapon weapon, final boolean empty) {
@@ -402,7 +402,7 @@ public class FightController extends HeroTabController {
 			final ContextMenu rowMenu = new ContextMenu();
 
 			final MenuItem atItem = new MenuItem("Attacke");
-			atItem.setOnAction(e -> {
+			atItem.setOnAction(_ -> {
 				final RangedWeapon item = row.getItem();
 				new SingleRollDialog(pane.getScene().getWindow(), SingleRollDialog.Type.ATTACK, null, item);
 			});
@@ -413,7 +413,7 @@ public class FightController extends HeroTabController {
 			return row;
 		});
 
-		rangedCombatTypeColumn.setCellFactory(p -> {
+		rangedCombatTypeColumn.setCellFactory(_ -> {
 			final ComboBoxTableCell<RangedWeapon, String> cell = new ComboBoxTableCell<>() {
 
 				@Override
@@ -425,9 +425,9 @@ public class FightController extends HeroTabController {
 						comboBox.itemsProperty().bindBidirectional(getTableView().getItems().get(getIndex()).talentsProperty());
 						comboBox.setMaxWidth(Double.MAX_VALUE);
 						comboBox.getSelectionModel().select(item);
-						comboBox.getSelectionModel().selectedItemProperty().addListener((ov, oldValue, newValue) -> {
-							if (newValue != null) {
-								getTableView().getItems().get(getIndex()).setType(newValue);
+						comboBox.getSelectionModel().selectedItemProperty().addListener((_, _, newV) -> {
+							if (newV != null) {
+								getTableView().getItems().get(getIndex()).setType(newV);
 							}
 						});
 						setGraphic(comboBox);
@@ -437,7 +437,7 @@ public class FightController extends HeroTabController {
 			};
 			return cell;
 		});
-		rangedCombatAmmunitionColumn.setCellFactory(o -> new GraphicTableCell<>(false) {
+		rangedCombatAmmunitionColumn.setCellFactory(_ -> new GraphicTableCell<>(false) {
 			@Override
 			protected void createGraphic() {
 				if (!"Pfeile".equals(getItem()) && !"Bolzen".equals(getItem())) {
@@ -451,7 +451,7 @@ public class FightController extends HeroTabController {
 			public void updateItem(final String item, final boolean empty) {
 				if ("Pfeile".equals(item) || "Bolzen".equals(item)) {
 					final Button button = new Button(item);
-					button.setOnAction(o -> {
+					button.setOnAction(_ -> {
 						final int row = getTableRow().getIndex();
 						final CellEditEvent<RangedWeapon, String> editEvent = new CellEditEvent<>(rangedCombatTable,
 								new TablePosition<>(rangedCombatTable, row, rangedCombatAmmunitionColumn), TableColumn.editCommitEvent(), item);
@@ -482,7 +482,7 @@ public class FightController extends HeroTabController {
 		GUIUtil.autosizeTable(shieldsTable);
 		GUIUtil.cellValueFactories(shieldsTable, "name", "at", "pa", "ini", "bf");
 
-		shieldsTable.setRowFactory(table -> {
+		shieldsTable.setRowFactory(_ -> {
 			final TableRow<DefensiveWeapon> row = new TableRow<>() {
 				@Override
 				public void updateItem(final DefensiveWeapon weapon, final boolean empty) {
@@ -503,13 +503,13 @@ public class FightController extends HeroTabController {
 			final ContextMenu rowMenu = new ContextMenu();
 
 			final MenuItem paItem = new MenuItem("Parade");
-			paItem.setOnAction(e -> {
+			paItem.setOnAction(_ -> {
 				final DefensiveWeapon item = row.getItem();
 				new SingleRollDialog(pane.getScene().getWindow(), SingleRollDialog.Type.DEFENSE, hero, item);
 			});
 
 			final CheckMenuItem mainWeaponItem = new CheckMenuItem("Seitenwaffe");
-			mainWeaponItem.setOnAction(e -> {
+			mainWeaponItem.setOnAction(_ -> {
 				final DefensiveWeapon item = row.getItem();
 				if (!item.isMainWeapon()) {
 					unsetMainWeapon(true);
@@ -518,13 +518,13 @@ public class FightController extends HeroTabController {
 			});
 
 			rowMenu.getItems().addAll(paItem, mainWeaponItem);
-			rowMenu.setOnShowing(e -> mainWeaponItem.setSelected(row.getItem() != null && row.getItem().isMainWeapon()));
+			rowMenu.setOnShowing(_ -> mainWeaponItem.setSelected(row.getItem() != null && row.getItem().isMainWeapon()));
 			row.setContextMenu(rowMenu);
 
 			return row;
 		});
 
-		shieldsNameColumn.setCellFactory(p -> {
+		shieldsNameColumn.setCellFactory(_ -> {
 			final TextFieldTableCell<DefensiveWeapon, String> cell = new TextFieldTableCell<>() {
 				@Override
 				public void updateItem(final String item, final boolean empty) {
@@ -543,7 +543,7 @@ public class FightController extends HeroTabController {
 		});
 
 		shieldsIniColumn.setCellFactory(UiUtil.signedIntegerCellFactory);
-		shieldsBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12));
+		shieldsBFColumn.setCellFactory(_ -> new IntegerSpinnerTableCell<>(-12, 12));
 		shieldsBFColumn.setOnEditCommit(t -> {
 			if (t.getRowValue() != null) {
 				t.getRowValue().setBf(t.getNewValue());
@@ -559,7 +559,7 @@ public class FightController extends HeroTabController {
 		GUIUtil.autosizeTable(defensiveWeaponsTable);
 		GUIUtil.cellValueFactories(defensiveWeaponsTable, "name", "at", "pa", "ini", "bf");
 
-		defensiveWeaponsTable.setRowFactory(table -> {
+		defensiveWeaponsTable.setRowFactory(_ -> {
 			final TableRow<DefensiveWeapon> row = new TableRow<>() {
 				@Override
 				public void updateItem(final DefensiveWeapon weapon, final boolean empty) {
@@ -580,13 +580,13 @@ public class FightController extends HeroTabController {
 			final ContextMenu rowMenu = new ContextMenu();
 
 			final MenuItem paItem = new MenuItem("Parade");
-			paItem.setOnAction(e -> {
+			paItem.setOnAction(_ -> {
 				final DefensiveWeapon item = row.getItem();
 				new SingleRollDialog(pane.getScene().getWindow(), SingleRollDialog.Type.DEFENSE, hero, item);
 			});
 
 			final CheckMenuItem mainWeaponItem = new CheckMenuItem("Seitenwaffe");
-			mainWeaponItem.setOnAction(e -> {
+			mainWeaponItem.setOnAction(_ -> {
 				final DefensiveWeapon item = row.getItem();
 				if (!item.isMainWeapon()) {
 					unsetMainWeapon(true);
@@ -595,7 +595,7 @@ public class FightController extends HeroTabController {
 			});
 
 			rowMenu.getItems().addAll(paItem, mainWeaponItem);
-			rowMenu.setOnShowing(e -> {
+			rowMenu.setOnShowing(_ -> {
 				paItem.setVisible(HeroUtil.getMainWeapon(hero) != null);
 				mainWeaponItem.setSelected(row.getItem() != null && row.getItem().isMainWeapon());
 			});
@@ -604,7 +604,7 @@ public class FightController extends HeroTabController {
 			return row;
 		});
 
-		defensiveWeaponsNameColumn.setCellFactory(p -> {
+		defensiveWeaponsNameColumn.setCellFactory(_ -> {
 			final TextFieldTableCell<DefensiveWeapon, String> cell = new TextFieldTableCell<>() {
 				@Override
 				public void updateItem(final String item, final boolean empty) {
@@ -623,7 +623,7 @@ public class FightController extends HeroTabController {
 		});
 
 		defensiveWeaponsIniColumn.setCellFactory(UiUtil.signedIntegerCellFactory);
-		defensiveWeaponsBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12));
+		defensiveWeaponsBFColumn.setCellFactory(_ -> new IntegerSpinnerTableCell<>(-12, 12));
 		defensiveWeaponsBFColumn.setOnEditCommit(t -> {
 			if (t.getRowValue() != null) {
 				t.getRowValue().setBf(t.getNewValue());
@@ -648,7 +648,7 @@ public class FightController extends HeroTabController {
 	private void unsetMainWeapon(final boolean secondary) {
 		HeroUtil.foreachInventoryItem(hero,
 				otherItem -> otherItem.containsKey("Kategorien"),
-				(otherItem, extraInventory) -> {
+				(otherItem, _) -> {
 					if (otherItem.getArr("Kategorien").contains("Nahkampfwaffe")) {
 						final JSONObject baseWeapon = otherItem;
 						if (otherItem != null && otherItem.containsKey("Nahkampfwaffe")) {

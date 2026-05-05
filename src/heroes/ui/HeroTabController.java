@@ -35,7 +35,7 @@ public abstract class HeroTabController implements HeroController {
 	public HeroTabController(final TabPane pane) {
 		tab = new Tab(getText());
 		tab.setClosable(false);
-		tab.setOnSelectionChanged(e -> {
+		tab.setOnSelectionChanged(_ -> {
 			if (tab.isSelected()) {
 				if (getControl() == null && !stopInit) {
 					init();

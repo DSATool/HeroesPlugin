@@ -82,7 +82,7 @@ public class TalentGroupController {
 	private JSONObject talents;
 	private JSONObject hero;
 
-	private final JSONListener listener = o -> refreshTable();
+	private final JSONListener listener = _ -> refreshTable();
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public TalentGroupController(final ScrollPane parent, final String name, final JSONObject talentGroup, final JSONObject talents) {
@@ -115,7 +115,7 @@ public class TalentGroupController {
 		GUIUtil.autosizeTable(table);
 
 		nameColumn.setCellValueFactory(new PropertyValueFactory<>("displayName"));
-		nameColumn.setCellFactory(c -> new GraphicTableCell<>(false) {
+		nameColumn.setCellFactory(_ -> new GraphicTableCell<>(false) {
 			@Override
 			protected void createGraphic() {
 				final Talent item = getTableRow().getItem();
@@ -124,7 +124,7 @@ public class TalentGroupController {
 				t.setItems(FXCollections.observableArrayList(
 						HeroUtil.getChoices(null, talent.getStringOrDefault("Auswahl", talent.getStringOrDefault("Freitext", null)), null)));
 				t.setEditable(talent.containsKey("Freitext"));
-				createGraphic(t, t::getValue, s -> t.getSelectionModel().select(item.getVariant()));
+				createGraphic(t, t::getValue, _ -> t.getSelectionModel().select(item.getVariant()));
 			}
 
 			@Override
@@ -157,14 +157,14 @@ public class TalentGroupController {
 
 		int i = 1;
 
-		table.setRowFactory(t -> {
+		table.setRowFactory(_ -> {
 			final TableRow<Talent> row = new TableRow<>();
 
 			final ContextMenu contextMenu = new ContextMenu();
 
 			if (!"Meta-Talente".equals(name)) {
 				final MenuItem editItem = new MenuItem("Bearbeiten");
-				editItem.setOnAction(o -> {
+				editItem.setOnAction(_ -> {
 					final Talent item = row.getItem();
 					new TalentEditDialog(pane.getScene().getWindow(), item);
 				});
@@ -174,7 +174,7 @@ public class TalentGroupController {
 				}, row.itemProperty()));
 
 				final MenuItem enhanceItem = new MenuItem("Steigern");
-				enhanceItem.setOnAction(o -> {
+				enhanceItem.setOnAction(_ -> {
 					final Talent item = row.getItem();
 					new TalentEnhancementDialog(pane.getScene().getWindow(), item, hero, item.getValue() == Integer.MIN_VALUE ? 0 : item.getValue() + 1);
 				});
@@ -184,13 +184,13 @@ public class TalentGroupController {
 
 			if (!List.of("Nahkampftalente", "Fernkampftalente").contains(name)) {
 				final MenuItem rollItem = new MenuItem("Talentprobe");
-				rollItem.setOnAction(o -> {
+				rollItem.setOnAction(_ -> {
 					final Talent item = row.getItem();
 					new TalentRollDialog(pane.getScene().getWindow(), item.getName(), item instanceof final Spell s ? s.getRepresentation() : null,
 							new JSONObject[] { hero });
 				});
 				final MenuItem rollGroupItem = new MenuItem("Gruppenprobe");
-				rollGroupItem.setOnAction(o -> {
+				rollGroupItem.setOnAction(_ -> {
 					final Talent item = row.getItem();
 					final List<JSONObject> characters = ResourceManager.getAllResources("characters/");
 					new TalentRollDialog(pane.getScene().getWindow(), item.getName(), item instanceof final Spell s ? s.getRepresentation() : null,
@@ -201,7 +201,7 @@ public class TalentGroupController {
 
 			if (!"Meta-Talente".equals(name)) {
 				final MenuItem deleteItem = new MenuItem("Löschen");
-				deleteItem.setOnAction(o -> {
+				deleteItem.setOnAction(_ -> {
 					final Talent item = row.getItem();
 					item.removeTalent();
 				});
@@ -312,7 +312,7 @@ public class TalentGroupController {
 				spellPrimaryColumn.setCellValueFactory((c) -> {
 					final Spell spell = (Spell) c.getValue();
 					final BooleanProperty property = new SimpleBooleanProperty(spell.isPrimarySpell());
-					property.addListener((o, oldV, newV) -> spell.setPrimarySpell(newV));
+					property.addListener((_, _, newV) -> spell.setPrimarySpell(newV));
 					return property;
 				});
 				spellPrimaryColumn.setCellFactory(CheckBoxTableCell.forTableColumn(spellPrimaryColumn));
@@ -327,7 +327,7 @@ public class TalentGroupController {
 			final TableColumn<Talent, Boolean> primaryColumn = (TableColumn<Talent, Boolean>) table.getColumns().get(i);
 			primaryColumn.setCellValueFactory((c) -> {
 				final BooleanProperty property = new SimpleBooleanProperty(c.getValue().isPrimaryTalent());
-				property.addListener((o, oldV, newV) -> c.getValue().setPrimaryTalent(newV));
+				property.addListener((_, _, newV) -> c.getValue().setPrimaryTalent(newV));
 				return property;
 			});
 			primaryColumn.setCellFactory(CheckBoxTableCell.forTableColumn(primaryColumn));
@@ -336,7 +336,7 @@ public class TalentGroupController {
 
 			final TableColumn<Talent, Integer> sesColumn = (TableColumn<Talent, Integer>) table.getColumns().get(i);
 			sesColumn.setCellValueFactory(new PropertyValueFactory<>("ses"));
-			sesColumn.setCellFactory(o -> new IntegerSpinnerTableCell(0, 9));
+			sesColumn.setCellFactory(_ -> new IntegerSpinnerTableCell(0, 9));
 			sesColumn.setOnEditCommit((final CellEditEvent<Talent, Integer> t) -> {
 				if (t.getRowValue() != null) {
 					t.getRowValue().setSes(t.getNewValue());
@@ -347,12 +347,12 @@ public class TalentGroupController {
 
 		final TableColumn<Talent, Integer> valueColumn = (TableColumn<Talent, Integer>) table.getColumns().get(i);
 		valueColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
-		valueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99) {
+		valueColumn.setCellFactory(_ -> new IntegerSpinnerTableCell<>(-99, 99) {
 			@Override
 			public void updateItem(final Integer item, final boolean empty) {
 				if (empty || item.equals(Integer.MIN_VALUE)) {
 					final Button button = new Button("Akt.");
-					button.setOnAction(o -> {
+					button.setOnAction(_ -> {
 						final int row = getTableRow().getIndex();
 						final CellEditEvent<Talent, Integer> editEvent = new CellEditEvent<>(table, new TablePosition<>(table, row, valueColumn),
 								TableColumn.editCommitEvent(), 0);
@@ -375,13 +375,13 @@ public class TalentGroupController {
 		});
 
 		if (representationsList != null) {
-			talentsList.getSelectionModel().selectedItemProperty().addListener((ChangeListener<String>) (observable, oldValue, newValue) -> {
-				if (newValue != null) {
+			talentsList.getSelectionModel().selectedItemProperty().addListener((ChangeListener<String>) (_, _, newV) -> {
+				if (newV != null) {
 					representationsList.getItems().clear();
-					final JSONObject spell = talents.getObj(newValue);
+					final JSONObject spell = talents.getObj(newV);
 					final Set<String> representations = spell.getObj("Repräsentationen").keySet();
 					final JSONObject actual = hero.getObj("Zauber");
-					final JSONObject actualSpell = actual.getObjOrDefault(newValue, null);
+					final JSONObject actualSpell = actual.getObjOrDefault(newV, null);
 					if (actualSpell == null) {
 						representationsList.getItems().setAll(representations);
 					} else {
@@ -437,7 +437,7 @@ public class TalentGroupController {
 
 		final JSONObject actualGroup = "Zauber".equals(name) ? hero.getObjOrDefault("Zauber", null) : hero.getObj("Talente").getObjOrDefault(name, null);
 
-		DSAUtil.foreach(talent -> true, (talentName, talent) -> {
+		DSAUtil.foreach(_ -> true, (talentName, talent) -> {
 			final List<JSONObject> actualTalents;
 			if ("Meta-Talente".equals(name)) {
 				actualTalents = Collections.singletonList(new JSONObject(null));

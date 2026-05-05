@@ -136,7 +136,7 @@ public class WeaponMasteryDialog {
 
 		talent.setItems(FXCollections.observableArrayList(skill.getFirstChoiceItems(false)));
 
-		talent.getSelectionModel().selectedItemProperty().addListener((o, oldV, newV) -> {
+		talent.getSelectionModel().selectedItemProperty().addListener((_, oldV, newV) -> {
 			if (rangedCombatTalents.containsKey(newV)) {
 				if (!rangedCombatTalents.containsKey(oldV)) {
 					initRangedCombat(actual);
@@ -156,7 +156,7 @@ public class WeaponMasteryDialog {
 			weapon.setItems(FXCollections.observableArrayList(skillCopy.getSecondChoiceItems(false)));
 		});
 
-		okButton.setOnAction(event -> {
+		okButton.setOnAction(_ -> {
 			final boolean ranged = rangedCombatTalents.containsKey(talent.getValue());
 
 			skill.setDescription(talent.getValue(), true);
@@ -257,11 +257,11 @@ public class WeaponMasteryDialog {
 			stage.close();
 		});
 
-		cancelButton.setOnAction(e -> stage.close());
+		cancelButton.setOnAction(_ -> stage.close());
 
 		stage.show();
 
-		final ChangeListener<? super Number> heightListener = (o, oldV, newV) -> stage.setHeight(stage.getHeight() + newV.doubleValue() - oldV.doubleValue());
+		final ChangeListener<? super Number> heightListener = (_, oldV, newV) -> stage.setHeight(stage.getHeight() + newV.doubleValue() - oldV.doubleValue());
 		easierManeuverTable.heightProperty().addListener(heightListener);
 		additionalManeuverList.heightProperty().addListener(heightListener);
 		prosTable.heightProperty().addListener(heightListener);
@@ -315,7 +315,7 @@ public class WeaponMasteryDialog {
 		list.minHeightProperty().bind(height);
 		list.maxHeightProperty().bind(height);
 
-		list.setCellFactory(c -> {
+		list.setCellFactory(_ -> {
 			final ListCell<String> cell = new GraphicListCell<>(false) {
 				@Override
 				protected void createGraphic() {
@@ -327,7 +327,7 @@ public class WeaponMasteryDialog {
 			final ContextMenu contextMenu = new ContextMenu();
 
 			final MenuItem deleteItem = new MenuItem("Löschen");
-			deleteItem.setOnAction(e -> list.getItems().remove(cell.getIndex()));
+			deleteItem.setOnAction(_ -> list.getItems().remove(cell.getIndex()));
 			deleteItem.visibleProperty().bind(cell.itemProperty().isNotNull());
 			contextMenu.getItems().add(deleteItem);
 			cell.contextMenuProperty().bind(Bindings.when(cell.indexProperty().isNotEqualTo(Bindings.size(list.getItems()).subtract(1))).then(contextMenu)
@@ -390,7 +390,7 @@ public class WeaponMasteryDialog {
 		table.setMaxHeight(101);
 
 		final TableColumn<ManeuverOrPro, String> nameColumn = (TableColumn<ManeuverOrPro, String>) table.getColumns().get(0);
-		nameColumn.setCellFactory(c -> new GraphicTableCell<>(false) {
+		nameColumn.setCellFactory(_ -> new GraphicTableCell<>(false) {
 			@Override
 			protected void createGraphic() {
 				final TextField t = new TextField();
@@ -411,7 +411,7 @@ public class WeaponMasteryDialog {
 			}
 		});
 
-		((TableColumn<ManeuverOrPro, Integer>) table.getColumns().get(1)).setCellFactory(c -> new IntegerSpinnerTableCell<>(0, 9) {
+		((TableColumn<ManeuverOrPro, Integer>) table.getColumns().get(1)).setCellFactory(_ -> new IntegerSpinnerTableCell<>(0, 9) {
 			@Override
 			public void startEdit() {
 				if (getTableRow().getIndex() < table.getItems().size() - 1) {
@@ -423,11 +423,11 @@ public class WeaponMasteryDialog {
 		GUIUtil.autosizeTable(table);
 		GUIUtil.cellValueFactories(table, "name", "value");
 
-		table.setRowFactory(t -> {
+		table.setRowFactory(_ -> {
 			final TableRow<ManeuverOrPro> row = new TableRow<>();
 			final ContextMenu contextMenu = new ContextMenu();
 			final MenuItem deleteItem = new MenuItem("Löschen");
-			deleteItem.setOnAction(event -> table.getItems().remove(row.getIndex()));
+			deleteItem.setOnAction(_ -> table.getItems().remove(row.getIndex()));
 			contextMenu.getItems().add(deleteItem);
 			row.contextMenuProperty().bind(Bindings.when(row.indexProperty().isNotEqualTo(Bindings.size(table.getItems()).subtract(1))).then(contextMenu)
 					.otherwise((ContextMenu) null));

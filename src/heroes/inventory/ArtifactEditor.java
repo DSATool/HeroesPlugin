@@ -158,16 +158,16 @@ public class ArtifactEditor {
 
 		spells = artifact.getSpells().clone(null);
 
-		spellTable.heightProperty().addListener((o, oldV, newV) -> stage.setHeight(stage.getHeight() + newV.doubleValue() - oldV.doubleValue()));
+		spellTable.heightProperty().addListener((_, oldV, newV) -> stage.setHeight(stage.getHeight() + newV.doubleValue() - oldV.doubleValue()));
 
 		GUIUtil.autosizeTable(spellTable);
 		GUIUtil.cellValueFactories(spellTable, "name", "variant");
 
-		spellTable.setRowFactory(table -> {
+		spellTable.setRowFactory(_ -> {
 			final TableRow<Spell> row = new TableRow<>();
 			final ContextMenu contextMenu = new ContextMenu();
 			final MenuItem deleteItem = new MenuItem("Löschen");
-			deleteItem.setOnAction(event -> {
+			deleteItem.setOnAction(_ -> {
 				final JSONObject item = row.getItem().actual;
 				final JSONValue parent = item.getParent();
 				parent.remove(item);
@@ -180,7 +180,7 @@ public class ArtifactEditor {
 			return row;
 		});
 
-		spellNameColumn.setCellFactory(o -> new GraphicTableCell<>(false) {
+		spellNameColumn.setCellFactory(_ -> new GraphicTableCell<>(false) {
 			@Override
 			protected void createGraphic() {
 				final TextField t = new TextField();
@@ -208,7 +208,7 @@ public class ArtifactEditor {
 				}
 		});
 
-		spellVariantColumn.setCellFactory(o -> new GraphicTableCell<>(false) {
+		spellVariantColumn.setCellFactory(_ -> new GraphicTableCell<>(false) {
 			@Override
 			protected void createGraphic() {
 				final TextField t = new TextField();
@@ -228,7 +228,7 @@ public class ArtifactEditor {
 			}
 		});
 
-		type.valueProperty().addListener((o, oldV, newV) -> {
+		type.valueProperty().addListener((_, _, _) -> {
 			loadNum.setDisable(true);
 			loadFreq.setDisable(true);
 			stability.setDisable(true);
@@ -247,7 +247,7 @@ public class ArtifactEditor {
 			}
 		});
 
-		triggerType.valueProperty().addListener((o, oldV, newV) -> {
+		triggerType.valueProperty().addListener((_, _, newV) -> {
 			if (!"andere".equals(newV)) {
 				final JSONObject trigger = triggers.getObj(newV);
 				triggerActions.getValueFactory().setValue(trigger.getBoolOrDefault("Reaktion", false) ? 0 : trigger.getIntOrDefault("Aktionen", 1));
@@ -278,7 +278,7 @@ public class ArtifactEditor {
 		weight.getValueFactory().setValue(artifact.getWeight());
 		notes.setText(artifact.getNotes());
 
-		okButton.setOnAction(event -> {
+		okButton.setOnAction(_ -> {
 			artifact.setName(name.getText());
 			artifact.setType(type.getValue());
 			switch (type.getValue()) {
@@ -309,9 +309,9 @@ public class ArtifactEditor {
 			stage.close();
 		});
 
-		books.setOnAction(event -> new BooksEditor(stage, artifact));
+		books.setOnAction(_ -> new BooksEditor(stage, artifact));
 
-		cancelButton.setOnAction(event -> stage.close());
+		cancelButton.setOnAction(_ -> stage.close());
 
 		okButton.setDefaultButton(true);
 		cancelButton.setCancelButton(true);

@@ -227,9 +227,9 @@ public class InventoryController extends HeroTabController {
 
 	private final JSONObject equipment;
 	private JSONArray items;
-	private final JSONListener heroMoneyListener = o -> refreshMoney();
-	private final JSONListener heroItemListener = o -> refreshTables();
-	private final JSONListener heroInventoriesListener = o -> update();
+	private final JSONListener heroMoneyListener = _ -> refreshMoney();
+	private final JSONListener heroItemListener = _ -> refreshTables();
+	private final JSONListener heroInventoriesListener = _ -> update();
 
 	private final HashMap<ComboBox<String>, ObservableList<String>> itemLists = new HashMap<>();
 
@@ -343,7 +343,7 @@ public class InventoryController extends HeroTabController {
 		super.init();
 
 		final JSONObject ritualGroups = ResourceManager.getResource("data/Ritualgruppen");
-		DSAUtil.foreach(group -> group.getString("Ritualobjekt") != null, (name, group) -> {
+		DSAUtil.foreach(group -> group.getString("Ritualobjekt") != null, (name, _) -> {
 			ritualObjectGroups.add(name);
 		}, ritualGroups);
 
@@ -379,7 +379,7 @@ public class InventoryController extends HeroTabController {
 
 		for (final TableView<? extends InventoryItem> table : new TableView[] { closeCombatTable, rangedTable, shieldsTable, defensiveWeaponsTable, armorTable,
 				ritualObjectTable, valuablesTable, potionsTable, artifactTable, clothingTable }) {
-			((TableColumn<InventoryItem, String>) table.getColumns().get(0)).setCellFactory(c -> new GraphicTableCell<>(false) {
+			((TableColumn<InventoryItem, String>) table.getColumns().get(0)).setCellFactory(_ -> new GraphicTableCell<>(false) {
 				@Override
 				protected void createGraphic() {
 					final TextField t = new TextField();
@@ -445,7 +445,7 @@ public class InventoryController extends HeroTabController {
 		initTable(closeCombatTable, "Nahkampfwaffen", "Nahkampfwaffe");
 		GUIUtil.cellValueFactories(closeCombatTable, "name", "tp", "tpkk", "weight", "length", "bf", "ini", "wm", "special", "dk");
 
-		closeCombatBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12));
+		closeCombatBFColumn.setCellFactory(_ -> new IntegerSpinnerTableCell<>(-12, 12));
 		closeCombatBFColumn.setOnEditCommit(t -> {
 			if (t.getRowValue() != null) {
 				t.getRowValue().setBf(t.getNewValue());
@@ -463,7 +463,7 @@ public class InventoryController extends HeroTabController {
 			item.notifyListeners(null);
 		});
 
-		clothingNotesColumn.setCellFactory(o -> {
+		clothingNotesColumn.setCellFactory(_ -> {
 			final TableCell<Clothing, String> cell = new GraphicTableCell<>(false) {
 				@Override
 				protected void createGraphic() {
@@ -489,7 +489,7 @@ public class InventoryController extends HeroTabController {
 		initTable(defensiveWeaponsTable, "Parierwaffen", "Parierwaffe");
 		GUIUtil.cellValueFactories(defensiveWeaponsTable, "name", "wm", "ini", "bf", "weight");
 
-		defensiveWeaponsBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12));
+		defensiveWeaponsBFColumn.setCellFactory(_ -> new IntegerSpinnerTableCell<>(-12, 12));
 		defensiveWeaponsBFColumn.setOnEditCommit(t -> {
 			if (t.getRowValue() != null) {
 				t.getRowValue().setBf(t.getNewValue());
@@ -509,7 +509,7 @@ public class InventoryController extends HeroTabController {
 		potionsNameColumn.prefWidthProperty().bind(potionsWidth);
 		potionsNotesColumn.prefWidthProperty().bind(potionsWidth);
 
-		potionsAmountColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 99));
+		potionsAmountColumn.setCellFactory(_ -> new IntegerSpinnerTableCell<>(0, 99));
 		potionsAmountColumn.setOnEditCommit(t -> {
 			if (t.getRowValue() != null) {
 				t.getRowValue().setAmount(t.getNewValue());
@@ -531,7 +531,7 @@ public class InventoryController extends HeroTabController {
 		initTable(shieldsTable, "Schilde", "Schild");
 		GUIUtil.cellValueFactories(shieldsTable, "name", "wm", "ini", "bf", "weight");
 
-		shieldsBFColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-12, 12));
+		shieldsBFColumn.setCellFactory(_ -> new IntegerSpinnerTableCell<>(-12, 12));
 		shieldsBFColumn.setOnEditCommit(t -> {
 			if (t.getRowValue() != null) {
 				t.getRowValue().setBf(t.getNewValue());
@@ -549,7 +549,7 @@ public class InventoryController extends HeroTabController {
 			item.notifyListeners(null);
 		});
 
-		valuablesNotesColumn.setCellFactory(o -> {
+		valuablesNotesColumn.setCellFactory(_ -> {
 			final TableCell<InventoryItem, String> cell = new GraphicTableCell<>(false) {
 				@Override
 				protected void createGraphic() {
@@ -635,13 +635,13 @@ public class InventoryController extends HeroTabController {
 			});
 
 			final MenuItem editItem = new MenuItem("Bearbeiten");
-			editItem.setOnAction(event -> edit.run());
+			editItem.setOnAction(_ -> edit.run());
 
 			final Menu addItem = new Menu("Hinzufügen zu ...");
 			for (int i = 0; i < categoryNames.length; ++i) {
 				final MenuItem addCatItem = new MenuItem(categoryLongNames[i]);
 				final String categoryName = categoryNames[i];
-				addCatItem.setOnAction(event -> {
+				addCatItem.setOnAction(_ -> {
 					final JSONObject item = row.getItem().getBaseItem();
 					JSONArray categories = item.getArr("Kategorien");
 					if (categories == null) {
@@ -675,7 +675,7 @@ public class InventoryController extends HeroTabController {
 			}
 
 			final MenuItem removeItem = new MenuItem("Entfernen aus " + name);
-			removeItem.setOnAction(event -> {
+			removeItem.setOnAction(_ -> {
 				final JSONObject item = row.getItem().getBaseItem();
 				final JSONArray categories = item.getArr("Kategorien");
 
@@ -696,10 +696,10 @@ public class InventoryController extends HeroTabController {
 			});
 
 			final Menu location = new Menu("Ort");
-			rowMenu.setOnShowing(e -> EquipmentList.updateLocationMenu(row.getItem().getBaseItem(), location, hero));
+			rowMenu.setOnShowing(_ -> EquipmentList.updateLocationMenu(row.getItem().getBaseItem(), location, hero));
 
 			final MenuItem deleteItem = new MenuItem("Löschen");
-			deleteItem.setOnAction(event -> {
+			deleteItem.setOnAction(_ -> {
 				final JSONObject item = row.getItem().getBaseItem();
 				final JSONValue parent = item.getParent();
 				parent.remove(item);
@@ -739,7 +739,7 @@ public class InventoryController extends HeroTabController {
 
 		final JSONObject ritualGroups = ResourceManager.getResource("data/Ritualgruppen");
 
-		HeroUtil.foreachInventoryItem(hero, item -> true, (item, fromExtraInventory) -> {
+		HeroUtil.foreachInventoryItem(hero, _ -> true, (item, _) -> {
 			final JSONArray categories = item.getArr("Kategorien");
 			if (categories != null) {
 				if (categories.contains("Kleidung")) {
@@ -843,22 +843,22 @@ public class InventoryController extends HeroTabController {
 
 		refreshMoney();
 
-		ducats.valueProperty().addListener((o, oldV, newV) -> {
+		ducats.valueProperty().addListener((_, oldV, newV) -> {
 			if (newV == null || oldV == null || oldV.equals(newV) || newV.equals(money.getIntOrDefault("Dukaten", 0))) return;
 			money.put("Dukaten", newV);
 			money.notifyListeners(heroMoneyListener);
 		});
-		silver.valueProperty().addListener((o, oldV, newV) -> {
+		silver.valueProperty().addListener((_, oldV, newV) -> {
 			if (newV == null || oldV == null || oldV.equals(newV) || newV.equals(money.getIntOrDefault("Silbertaler", 0))) return;
 			money.put("Silbertaler", newV);
 			money.notifyListeners(heroMoneyListener);
 		});
-		heller.valueProperty().addListener((o, oldV, newV) -> {
+		heller.valueProperty().addListener((_, oldV, newV) -> {
 			if (newV == null || oldV == null || oldV.equals(newV) || newV.equals(money.getIntOrDefault("Heller", 0))) return;
 			money.put("Heller", newV);
 			money.notifyListeners(heroMoneyListener);
 		});
-		kreuzer.valueProperty().addListener((o, oldV, newV) -> {
+		kreuzer.valueProperty().addListener((_, oldV, newV) -> {
 			if (newV == null || oldV == null || oldV.equals(newV) || newV.equals(money.getIntOrDefault("Kreuzer", 0))) return;
 			money.put("Kreuzer", newV);
 			money.notifyListeners(heroMoneyListener);
@@ -882,7 +882,7 @@ public class InventoryController extends HeroTabController {
 
 		final JSONArray inventories = possessions.getArrOrDefault("Inventare", null);
 
-		DSAUtil.foreach(inventory -> true, inventory -> {
+		DSAUtil.foreach(_ -> true, inventory -> {
 			final EquipmentList list = new EquipmentList(false);
 
 			final String name = inventory.getStringOrDefault("Name", "Unbenanntes Inventar");
@@ -903,7 +903,7 @@ public class InventoryController extends HeroTabController {
 	private void updateLists() {
 		itemLists.values().forEach(ObservableList::clear);
 
-		DSAUtil.foreach(item -> true, (itemName, item) -> {
+		DSAUtil.foreach(_ -> true, (itemName, item) -> {
 			final JSONArray categories = item.getArr("Kategorien");
 			if (categories.contains("Kleidung")) {
 				itemLists.get(clothingList).add(itemName);

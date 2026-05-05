@@ -66,15 +66,15 @@ public class PotionPurchaseDialog {
 		notes.setText(item.getStringOrDefault("Anmerkungen", ""));
 		cost.getValueFactory().setValue(item.getDoubleOrDefault("Preis", 0.0));
 
-		quality.valueProperty().addListener((o, oldV, newV) -> {
+		quality.valueProperty().addListener((_, oldV, newV) -> {
 			if (!costChanged) {
 				cost.getValueFactory().setValue(cost.getValue() / getPriceFactor(oldV) * getPriceFactor(newV));
 				costChanged = false;
 			}
 		});
-		cost.valueProperty().addListener((o, oldV, newV) -> costChanged = true);
+		cost.valueProperty().addListener((_, _, _) -> costChanged = true);
 
-		okButton.setOnAction(event -> {
+		okButton.setOnAction(_ -> {
 			item.put("Name", name.getText());
 			final String potionQuality = quality.getValue();
 			if ("".equals(potionQuality)) {
@@ -96,7 +96,7 @@ public class PotionPurchaseDialog {
 			stage.close();
 		});
 
-		cancelButton.setOnAction(event -> stage.close());
+		cancelButton.setOnAction(_ -> stage.close());
 
 		okButton.setDefaultButton(true);
 		cancelButton.setCancelButton(true);

@@ -145,7 +145,7 @@ public class GeneralController extends HeroTabController {
 
 	private boolean update = false;
 
-	private final JSONListener heroBioListener = o -> {
+	private final JSONListener heroBioListener = _ -> {
 		setBiography();
 		setAppearance();
 	};
@@ -233,7 +233,7 @@ public class GeneralController extends HeroTabController {
 
 		GUIUtil.autosizeTable(attributesTable);
 		GUIUtil.cellValueFactories(attributesTable, "name", "value", "manualModifier", "current");
-		attributesValueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 30));
+		attributesValueColumn.setCellFactory(_ -> new IntegerSpinnerTableCell<>(0, 30));
 		attributesValueColumn.setOnEditCommit(t -> {
 			if (t.getRowValue() != null)
 				if (HeroTabController.isEditable.get()) {
@@ -243,35 +243,35 @@ public class GeneralController extends HeroTabController {
 							t.getNewValue());
 				}
 		});
-		attributesModifierColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99));
+		attributesModifierColumn.setCellFactory(_ -> new IntegerSpinnerTableCell<>(-99, 99));
 		attributesModifierColumn.setOnEditCommit(t -> {
 			if (t.getRowValue() != null) {
 				t.getRowValue().setManualModifier(t.getNewValue());
 			}
 		});
 
-		attributesTable.setRowFactory(t -> {
+		attributesTable.setRowFactory(_ -> {
 			final TableRow<Attribute> row = new TableRow<>();
 
 			final ContextMenu attributesContextMenu = new ContextMenu();
 
 			final MenuItem attributesEnhanceItem = new MenuItem("Steigern");
 			attributesContextMenu.getItems().add(attributesEnhanceItem);
-			attributesEnhanceItem.setOnAction(o -> {
+			attributesEnhanceItem.setOnAction(_ -> {
 				final Attribute attribute = row.getItem();
 				new AttributeEnhancementDialog(pane.getScene().getWindow(), attribute, hero, attribute.getValue() + 1);
 			});
 
 			final MenuItem attributesEditItem = new MenuItem("Bearbeiten");
 			attributesContextMenu.getItems().add(attributesEditItem);
-			attributesEditItem.setOnAction(o -> {
+			attributesEditItem.setOnAction(_ -> {
 				final Attribute attribute = row.getItem();
 				new AttributeEditor(pane.getScene().getWindow(), attribute);
 			});
 
 			final MenuItem rollItem = new MenuItem("Eigenschaftsprobe");
 			attributesContextMenu.getItems().add(rollItem);
-			rollItem.setOnAction(e -> {
+			rollItem.setOnAction(_ -> {
 				final Attribute item = row.getItem();
 				new SingleRollDialog(pane.getScene().getWindow(), SingleRollDialog.Type.ATTRIBUTE, hero, item);
 			});
@@ -285,7 +285,7 @@ public class GeneralController extends HeroTabController {
 
 		GUIUtil.autosizeTable(derivedValuesTable);
 		GUIUtil.cellValueFactories(derivedValuesTable, "name", "manualModifier", "current");
-		derivedModifierColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99));
+		derivedModifierColumn.setCellFactory(_ -> new IntegerSpinnerTableCell<>(-99, 99));
 		derivedModifierColumn.setOnEditCommit(t -> {
 			if (t.getRowValue() != null) {
 				t.getRowValue().setManualModifier(t.getNewValue());
@@ -293,13 +293,13 @@ public class GeneralController extends HeroTabController {
 		});
 		derivedCurrentColumn.setCellValueFactory(new PropertyValueFactory<>("current"));
 
-		derivedValuesTable.setRowFactory(t -> {
+		derivedValuesTable.setRowFactory(_ -> {
 			final TableRow<DerivedValue> row = new TableRow<>();
 
 			final ContextMenu derivedContextMenu = new ContextMenu();
 			final MenuItem derivedContextMenuItem = new MenuItem("Bearbeiten");
 			derivedContextMenu.getItems().add(derivedContextMenuItem);
-			derivedContextMenuItem.setOnAction(o -> {
+			derivedContextMenuItem.setOnAction(_ -> {
 				final DerivedValue value = row.getItem();
 				new DerivedValueEditor(pane.getScene().getWindow(), value, false);
 			});
@@ -313,13 +313,13 @@ public class GeneralController extends HeroTabController {
 
 		GUIUtil.autosizeTable(energiesTable);
 		GUIUtil.cellValueFactories(energiesTable, "name", "permanent", "bought", "manualModifier", "currentPercentage");
-		energiesPermanentColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99));
+		energiesPermanentColumn.setCellFactory(_ -> new IntegerSpinnerTableCell<>(-99, 99));
 		energiesPermanentColumn.setOnEditCommit(t -> {
 			if (t.getRowValue() != null) {
 				t.getRowValue().setPermanent(t.getNewValue());
 			}
 		});
-		energiesBoughtColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(0, 99));
+		energiesBoughtColumn.setCellFactory(_ -> new IntegerSpinnerTableCell<>(0, 99));
 		energiesBoughtColumn.setOnEditCommit(t -> {
 			if (t.getRowValue() != null)
 				if (HeroTabController.isEditable.get()) {
@@ -329,21 +329,21 @@ public class GeneralController extends HeroTabController {
 					new EnergyEnhancementDialog(pane.getScene().getWindow(), energy, hero, energy.getMax() - energy.getBought() + t.getNewValue());
 				}
 		});
-		energiesModifierColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(-99, 99));
+		energiesModifierColumn.setCellFactory(_ -> new IntegerSpinnerTableCell<>(-99, 99));
 		energiesModifierColumn.setOnEditCommit(t -> {
 			if (t.getRowValue() != null) {
 				t.getRowValue().setManualModifier(t.getNewValue());
 			}
 		});
-		energiesCurrentColumn.setCellFactory(o -> new ColoredProgressBarTableCell<>());
+		energiesCurrentColumn.setCellFactory(_ -> new ColoredProgressBarTableCell<>());
 
-		energiesTable.setRowFactory(t -> {
+		energiesTable.setRowFactory(_ -> {
 			final TableRow<HeroEnergy> row = new TableRow<>();
 
 			final ContextMenu energiesContextMenu = new ContextMenu();
 			final MenuItem energiesEnhanceItem = new MenuItem("Zukaufen");
 			energiesContextMenu.getItems().add(energiesEnhanceItem);
-			energiesEnhanceItem.setOnAction(o -> {
+			energiesEnhanceItem.setOnAction(_ -> {
 				final HeroEnergy value = row.getItem();
 				if ("Karmaenergie".equals(value.getName())) {
 					final Alert alert = new ThemedAlert(AlertType.WARNING);
@@ -357,7 +357,7 @@ public class GeneralController extends HeroTabController {
 			});
 			final MenuItem energiesEditItem = new MenuItem("Bearbeiten");
 			energiesContextMenu.getItems().add(energiesEditItem);
-			energiesEditItem.setOnAction(o -> {
+			energiesEditItem.setOnAction(_ -> {
 				final DerivedValue value = row.getItem();
 				new DerivedValueEditor(pane.getScene().getWindow(), value, !"Karmaenergie".equals(value.getName()));
 			});
@@ -394,29 +394,29 @@ public class GeneralController extends HeroTabController {
 	}
 
 	private void registerUIListeners() {
-		name.focusedProperty().addListener(Util.changeListener(() -> update, newV -> {
+		name.focusedProperty().addListener(Util.changeListener(() -> update, _ -> {
 			final JSONObject bio = hero.getObj("Biografie");
 			bio.put("Vorname", name.getText());
 			ResourceManager.moveResource(getHero(), "characters/" + name.getText());
 			bio.notifyListeners(heroBioListener);
 		}));
-		surname.focusedProperty().addListener(Util.changeListener(() -> update, newV -> {
+		surname.focusedProperty().addListener(Util.changeListener(() -> update, _ -> {
 			final JSONObject bio = hero.getObj("Biografie");
 			bio.put("Nachname", surname.getText());
 			bio.notifyListeners(heroBioListener);
 		}));
-		player.focusedProperty().addListener(Util.changeListener(() -> update, newV -> {
+		player.focusedProperty().addListener(Util.changeListener(() -> update, _ -> {
 			hero.put("Spieler", player.getText());
 			hero.notifyListeners(heroBioListener);
 		}));
 
-		socialstate.valueProperty().addListener(Util.changeListener(() -> update, newV -> {
+		socialstate.valueProperty().addListener(Util.changeListener(() -> update, _ -> {
 			final JSONObject so = hero.getObj("Basiswerte").getObj("Sozialstatus");
 			so.put("Wert", socialstate.getValue());
 			so.notifyListeners(heroBioListener);
 		}));
 
-		ap.valueProperty().addListener((o, oldV, newV) -> {
+		ap.valueProperty().addListener((_, oldV, newV) -> {
 			freeAp.getValueFactory().setValue(freeAp.getValue() + newV - oldV);
 			if (!update && !oldV.equals(newV)) {
 				final JSONArray history = getHero().getArr("Historie");
@@ -442,62 +442,62 @@ public class GeneralController extends HeroTabController {
 				bio.notifyListeners(heroBioListener);
 			}
 		});
-		freeAp.valueProperty().addListener(Util.changeListener(() -> update, newV -> {
+		freeAp.valueProperty().addListener(Util.changeListener(() -> update, _ -> {
 			final JSONObject bio = hero.getObj("Biografie");
 			bio.put("Abenteuerpunkte-Guthaben", freeAp.getValue());
 			bio.notifyListeners(heroBioListener);
 			investedAp.setText(Integer.toString(ap.getValue() - freeAp.getValue()));
 		}));
 
-		race.focusedProperty().addListener(Util.changeListener(() -> update, newV -> changeModifiedString("Rasse", race.getText())));
-		culture.focusedProperty().addListener(Util.changeListener(() -> update, newV -> changeModifiedString("Kultur", culture.getText())));
-		profession.focusedProperty().addListener(Util.changeListener(() -> update, newV -> changeModifiedProfession(profession.getText())));
+		race.focusedProperty().addListener(Util.changeListener(() -> update, _ -> changeModifiedString("Rasse", race.getText())));
+		culture.focusedProperty().addListener(Util.changeListener(() -> update, _ -> changeModifiedString("Kultur", culture.getText())));
+		profession.focusedProperty().addListener(Util.changeListener(() -> update, _ -> changeModifiedProfession(profession.getText())));
 
-		birthday.valueProperty().addListener(Util.changeListener(() -> update, newV -> {
+		birthday.valueProperty().addListener(Util.changeListener(() -> update, _ -> {
 			final JSONObject bio = hero.getObj("Biografie");
 			bio.put("Geburtstag", birthday.getValue());
 			bio.notifyListeners(heroBioListener);
 			setAge(ResourceManager.getResource("settings/Allgemein").getObj("Zeit"));
 		}));
-		birthmonth.getSelectionModel().selectedIndexProperty().addListener(Util.changeListener(() -> update, newV -> {
+		birthmonth.getSelectionModel().selectedIndexProperty().addListener(Util.changeListener(() -> update, _ -> {
 			final JSONObject bio = hero.getObj("Biografie");
 			bio.put("Geburtsmonat", birthmonth.getSelectionModel().getSelectedIndex() + 1);
 			bio.notifyListeners(heroBioListener);
 			setAge(ResourceManager.getResource("settings/Allgemein").getObj("Zeit"));
 		}));
-		birthyear.valueProperty().addListener(Util.changeListener(() -> update, newV -> {
+		birthyear.valueProperty().addListener(Util.changeListener(() -> update, _ -> {
 			final JSONObject bio = hero.getObj("Biografie");
 			bio.put("Geburtsjahr", birthyear.getValue());
 			bio.notifyListeners(heroBioListener);
 			setAge(ResourceManager.getResource("settings/Allgemein").getObj("Zeit"));
 		}));
-		gender.getSelectionModel().selectedIndexProperty().addListener(Util.changeListener(() -> update, newV -> {
+		gender.getSelectionModel().selectedIndexProperty().addListener(Util.changeListener(() -> update, _ -> {
 			final JSONObject bio = hero.getObj("Biografie");
 			bio.put("Geschlecht", gender.getSelectionModel().getSelectedItem());
 			bio.notifyListeners(heroBioListener);
 		}));
-		size.valueProperty().addListener(Util.changeListener(() -> update, newV -> {
+		size.valueProperty().addListener(Util.changeListener(() -> update, _ -> {
 			final JSONObject bio = hero.getObj("Biografie");
 			bio.put("Größe", size.getValue());
 			bio.notifyListeners(heroBioListener);
 		}));
-		weight.valueProperty().addListener(Util.changeListener(() -> update, newV -> {
+		weight.valueProperty().addListener(Util.changeListener(() -> update, _ -> {
 			final JSONObject bio = hero.getObj("Biografie");
 			bio.put("Gewicht", weight.getValue());
 			bio.notifyListeners(heroBioListener);
 		}));
-		eyecolor.valueProperty().addListener(Util.changeListener(() -> update, newV -> {
+		eyecolor.valueProperty().addListener(Util.changeListener(() -> update, _ -> {
 			final JSONObject bio = hero.getObj("Biografie");
 			bio.put("Augenfarbe", eyecolor.getValue());
 			bio.notifyListeners(heroBioListener);
 		}));
 
-		haircolor.valueProperty().addListener(Util.changeListener(() -> update || "".equals(haircolor.getValue()), newV -> {
+		haircolor.valueProperty().addListener(Util.changeListener(() -> update || "".equals(haircolor.getValue()), _ -> {
 			final JSONObject bio = hero.getObj("Biografie");
 			bio.put(bio.containsKey("Schuppenfarbe 1") ? "Schuppenfarbe 1" : "Haarfarbe", haircolor.getValue());
 			bio.notifyListeners(heroBioListener);
 		}));
-		skincolor.valueProperty().addListener(Util.changeListener(() -> update || "".equals(skincolor.getValue()), newV -> {
+		skincolor.valueProperty().addListener(Util.changeListener(() -> update || "".equals(skincolor.getValue()), _ -> {
 			final JSONObject bio = hero.getObj("Biografie");
 			bio.put(bio.containsKey("Schuppenfarbe 2") ? "Schuppenfarbe 2" : "Hautfarbe", skincolor.getValue());
 			bio.notifyListeners(heroBioListener);

@@ -186,7 +186,7 @@ public class RangedWeaponEditor {
 			final ReactiveSpinner<Integer> spinner = new ReactiveSpinner<>(0, 9999, ammunition.getObj(type).getIntOrDefault("Gesamt", 0));
 			spinner.setEditable(true);
 			spinner.setPrefWidth(80);
-			spinner.valueProperty().addListener((o, oldV, newV) -> {
+			spinner.valueProperty().addListener((_, oldV, newV) -> {
 				if (newV == 0) {
 					ammunition.removeKey(type);
 				} else {
@@ -206,14 +206,14 @@ public class RangedWeaponEditor {
 
 		weightBullet.disableProperty().bind(noBullet.selectedProperty().not());
 
-		noBullet.selectedProperty().addListener((o, oldV, newV) -> {
+		noBullet.selectedProperty().addListener((_, _, newV) -> {
 			bulletType.setDisable(!newV);
 			setAmmunitionVisible(newV && ("Pfeile".equals(bulletType.getValue()) || "Bolzen".equals(bulletType.getValue())));
 		});
 
-		bulletType.valueProperty().addListener((o, oldV, newV) -> setAmmunitionVisible("Pfeile".equals(newV) || "Bolzen".equals(newV)));
+		bulletType.valueProperty().addListener((_, _, newV) -> setAmmunitionVisible("Pfeile".equals(newV) || "Bolzen".equals(newV)));
 
-		okButton.setOnAction(event -> {
+		okButton.setOnAction(_ -> {
 			weapon.setName(name.getText());
 			weapon.setItemType(type.getText());
 			weapon.setTalents(talents.getCheckModel().getCheckedItems());
@@ -239,9 +239,9 @@ public class RangedWeaponEditor {
 			stage.close();
 		});
 
-		books.setOnAction(event -> new BooksEditor(stage, weapon));
+		books.setOnAction(_ -> new BooksEditor(stage, weapon));
 
-		cancelButton.setOnAction(event -> stage.close());
+		cancelButton.setOnAction(_ -> stage.close());
 
 		okButton.setDefaultButton(true);
 		cancelButton.setCancelButton(true);

@@ -38,8 +38,8 @@ public class CheaperSkillsController extends ProsOrConsController {
 		valueColumn.setText("Verbilligungen");
 		valueColumn.setMinWidth(100);
 		valueColumn.setMaxWidth(100);
-		valueColumn.setCellValueFactory(new PropertyValueFactory<ProOrCon, Integer>("numCheaper"));
-		valueColumn.setCellFactory(o -> new IntegerSpinnerTableCell<>(1, 9));
+		valueColumn.setCellValueFactory(new PropertyValueFactory<>("numCheaper"));
+		valueColumn.setCellFactory(_ -> new IntegerSpinnerTableCell<>(1, 9));
 		valueColumn.setOnEditCommit(t -> {
 			if (t.getRowValue() != null) {
 				t.getRowValue().setNumCheaper(t.getNewValue());
@@ -72,7 +72,7 @@ public class CheaperSkillsController extends ProsOrConsController {
 
 	@Override
 	protected EventHandler<ActionEvent> deleteAction(final TableRow<ProOrCon> row) {
-		return o -> {
+		return _ -> {
 			final JSONObject actual = hero.getObj(category);
 			final ProOrCon item = row.getItem();
 			final String skillName = item.getName();
@@ -98,14 +98,14 @@ public class CheaperSkillsController extends ProsOrConsController {
 		final JSONObject liturgies = ResourceManager.getResource("data/Liturgien");
 		final JSONObject shamanistic = ResourceManager.getResource("data/Schamanenrituale");
 
-		DSAUtil.foreach(group -> true, (groupName, group) -> {
-			DSAUtil.foreach(skill -> true, (skillName, skill) -> {
+		DSAUtil.foreach(_ -> true, (_, group) -> {
+			DSAUtil.foreach(_ -> true, (skillName, skill) -> {
 				if (!actual.containsKey(skillName) || skill.containsKey("Auswahl") || skill.containsKey("Freitext")) {
 					list.getItems().add(skillName);
 				}
 			}, group);
 		}, specialSkills, rituals);
-		DSAUtil.foreach(skill -> true, (skillName, skill) -> {
+		DSAUtil.foreach(_ -> true, (skillName, skill) -> {
 			if (!actual.containsKey(skillName) || skill.containsKey("Auswahl") || skill.containsKey("Freitext")) {
 				list.getItems().add(skillName);
 			}

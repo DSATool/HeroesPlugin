@@ -170,7 +170,7 @@ public class CloseCombatWeaponEditor {
 		tpkkStep.disableProperty().bind(noTpkk.selectedProperty().not());
 		bf.disableProperty().bind(noBf.selectedProperty().not());
 
-		okButton.setOnAction(event -> {
+		okButton.setOnAction(_ -> {
 			weapon.setName(name.getText());
 			weapon.setItemType(type.getText());
 			weapon.setTalents(talents.getCheckModel().getCheckedItems());
@@ -188,9 +188,9 @@ public class CloseCombatWeaponEditor {
 			stage.close();
 		});
 
-		books.setOnAction(event -> new BooksEditor(stage, weapon));
+		books.setOnAction(_ -> new BooksEditor(stage, weapon));
 
-		cancelButton.setOnAction(event -> stage.close());
+		cancelButton.setOnAction(_ -> stage.close());
 
 		okButton.setDefaultButton(true);
 		cancelButton.setCancelButton(true);

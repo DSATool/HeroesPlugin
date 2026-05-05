@@ -48,11 +48,11 @@ public class NotesController extends HeroTabController implements JSONListener {
 	public void init() {
 		text = new HTMLEditor();
 
-		text.setOnKeyReleased(e -> textChanged());
-		text.setOnMouseClicked(e -> textChanged());
+		text.setOnKeyReleased(_ -> textChanged());
+		text.setOnMouseClicked(_ -> textChanged());
 		for (final Node n : ((GridPane) ((HTMLEditorSkin) text.getSkin()).getChildren().get(0)).getChildren()) {
-			n.setOnMouseExited(e -> textChanged());
-			n.focusedProperty().addListener((o, oldV, newV) -> {
+			n.setOnMouseExited(_ -> textChanged());
+			n.focusedProperty().addListener((_, _, newV) -> {
 				if (!newV) {
 					textChanged();
 				}

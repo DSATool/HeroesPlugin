@@ -69,10 +69,10 @@ public class EnergyEnhancementDialog {
 
 		enhanceLabel.setText(" zukaufen:");
 
-		target.valueProperty().addListener((o, oldV, newV) -> ap.getValueFactory().setValue(getCalculatedAP(energy, hero)));
-		ses.valueProperty().addListener((o, oldV, newV) -> ap.getValueFactory().setValue(getCalculatedAP(energy, hero)));
+		target.valueProperty().addListener((_, _, _) -> ap.getValueFactory().setValue(getCalculatedAP(energy, hero)));
+		ses.valueProperty().addListener((_, _, _) -> ap.getValueFactory().setValue(getCalculatedAP(energy, hero)));
 
-		okButton.setOnAction(event -> {
+		okButton.setOnAction(_ -> {
 			final int usedSes = Math.min(ses.getValue(), target.getValue() - energy.getMax());
 			final JSONArray history = hero.getArr("Historie");
 			final JSONObject historyEntry = new JSONObject(history);
@@ -96,7 +96,7 @@ public class EnergyEnhancementDialog {
 			stage.close();
 		});
 
-		cancelButton.setOnAction(e -> stage.close());
+		cancelButton.setOnAction(_ -> stage.close());
 
 		nameLabel.setText(energy.getName());
 		startLabel.setText(Integer.toString(energy.getMax()));

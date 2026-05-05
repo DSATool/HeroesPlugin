@@ -116,7 +116,7 @@ public class ArmorList {
 			GUIUtil.cellValueFactories(armorTable, "name", "head", "breast", "back", "belly", "larm", "rarm", "lleg", "rleg", "zoners", "zonebe");
 		}
 
-		armorTable.setRowFactory(table -> {
+		armorTable.setRowFactory(_ -> {
 			final TableRow<Armor> row = new TableRow<>() {
 				@Override
 				public void updateItem(final Armor weapon, final boolean empty) {
@@ -143,7 +143,7 @@ public class ArmorList {
 					final String name = set.getStringOrDefault("Name", "Unbennante Rüstungskombination");
 					if (armorSet == null || !name.equals(armorSet.getString("Name"))) {
 						final MenuItem addItem = new MenuItem(name);
-						addItem.setOnAction(event -> {
+						addItem.setOnAction(_ -> {
 							final JSONObject item = row.getItem().getItem();
 							final JSONArray sets = item.getArr("Rüstungskombinationen");
 							sets.add(name);
@@ -157,7 +157,7 @@ public class ArmorList {
 
 			if (armorSet != null) {
 				final MenuItem removeItem = new MenuItem("Aus Rüstungskombination entfernen");
-				removeItem.setOnAction(event -> {
+				removeItem.setOnAction(_ -> {
 					final JSONObject item = row.getItem().getItem();
 					final JSONArray sets = item.getArrOrDefault("Rüstungskombinationen", null);
 					sets.remove(armorSet.getString("Name"));
@@ -177,7 +177,7 @@ public class ArmorList {
 			if (!isDefault) {
 				final ContextMenu contextMenu = new ContextMenu();
 				final MenuItem defaultItem = new MenuItem("Zum Standard machen");
-				defaultItem.setOnAction(event -> {
+				defaultItem.setOnAction(_ -> {
 					final JSONObject oldDefault = HeroUtil.getDefaultArmor(hero);
 					if (oldDefault != null) {
 						oldDefault.removeKey("Standardrüstung");
@@ -200,7 +200,7 @@ public class ArmorList {
 
 			if (!isDefault) {
 				final MenuItem defaultItem = new MenuItem("Zum Standard machen");
-				defaultItem.setOnAction(event -> {
+				defaultItem.setOnAction(_ -> {
 					final JSONObject oldDefault = HeroUtil.getDefaultArmor(hero);
 					if (oldDefault != null) {
 						oldDefault.removeKey("Standardrüstung");
@@ -212,13 +212,13 @@ public class ArmorList {
 			}
 
 			final MenuItem editItem = new MenuItem("Bearbeiten");
-			editItem.setOnAction(event -> rename(hero, armorSets, armorSet));
+			editItem.setOnAction(_ -> rename(hero, armorSets, armorSet));
 			contextMenu.getItems().add(editItem);
 
 			final int index = armorSets.indexOf(armorSet);
 			if (index > 0) {
 				final MenuItem upItem = new MenuItem("Nach oben");
-				upItem.setOnAction(event -> {
+				upItem.setOnAction(_ -> {
 					armorSets.remove(armorSet);
 					armorSets.add(index - 1, armorSet);
 					armorSets.notifyListeners(null);
@@ -227,7 +227,7 @@ public class ArmorList {
 			}
 			if (index < armorSets.size() - 1) {
 				final MenuItem downItem = new MenuItem("Nach unten");
-				downItem.setOnAction(event -> {
+				downItem.setOnAction(_ -> {
 					armorSets.remove(armorSet);
 					armorSets.add(index + 1, armorSet);
 					armorSets.notifyListeners(null);
@@ -236,10 +236,10 @@ public class ArmorList {
 			}
 
 			final MenuItem deleteItem = new MenuItem("Löschen");
-			deleteItem.setOnAction(event -> {
+			deleteItem.setOnAction(_ -> {
 				armorSets.remove(armorSet);
 				HeroUtil.foreachInventoryItem(hero, item -> item.containsKey("Kategorien") && item.getArr("Kategorien").contains("Rüstung"),
-						(item, extraInventory) -> item.getArrOrDefault("Rüstungskombinationen", new JSONArray(null)).remove(armorSet.getString("Name")));
+						(item, _) -> item.getArrOrDefault("Rüstungskombinationen", new JSONArray(null)).remove(armorSet.getString("Name")));
 				hero.notifyListeners(null);
 			});
 			contextMenu.getItems().add(deleteItem);
@@ -247,7 +247,7 @@ public class ArmorList {
 			pane.setContextMenu(contextMenu);
 		}
 
-		HeroUtil.foreachInventoryItem(hero, item -> item.containsKey("Kategorien") && item.getArr("Kategorien").contains("Rüstung"), (item, extraInventory) -> {
+		HeroUtil.foreachInventoryItem(hero, item -> item.containsKey("Kategorien") && item.getArr("Kategorien").contains("Rüstung"), (item, _) -> {
 			final JSONArray sets = item.getArrOrDefault("Rüstungskombinationen", null);
 			if (armorSet == null && (sets == null || sets.size() == 0) || armorSet != null && sets != null && sets.contains(armorSet.getString("Name"))) {
 				if (item.containsKey("Rüstung")) {
@@ -272,7 +272,7 @@ public class ArmorList {
 				(oldName, newName) -> {
 					if (oldName != null) {
 						HeroUtil.foreachInventoryItem(hero, item -> item.containsKey("Kategorien") && item.getArr("Kategorien").contains("Rüstung"),
-								(item, extraInventory) -> {
+								(item, _) -> {
 									final JSONArray sets = item.getArrOrDefault("Rüstungskombinationen", new JSONArray(null));
 									if (sets.contains(oldName)) {
 										sets.remove(oldName);

@@ -55,12 +55,12 @@ public class TalentEditDialog {
 
 		final Stage stage = GUIUtil.setupStage(root, 250, 115, "Talent bearbeiten", window, true);
 
-		okButton.setOnAction(event -> {
+		okButton.setOnAction(_ -> {
 			actualTalent.setVariant(variant.getValue());
 			stage.close();
 		});
 
-		cancelButton.setOnAction(e -> stage.close());
+		cancelButton.setOnAction(_ -> stage.close());
 
 		final JSONObject talent = actualTalent.getTalent();
 

@@ -83,7 +83,7 @@ public class HorseArmorEditor {
 
 		final Stage stage = GUIUtil.setupStage(root, 335, 175, "Bearbeiten", window, true);
 
-		horseArmor.selectedProperty().addListener((o, oldV, newV) -> {
+		horseArmor.selectedProperty().addListener((_, _, newV) -> {
 			headBox.setVisible(newV);
 			neckBox.setVisible(newV);
 			breastBox.setVisible(newV);
@@ -115,7 +115,7 @@ public class HorseArmorEditor {
 		legsBox.managedProperty().bindBidirectional(legsBox.visibleProperty());
 		beBox.managedProperty().bindBidirectional(beBox.visibleProperty());
 
-		okButton.setOnAction(event -> {
+		okButton.setOnAction(_ -> {
 			item.setName(name.getText());
 			item.setWeight(weight.getValue());
 			item.setNotes(notes.getText());
@@ -135,7 +135,7 @@ public class HorseArmorEditor {
 			stage.close();
 		});
 
-		cancelButton.setOnAction(event -> stage.close());
+		cancelButton.setOnAction(_ -> stage.close());
 
 		stage.show();
 	}

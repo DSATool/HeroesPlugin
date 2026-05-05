@@ -21,7 +21,7 @@ import javafx.util.Callback;
 public class UiUtil {
 
 	@SuppressWarnings("rawtypes")
-	public static final Callback integerCellFactory = col -> new TableCell() {
+	public static final Callback integerCellFactory = _ -> new TableCell() {
 		@Override
 		protected void updateItem(final Object item, final boolean empty) {
 			if (empty || item.equals(Integer.MIN_VALUE) || item.equals(Double.NEGATIVE_INFINITY)) {
@@ -37,7 +37,7 @@ public class UiUtil {
 	};
 
 	@SuppressWarnings("rawtypes")
-	public static final Callback signedIntegerCellFactory = col -> new TableCell() {
+	public static final Callback signedIntegerCellFactory = _ -> new TableCell() {
 		@Override
 		protected void updateItem(final Object item, final boolean empty) {
 			if (empty || item.equals(Integer.MIN_VALUE)) {
