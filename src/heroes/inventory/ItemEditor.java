@@ -58,7 +58,7 @@ public class ItemEditor {
 			ErrorLogger.logError(e);
 		}
 
-		final Stage stage = GUIUtil.setupStage(root, 310, 180, "Bearbeiten", window, true);
+		final Stage stage = GUIUtil.setupStage(root, 310, 183, "Bearbeiten", window, true);
 
 		name.setText(item.getName());
 		value.getValueFactory().setValue(item.getValue());
