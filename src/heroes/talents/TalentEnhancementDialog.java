@@ -52,6 +52,8 @@ public class TalentEnhancementDialog {
 	@FXML
 	private Label startLabel;
 	@FXML
+	private Label maxLabel;
+	@FXML
 	private ReactiveSpinner<Integer> target;
 	@FXML
 	private ReactiveSpinner<Integer> ses;
@@ -80,7 +82,7 @@ public class TalentEnhancementDialog {
 
 		final boolean includeCost = Settings.getSettingBoolOrDefault(true, "Steigerung", "Lehrmeisterkosten");
 
-		final Stage stage = GUIUtil.setupStage(root, 250, includeCost ? 250 : 220, "Talent steigern", window, true);
+		final Stage stage = GUIUtil.setupStage(root, 270, includeCost ? 270 : 240, "Talent steigern", window, true);
 
 		if (!includeCost) {
 			costBox.setVisible(false);
@@ -200,7 +202,9 @@ public class TalentEnhancementDialog {
 			}
 		});
 
+		maxLabel.setText(talent.getMaximum(hero) == Integer.MAX_VALUE ? "—" : Integer.toString(talent.getMaximum(hero)));
 		((IntegerSpinnerValueFactory) target.getValueFactory()).setMin(startValue + 1);
+		((IntegerSpinnerValueFactory) target.getValueFactory()).setMax(talent.getMaximum(hero));
 		if (initialTarget < 0 && !basis) {
 			target.getValueFactory().setValue(initialTarget - 1);
 		} else {

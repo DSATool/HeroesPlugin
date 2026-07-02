@@ -17,6 +17,10 @@
       <Label fx:id="startLabel" alignment="CENTER" />
    </HBox>
    <HBox alignment="CENTER" >
+      <Label text="Maximum: " alignment="CENTER_LEFT" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+      <Label fx:id="maxLabel" alignment="CENTER" />
+   </HBox>
+   <HBox alignment="CENTER" >
       <Label text="Ziel: " alignment="CENTER_LEFT" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
       <ReactiveSpinner fx:id="target" imin="-99" imax="99" editable="true" prefWidth="60" />
    </HBox>
