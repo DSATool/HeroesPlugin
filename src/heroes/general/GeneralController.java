@@ -19,6 +19,8 @@ import java.time.LocalDate;
 
 import dsa41basis.hero.Attribute;
 import dsa41basis.hero.DerivedValue;
+import dsa41basis.ui.hero.AttributeEnhancementDialog;
+import dsa41basis.ui.hero.EnergyEnhancementDialog;
 import dsa41basis.ui.hero.SingleRollDialog;
 import dsa41basis.util.DSAUtil;
 import dsa41basis.util.HeroUtil;

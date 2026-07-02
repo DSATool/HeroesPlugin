@@ -19,8 +19,10 @@ import java.util.Optional;
 
 import dsa41basis.fight.AttackTable;
 import dsa41basis.hero.Attribute;
+import dsa41basis.ui.hero.AttributeEnhancementDialog;
 import dsa41basis.ui.hero.BasicValuesController;
 import dsa41basis.ui.hero.BasicValuesController.CharacterType;
+import dsa41basis.ui.hero.EnergyEnhancementDialog;
 import dsa41basis.util.DSAUtil;
 import dsatool.gui.GUIUtil;
 import dsatool.gui.ThemedAlert;
