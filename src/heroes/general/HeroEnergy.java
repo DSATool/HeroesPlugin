@@ -31,7 +31,7 @@ public class HeroEnergy extends dsa41basis.hero.Energy implements Colorable {
 	public HeroEnergy(final String name, final JSONObject derivation, final JSONObject hero, final Color color) {
 		super(name, derivation, hero);
 
-		text.bind(Bindings.when(current.isEqualTo(max)).then(max.asString()).otherwise(current.asString().concat('/').concat(max)));
+		text.bind(Bindings.when(current.isEqualTo(value)).then(value.asString()).otherwise(current.asString().concat('/').concat(value)));
 
 		this.color = color;
 	}

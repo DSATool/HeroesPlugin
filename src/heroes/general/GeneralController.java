@@ -239,8 +239,7 @@ public class GeneralController extends HeroTabController {
 				if (HeroTabController.isEditable.get()) {
 					t.getRowValue().setValue(t.getNewValue());
 				} else if (!t.getNewValue().equals(t.getOldValue())) {
-					new AttributeEnhancementDialog(pane.getScene().getWindow(), t.getRowValue(), hero,
-							t.getNewValue());
+					new AttributeEnhancementDialog(pane.getScene().getWindow(), t.getRowValue(), hero, t.getNewValue());
 				}
 		});
 		attributesModifierColumn.setCellFactory(_ -> new IntegerSpinnerTableCell<>(-99, 99));
@@ -326,7 +325,7 @@ public class GeneralController extends HeroTabController {
 					t.getRowValue().setBought(t.getNewValue());
 				} else {
 					final HeroEnergy energy = t.getRowValue();
-					new EnergyEnhancementDialog(pane.getScene().getWindow(), energy, hero, energy.getMax() - energy.getBought() + t.getNewValue());
+					new EnergyEnhancementDialog(pane.getScene().getWindow(), energy, hero, energy.getValue() - energy.getBought() + t.getNewValue());
 				}
 		});
 		energiesModifierColumn.setCellFactory(_ -> new IntegerSpinnerTableCell<>(-99, 99));
@@ -352,7 +351,7 @@ public class GeneralController extends HeroTabController {
 					alert.setContentText("Nutze die Karmalqueste, um mehr Karmaenegie zu erhalten");
 					alert.showAndWait();
 				} else {
-					new EnergyEnhancementDialog(pane.getScene().getWindow(), value, hero, value.getMax() + 1);
+					new EnergyEnhancementDialog(pane.getScene().getWindow(), value, hero, value.getValue() + 1);
 				}
 			});
 			final MenuItem energiesEditItem = new MenuItem("Bearbeiten");
