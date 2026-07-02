@@ -15,13 +15,16 @@
  */
 package heroes.animals;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import dsa41basis.ui.hero.BasicValuesController.CharacterType;
+import dsa41basis.ui.hero.MagicAnimalBindingDialog;
 import dsatool.gui.GUIUtil;
 import dsatool.util.ErrorLogger;
 import heroes.ui.HeroTabController;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -38,12 +41,15 @@ import jsonant.value.JSONObject;
 public class AnimalsController extends HeroTabController {
 	@FXML
 	private Node pane;
+
 	@FXML
 	private VBox animalsBox;
+	@FXML
+	private Button magicAnimalAddButton;
 
 	private JSONArray animals;
-	private final List<AnimalController> controllers = new ArrayList<>();
 
+	private final List<AnimalController> controllers = new ArrayList<>();
 	private final JSONListener animalsListener = _ -> {
 		update();
 	};
@@ -63,12 +69,31 @@ public class AnimalsController extends HeroTabController {
 		biography.put("Name", type);
 		biography.put("Typ", type);
 		animal.put("Biografie", biography);
-		if ("Vertrautentier".equals(type)) {
-			final JSONObject skills = animal.getObj("Fertigkeiten");
-			skills.put("Zwiegespräch", new JSONObject(skills));
+		if ("Vertrautentier".equals(type) && !isEditable.get()) {
+			new MagicAnimalBindingDialog(pane.getScene().getWindow(), animal, hero, true);
+
+			final int apCost = biography.getIntOrDefault("Abenteuerpunkte-Kosten", 0);
+			biography.removeKey("Abenteuerpunkte-Kosten");
+			final JSONObject heroBiography = hero.getObj("Biografie");
+			heroBiography.put("Abenteuerpunkte-Guthaben", heroBiography.getIntOrDefault("Abenteuerpunkte-Guthaben", 0) - apCost);
+
+			final JSONArray history = hero.getArr("Historie");
+			final JSONObject historyEntry = new JSONObject(history);
+			historyEntry.put("Typ", "Speziell");
+			historyEntry.put("Art", "Bindung eines Vertrautentiers");
+			historyEntry.put("AP", apCost);
+			final LocalDate currentDate = LocalDate.now();
+			historyEntry.put("Datum", currentDate.toString());
+			history.add(historyEntry);
+			history.notifyListeners(null);
+		} else if ("Tier".equals(type)) {
+			new AnimalLoyaltyEditor(pane.getScene().getWindow(), animal, true);
+			animals.add(animal);
+			animals.notifyListeners(null);
+		} else {
+			animals.add(animal);
+			animals.notifyListeners(null);
 		}
-		animals.add(animal);
-		animals.notifyListeners(null);
 	}
 
 	@Override
@@ -98,11 +123,13 @@ public class AnimalsController extends HeroTabController {
 
 	@Override
 	protected void registerListeners() {
+		hero.getObj("Sonderfertigkeiten").addLocalListener(animalsListener);
 		animals.addLocalListener(animalsListener);
 	}
 
 	@Override
 	protected void unregisterListeners() {
+		hero.getObj("Sonderfertigkeiten").removeListener(animalsListener);
 		animals.removeListener(animalsListener);
 		controllers.clear();
 	}
@@ -141,6 +168,9 @@ public class AnimalsController extends HeroTabController {
 				}
 			}
 		}
+
+		magicAnimalAddButton.disableProperty()
+				.bind(isEditable.or(new SimpleBooleanProperty(hero.getObj("Sonderfertigkeiten").containsKey("Vertrautenbindung"))).not());
 	}
 
 }

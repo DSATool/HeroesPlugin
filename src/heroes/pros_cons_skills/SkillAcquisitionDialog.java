@@ -16,6 +16,7 @@
 package heroes.pros_cons_skills;
 
 import java.time.LocalDate;
+import java.util.function.Supplier;
 
 import dsa41basis.hero.ProOrCon;
 import dsa41basis.hero.ProOrCon.ChoiceOrTextEnum;
@@ -64,6 +65,99 @@ public class SkillAcquisitionDialog {
 	private ReactiveSpinner<Double> cost;
 
 	public SkillAcquisitionDialog(final Window window, final ProOrCon actualSkill, final JSONObject hero) {
+		final boolean includeCost = Settings.getSettingBoolOrDefault(true, "Steigerung", "Lehrmeisterkosten");
+
+		final JSONObject skill = actualSkill.getProOrCon();
+		final JSONObject actual = actualSkill.getActual();
+		final String name = actualSkill.getName();
+		final boolean hasChoice = actualSkill.firstChoiceOrText() == ChoiceOrTextEnum.CHOICE;
+		final boolean hasText = actualSkill.firstChoiceOrText() == ChoiceOrTextEnum.TEXT || actualSkill.secondChoiceOrText() == ChoiceOrTextEnum.TEXT;
+
+		final Supplier<JSONObject> acquireSkill = () -> {
+			final JSONObject skills = hero.getObj("Sonderfertigkeiten");
+			final JSONObject cheaperSkills = hero.getObj("Verbilligte Sonderfertigkeiten");
+			JSONObject newSkill;
+			if (hasChoice || hasText) {
+				final JSONArray choices = skills.getArr(name);
+				newSkill = actual.clone(choices);
+				choices.add(newSkill);
+				choices.notifyListeners(null);
+				if (cheaperSkills.containsKey(name)) {
+					final JSONArray actualArray = cheaperSkills.getArr(name);
+					for (int i = 0; i < actualArray.size(); ++i) {
+						final JSONObject current = actualArray.getObj(i);
+						if (!hasChoice || !current.containsKey("Auswahl") || current.getString("Auswahl").equals(newSkill.getString("Auswahl"))) {
+							if (!hasText || !current.containsKey("Freitext") || current.getString("Freitext").equals(newSkill.getString("Freitext"))) {
+								actualArray.removeAt(i);
+								actualArray.notifyListeners(null);
+								break;
+							}
+						}
+					}
+				}
+			} else {
+				newSkill = actual.clone(skills);
+				skills.put(name, newSkill);
+				skills.notifyListeners(null);
+				if (cheaperSkills.containsKey(name)) {
+					cheaperSkills.removeKey(name);
+					cheaperSkills.notifyListeners(null);
+				}
+			}
+			HeroUtil.applyEffect(hero, name, skill, actual);
+
+			return newSkill;
+		};
+
+		this(window, name, skill, hero, hasChoice, hasText, includeCost, acquireSkill);
+
+		description.getSelectionModel().selectedItemProperty().addListener((_, _, newV) -> {
+			actualSkill.setDescription(newV == null ? "" : newV, false);
+			variant.setItems(FXCollections.observableArrayList(actualSkill.getSecondChoiceItems(true)));
+			variant.getSelectionModel().select(0);
+			ap.getValueFactory().setValue(actualSkill.getCost());
+		});
+
+		variant.getSelectionModel().selectedItemProperty().addListener((_, _, newV) -> {
+			actualSkill.setVariant(newV == null ? "" : newV, false);
+			ap.getValueFactory().setValue(actualSkill.getCost());
+		});
+
+		description.setEditable(hasText && !hasChoice);
+		description.setItems(FXCollections.observableArrayList(actualSkill.getFirstChoiceItems(true)));
+		description.getSelectionModel().select(actualSkill.getDescription());
+		if (description.getSelectionModel().getSelectedIndex() < 0) {
+			description.getSelectionModel().select(0);
+		}
+		variant.setEditable(hasText && hasChoice);
+		variant.setItems(FXCollections.observableArrayList(actualSkill.getSecondChoiceItems(true)));
+		variant.getSelectionModel().select(actualSkill.getVariant());
+		if (variant.getSelectionModel().getSelectedIndex() < 0) {
+			variant.getSelectionModel().select(0);
+		}
+
+		ap.valueProperty().addListener((_, _, _) -> cost.getValueFactory().setValue(getCalculatedCost(actualSkill)));
+		ap.getValueFactory().setValue(actualSkill.getCost());
+	}
+
+	public SkillAcquisitionDialog(final Window window, final String name, final JSONObject skill, final JSONObject animal) {
+		final int cost = skill.getIntOrDefault("Kosten", 0);
+
+		final Supplier<JSONObject> acquireSkill = () -> {
+			final JSONObject actualSkills = animal.getObj("Fertigkeiten");
+			final JSONObject newSkill = new JSONObject(actualSkills);
+			actualSkills.put(name, newSkill);
+			actualSkills.notifyListeners(null);
+			return newSkill;
+		};
+
+		this(window, name, skill, animal, false, false, false, acquireSkill);
+
+		ap.getValueFactory().setValue(cost);
+	}
+
+	private SkillAcquisitionDialog(final Window window, final String name, final JSONObject skill, final JSONObject character, final boolean hasChoice,
+			final boolean hasText, final boolean includeCost, final Supplier<JSONObject> acquireSkill) {
 		final FXMLLoader fxmlLoader = new FXMLLoader();
 
 		fxmlLoader.setController(this);
@@ -73,14 +167,6 @@ public class SkillAcquisitionDialog {
 		} catch (final Exception e) {
 			ErrorLogger.logError(e);
 		}
-
-		final boolean includeCost = Settings.getSettingBoolOrDefault(true, "Steigerung", "Lehrmeisterkosten");
-
-		final JSONObject skill = actualSkill.getProOrCon();
-		final JSONObject actual = actualSkill.getActual();
-		final String name = actualSkill.getName();
-		final boolean hasChoice = actualSkill.firstChoiceOrText() == ChoiceOrTextEnum.CHOICE;
-		final boolean hasText = actualSkill.firstChoiceOrText() == ChoiceOrTextEnum.TEXT || actualSkill.secondChoiceOrText() == ChoiceOrTextEnum.TEXT;
 
 		if (!includeCost) {
 			costBox.setVisible(false);
@@ -99,61 +185,18 @@ public class SkillAcquisitionDialog {
 			}
 		}
 
-		description.getSelectionModel().selectedItemProperty().addListener((_, _, newV) -> {
-			actualSkill.setDescription(newV == null ? "" : newV, false);
-			variant.setItems(FXCollections.observableArrayList(actualSkill.getSecondChoiceItems(true)));
-			variant.getSelectionModel().select(0);
-			ap.getValueFactory().setValue(actualSkill.getCost());
-		});
-
-		variant.getSelectionModel().selectedItemProperty().addListener((_, _, newV) -> {
-			actualSkill.setVariant(newV == null ? "" : newV, false);
-			ap.getValueFactory().setValue(actualSkill.getCost());
-		});
-
-		ap.valueProperty().addListener((_, _, _) -> cost.getValueFactory().setValue(getCalculatedCost(actualSkill)));
-
 		okButton.setOnAction(_ -> {
-			final JSONObject bio = hero.getObj("Biografie");
+			final JSONObject bio = character.getObj("Biografie");
 			bio.put("Abenteuerpunkte-Guthaben", bio.getIntOrDefault("Abenteuerpunkte-Guthaben", 0) - ap.getValue());
-			final JSONObject skills = hero.getObj("Sonderfertigkeiten");
-			final JSONObject cheaperSkills = hero.getObj("Verbilligte Sonderfertigkeiten");
-			JSONObject newSkill;
-			if (hasChoice || hasText) {
-				final JSONArray choices = skills.getArr(name);
-				newSkill = actual.clone(choices);
-				newSkill.put("Kosten", ap.getValue());
-				choices.add(newSkill);
-				choices.notifyListeners(null);
-				if (cheaperSkills.containsKey(name)) {
-					final JSONArray actualArray = cheaperSkills.getArr(name);
-					for (int i = 0; i < actualArray.size(); ++i) {
-						final JSONObject current = actualArray.getObj(i);
-						if (!hasChoice || !current.containsKey("Auswahl") || current.getString("Auswahl").equals(newSkill.getString("Auswahl"))) {
-							if (!hasText || !current.containsKey("Freitext") || current.getString("Freitext").equals(newSkill.getString("Freitext"))) {
-								actualArray.removeAt(i);
-								actualArray.notifyListeners(null);
-								break;
-							}
-						}
-					}
-				}
-			} else {
-				newSkill = actual.clone(skills);
-				newSkill.put("Kosten", ap.getValue());
-				skills.put(name, newSkill);
-				skills.notifyListeners(null);
-				if (cheaperSkills.containsKey(name)) {
-					cheaperSkills.removeKey(name);
-					cheaperSkills.notifyListeners(null);
-				}
-			}
-			HeroUtil.applyEffect(hero, name, skill, actual);
+			bio.notifyListeners(null);
 
-			final JSONArray history = hero.getArr("Historie");
+			final JSONObject newSkill = acquireSkill.get();
+			newSkill.put("Kosten", ap.getValue());
+
+			final JSONArray history = character.getArr("Historie");
 			final JSONObject historyEntry = new JSONObject(history);
 			historyEntry.put("Typ", "Sonderfertigkeit");
-			historyEntry.put("Sonderfertigkeit", actualSkill.getName());
+			historyEntry.put("Sonderfertigkeit", name);
 			if (skill.containsKey("Auswahl")) {
 				historyEntry.put("Auswahl", newSkill.getString("Auswahl"));
 			}
@@ -164,7 +207,7 @@ public class SkillAcquisitionDialog {
 
 			if (includeCost && cost.getValue() != 0) {
 				historyEntry.put("Kosten", cost.getValue());
-				HeroUtil.addMoney(hero, (int) (cost.getValue() * -100));
+				HeroUtil.addMoney(character, (int) (cost.getValue() * -100));
 			}
 
 			final LocalDate currentDate = LocalDate.now();
@@ -177,20 +220,7 @@ public class SkillAcquisitionDialog {
 
 		cancelButton.setOnAction(_ -> stage.close());
 
-		nameLabel.setText(actualSkill.getName());
-		description.setEditable(actualSkill.firstChoiceOrText() == ChoiceOrTextEnum.TEXT);
-		description.setItems(FXCollections.observableArrayList(actualSkill.getFirstChoiceItems(true)));
-		description.getSelectionModel().select(actualSkill.getDescription());
-		if (description.getSelectionModel().getSelectedIndex() < 0) {
-			description.getSelectionModel().select(0);
-		}
-		variant.setEditable(actualSkill.secondChoiceOrText() == ChoiceOrTextEnum.TEXT);
-		variant.setItems(FXCollections.observableArrayList(actualSkill.getSecondChoiceItems(true)));
-		variant.getSelectionModel().select(actualSkill.getVariant());
-		if (variant.getSelectionModel().getSelectedIndex() < 0) {
-			variant.getSelectionModel().select(0);
-		}
-		ap.getValueFactory().setValue(actualSkill.getCost());
+		nameLabel.setText(name);
 
 		stage.show();
 	}

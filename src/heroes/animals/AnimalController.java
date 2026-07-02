@@ -15,14 +15,18 @@
  */
 package heroes.animals;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import dsa41basis.fight.AttackTable;
 import dsa41basis.hero.Attribute;
+import dsa41basis.hero.Buyable;
 import dsa41basis.ui.hero.AttributeEnhancementDialog;
 import dsa41basis.ui.hero.BasicValuesController;
 import dsa41basis.ui.hero.BasicValuesController.CharacterType;
 import dsa41basis.ui.hero.EnergyEnhancementDialog;
+import dsa41basis.ui.hero.SingleRollDialog;
 import dsa41basis.util.DSAUtil;
 import dsatool.gui.GUIUtil;
 import dsatool.gui.ThemedAlert;
@@ -31,19 +35,23 @@ import dsatool.ui.GraphicTableCell;
 import dsatool.ui.IntegerSpinnerTableCell;
 import dsatool.ui.ReactiveSpinner;
 import dsatool.util.ErrorLogger;
+import dsatool.util.Tuple;
 import dsatool.util.Util;
 import heroes.inventory.EquipmentList;
 import heroes.inventory.InventoryDialog;
+import heroes.pros_cons_skills.SkillAcquisitionDialog;
 import heroes.ui.HeroTabController;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -61,6 +69,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import jsonant.event.JSONListener;
@@ -69,7 +79,7 @@ import jsonant.value.JSONObject;
 
 public class AnimalController {
 
-	public class AnimalAttribute extends Attribute {
+	public class AnimalAttribute extends Attribute implements Buyable {
 		private final IntegerProperty bought;
 
 		public AnimalAttribute(final String name, final JSONObject actual) {
@@ -81,14 +91,29 @@ public class AnimalController {
 			};
 		}
 
+		@Override
 		public final IntegerProperty boughtProperty() {
 			return bought;
 		}
 
+		@Override
 		public final int getBought() {
 			return bought.get();
 		}
 
+		@Override
+		public int getEnhancementComplexity(final JSONObject hero, final int targetLevel) {
+			return 6;
+		}
+
+		@Override
+		public int getMaximum(final JSONObject hero) {
+			if ("Astralenergie".equals(getName()))
+				return Integer.MAX_VALUE;
+			return super.getMaximum(hero) - getValue() + getBought();
+		}
+
+		@Override
 		public final void setBought(final int bought) {
 			if (bought == 0) {
 				actual.removeKey("Kauf");
@@ -160,9 +185,15 @@ public class AnimalController {
 	@FXML
 	private TextField name;
 	@FXML
+	private TextField species;
+	@FXML
 	private TextField race;
 	@FXML
 	private TextField training;
+	@FXML
+	private Label trainingTaPLabel;
+	@FXML
+	private ReactiveSpinner<Integer> trainingTaP;
 	@FXML
 	private TextField color;
 	@FXML
@@ -326,6 +357,9 @@ public class AnimalController {
 		updateInventories();
 
 		animalListener = _ -> {
+			updateBiography();
+			updateAttributes();
+			updateStats();
 			updateProCons();
 			updateSkills();
 			equipment.updateEquipment();
@@ -337,27 +371,33 @@ public class AnimalController {
 		actualAnimal.addListener(animalListener);
 		actualAnimal.getArr("Inventare").addListener(inventoriesListener);
 
-		attacksTable = new AttackTable(HeroTabController.isEditable, attributesBox.widthProperty().subtract(2).divide(1.667),
-				type == CharacterType.MAGIC_ANIMAL);
+		attacksTable = new AttackTable(actualAnimal, HeroTabController.isEditable, attributesBox.widthProperty().subtract(2).divide(1.667),
+				type == CharacterType.MAGIC_ANIMAL, type == CharacterType.MAGIC_ANIMAL);
 		attacksTable.setCharacter(animal);
 		statsAndAttacksBox.getChildren().add(attacksTable.getControl());
 
 		name.editableProperty().bind(HeroTabController.isEditable);
+		species.editableProperty().bind(HeroTabController.isEditable);
 		race.editableProperty().bind(HeroTabController.isEditable);
 		training.editableProperty().bind(HeroTabController.isEditable);
+		if (type != CharacterType.ANIMAL) {
+			trainingTaPLabel.setVisible(false);
+			trainingTaPLabel.setManaged(false);
+			trainingTaP.setVisible(false);
+			trainingTaP.setManaged(false);
+		}
 		color.editableProperty().bind(HeroTabController.isEditable);
 		gender.disableProperty().bind(HeroTabController.isEditable.not());
 		size.disableProperty().bind(HeroTabController.isEditable.not());
 		weight.disableProperty().bind(HeroTabController.isEditable.not());
-		attributesTable.editableProperty().bind(HeroTabController.isEditable);
+		attributesTable.editableProperty().bind(
+				Bindings.createBooleanBinding(() -> type == CharacterType.MAGIC_ANIMAL || HeroTabController.isEditable.get(), HeroTabController.isEditable));
 		statsTable.editableProperty().bind(HeroTabController.isEditable);
 		proConsTable.editableProperty().bind(HeroTabController.isEditable);
-		proConsList.disableProperty().bind(HeroTabController.isEditable.not());
 		proConsAddButton.disableProperty().bind(HeroTabController.isEditable.not().or(Bindings.isEmpty(proConsList.getItems())));
-		ritualsList.disableProperty().bind(HeroTabController.isEditable.not());
-		ritualsAddButton.disableProperty().bind(HeroTabController.isEditable.not().or(Bindings.isEmpty(ritualsList.getItems())));
-		skillsList.disableProperty().bind(HeroTabController.isEditable.not());
-		skillsAddButton.disableProperty().bind(HeroTabController.isEditable.not().or(Bindings.isEmpty(skillsList.getItems())));
+		ritualsAddButton.disableProperty().bind(Bindings.isEmpty(ritualsList.getItems()));
+		skillsAddButton.disableProperty().bind(
+				HeroTabController.isEditable.not().and(new SimpleBooleanProperty(type != CharacterType.ANIMAL)).or(Bindings.isEmpty(skillsList.getItems())));
 	}
 
 	@FXML
@@ -383,9 +423,15 @@ public class AnimalController {
 	@FXML
 	public void addRitual() {
 		final String ritualName = ritualsList.getSelectionModel().getSelectedItem();
-		final JSONObject actualSkills = actualAnimal.getObj("Fertigkeiten");
-		actualSkills.put(ritualName, new JSONObject(actualSkills));
-		actualSkills.notifyListeners(null);
+
+		if (!HeroTabController.isEditable.get()) {
+			new SkillAcquisitionDialog(pane.getScene().getWindow(), ritualName,
+					ResourceManager.getResource("data/Tierfertigkeiten").getObj("Vertrautenmagie").getObj(ritualName), actualAnimal);
+		} else {
+			final JSONObject actualSkills = actualAnimal.getObj("Fertigkeiten");
+			actualSkills.put(ritualName, new JSONObject(actualSkills));
+			actualSkills.notifyListeners(null);
+		}
 	}
 
 	@FXML
@@ -394,13 +440,37 @@ public class AnimalController {
 		final JSONObject skill = ResourceManager.getResource("data/Tierfertigkeiten").getObj(type == CharacterType.HORSE ? "Reittiere" : "Allgemein")
 				.getObj(skillName);
 		final JSONObject actualSkills = actualAnimal.getObj("Fertigkeiten");
-		if (skill.containsKey("Auswahl") || skill.containsKey("Freitext")) {
-			final JSONArray actual = actualSkills.getArr(skillName);
-			actual.add(new JSONObject(actual));
+		if (HeroTabController.isEditable.get()) {
+			if (skill.containsKey("Auswahl") || skill.containsKey("Freitext")) {
+				final JSONArray actual = actualSkills.getArr(skillName);
+				actual.add(new JSONObject(actual));
+			} else {
+				actualSkills.put(skillName, new JSONObject(actualSkills));
+			}
+			actualSkills.notifyListeners(null);
 		} else {
-			actualSkills.put(skillName, new JSONObject(actualSkills));
+			if (skill.getBoolOrDefault("Speziell", false)) {
+				final Alert alert = new ThemedAlert(AlertType.ERROR);
+				alert.setTitle("Spezielle Fertigkeit");
+				alert.setHeaderText(skillName + " ist eine spezielle Fertigkeit");
+				alert.setContentText("Spezielle Fertigkeiten können nur als Teil einer Ausbildung erlernt werden.");
+				alert.getButtonTypes().setAll(ButtonType.OK);
+				alert.show();
+			} else {
+				final JSONObject loyalty = actualAnimal.getObj("Basiswerte").getObj("Loyalität");
+				final int currentLoyalty = loyalty.getIntOrDefault("Wert", 0);
+				if (currentLoyalty >= loyalty.getIntOrDefault("Erziehung", 0) && currentLoyalty >= 3) {
+					new AnimalSkillTrainingDialog(pane.getScene().getWindow(), actualAnimal, skillName, skill);
+				} else {
+					final Alert alert = new ThemedAlert(AlertType.ERROR);
+					alert.setTitle("Niedrige Loyalität");
+					alert.setHeaderText("Loyalität zu niedrig für Ausbildung");
+					alert.setContentText("Für das Erlernen von Fertigkeiten muss die Erzieherische Loyalität erreicht sein, mindestens aber 3.");
+					alert.getButtonTypes().setAll(ButtonType.OK);
+					alert.show();
+				}
+			}
 		}
-		actualSkills.notifyListeners(null);
 	}
 
 	public Node getControl() {
@@ -415,7 +485,11 @@ public class AnimalController {
 		attributesValueColumn.setCellFactory(_ -> new IntegerSpinnerTableCell<>(0, 999));
 		attributesValueColumn.setOnEditCommit(t -> {
 			if (t.getRowValue() != null) {
-				t.getRowValue().setValue(t.getNewValue());
+				if (HeroTabController.isEditable.get()) {
+					t.getRowValue().setValue(t.getNewValue());
+				} else if (!t.getNewValue().equals(t.getOldValue())) {
+					new AttributeEnhancementDialog(pane.getScene().getWindow(), t.getRowValue(), actualAnimal, t.getNewValue());
+				}
 			}
 		});
 		attributesModifierColumn.setCellFactory(_ -> new IntegerSpinnerTableCell<>(-99, 99));
@@ -445,16 +519,35 @@ public class AnimalController {
 			final TableRow<AnimalAttribute> row = new TableRow<>();
 
 			final ContextMenu contextMenu = new ContextMenu();
-			final MenuItem attributesContextMenuItem = new MenuItem("Bearbeiten");
-			contextMenu.getItems().add(attributesContextMenuItem);
-			attributesContextMenuItem.setOnAction(_ -> {
+
+			if (type == CharacterType.MAGIC_ANIMAL) {
+				final MenuItem attributesEnhanceItem = new MenuItem("Steigern");
+				contextMenu.getItems().add(attributesEnhanceItem);
+				attributesEnhanceItem.setOnAction(_ -> {
+					final Attribute attribute = row.getItem();
+					new AttributeEnhancementDialog(pane.getScene().getWindow(), attribute, actualAnimal, attribute.getValue() + 1);
+				});
+			}
+
+			final MenuItem attributesEditItem = new MenuItem("Bearbeiten");
+			contextMenu.getItems().add(attributesEditItem);
+			attributesEditItem.setOnAction(_ -> {
 				final Attribute attribute = row.getItem();
 				new AnimalAttributeEditor(pane.getScene().getWindow(), attribute, type == CharacterType.MAGIC_ANIMAL);
 			});
+
+			final MenuItem rollItem = new MenuItem("Eigenschaftsprobe");
+			contextMenu.getItems().add(rollItem);
+			rollItem.setOnAction(_ -> {
+				final Attribute item = row.getItem();
+				new SingleRollDialog(pane.getScene().getWindow(), SingleRollDialog.Type.ATTRIBUTE, actualAnimal, item);
+			});
+
 			row.setContextMenu(contextMenu);
 
 			return row;
 		});
+
 	}
 
 	private void initBiography() {
@@ -463,6 +556,7 @@ public class AnimalController {
 		final ChangeListener<Object> biographyListener = (_, oldV, newV) -> {
 			if (oldV == newV || newV == null || oldV == null) return;
 			biography.put("Name", name.getText());
+			biography.put("Tierart", species.getText());
 			biography.put("Rasse", race.getText());
 			final JSONArray train = biography.getArr("Ausbildung");
 			train.clear();
@@ -475,25 +569,21 @@ public class AnimalController {
 			biography.put("Größe", size.getValue());
 			biography.put("Gewicht", weight.getValue());
 
-			biography.notifyListeners(null);
+			biography.notifyListeners(animalListener);
 		};
-
-		name.setText(biography.getStringOrDefault("Name", "Pferd"));
-		name.textProperty().addListener(biographyListener);
-		race.setText(biography.getStringOrDefault("Rasse", ""));
-		race.textProperty().addListener(biographyListener);
-		training.setText(String.join(", ", biography.getArr("Ausbildung").getStrings()));
-		training.textProperty().addListener(biographyListener);
 
 		gender.setItems(FXCollections.observableArrayList("männlich", "weiblich"));
 
-		color.setText(biography.getStringOrDefault("Farbe", ""));
+		updateBiography();
+
+		name.textProperty().addListener(biographyListener);
+		species.textProperty().addListener(biographyListener);
+		race.textProperty().addListener(biographyListener);
+		training.textProperty().addListener(biographyListener);
+
 		color.textProperty().addListener(biographyListener);
-		gender.setValue(biography.getStringOrDefault("Geschlecht", "weiblich"));
 		gender.valueProperty().addListener(biographyListener);
-		size.getValueFactory().setValue(biography.getIntOrDefault("Größe", 0));
 		size.valueProperty().addListener(biographyListener);
-		weight.getValueFactory().setValue(biography.getIntOrDefault("Gewicht", 0));
 		weight.valueProperty().addListener(biographyListener);
 	}
 
@@ -578,8 +668,7 @@ public class AnimalController {
 					actual.removeKey(item);
 					actual.notifyListeners(null);
 				});
-				row.contextMenuProperty().bind(
-						Bindings.when(HeroTabController.isEditable.and(row.itemProperty().isNotNull())).then(ritualContextMenu).otherwise((ContextMenu) null));
+				row.contextMenuProperty().bind(Bindings.when(row.itemProperty().isNotNull()).then(ritualContextMenu).otherwise((ContextMenu) null));
 
 				return row;
 			});
@@ -654,10 +743,62 @@ public class AnimalController {
 		statsTable.prefWidthProperty().bind(attributesBox.widthProperty().subtract(2).divide(1.667));
 		final JSONObject baseValues = actualAnimal.getObj("Basiswerte");
 
+		if (type == CharacterType.ANIMAL) {
+			updateStats();
+			trainingTaP.valueProperty().addListener((_, _, newV) -> {
+				if (HeroTabController.isEditable.get()) {
+					if (newV == 0) {
+						baseValues.removeKey("Ausbildung");
+					} else {
+						baseValues.getObj("Ausbildung").put("TaP*", newV);
+					}
+					baseValues.notifyListeners(animalListener);
+				}
+			});
+
+			trainingTaP.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+				if (event.getButton() == MouseButton.PRIMARY) {
+					if (!HeroTabController.isEditable.get()) {
+						final JSONObject loyalty = actualAnimal.getObj("Basiswerte").getObj("Loyalität");
+						final int currentLoyalty = loyalty.getIntOrDefault("Wert", 0);
+						if (currentLoyalty >= loyalty.getIntOrDefault("Schulung", 0)) {
+							new AnimalTrainingDialog(pane.getScene().getWindow(), actualAnimal,
+									trainingTaP.getValue() - baseValues.getObjOrDefault("Ausbildung", new JSONObject(null)).getIntOrDefault("TaP*", 0));
+						} else {
+							final Alert alert = new ThemedAlert(AlertType.ERROR);
+							alert.setTitle("Niedrige Loyalität");
+							alert.setHeaderText("Loyalität zu niedrig für Ausbildung");
+							alert.setContentText("Für eine Ausbildung muss die Schulische Loyalität erreicht sein.");
+							alert.getButtonTypes().setAll(ButtonType.OK);
+							alert.show();
+						}
+						event.consume();
+					}
+				}
+			});
+
+			trainingTaP.skinProperty().addListener((_, _, skin) -> {
+				if (skin != null) {
+					final TextField editor = (TextField) skin.getNode().lookup(".text-field");
+					if (editor != null) {
+						final ContextMenu contextMenu = new ContextMenu();
+						editor.setContextMenu(contextMenu);
+						final MenuItem enhanceItem = new MenuItem("Ausbilden");
+						contextMenu.getItems().add(enhanceItem);
+						enhanceItem.setOnAction(_ -> new AnimalTrainingDialog(pane.getScene().getWindow(), actualAnimal, 0));
+					}
+				}
+			});
+		}
+
 		GUIUtil.autosizeTable(statsTable);
 		GUIUtil.cellValueFactories(statsTable, "name", "value", "bought", "manualModifier", "current");
 
-		statsValueColumn.setCellFactory(_ -> new IntegerSpinnerTableCell<>(0, 999));
+		statsValueColumn.setCellFactory(IntegerSpinnerTableCell.forTableColumn(0, 999, 1, false, (cell, _) -> {
+			final AnimalAttribute stat = cell.getTableRow().getItem();
+			if (stat != null && "Loyalität".equals(stat.getName())) return new Tuple<>(-99, 99);
+			return new Tuple<>(0, 999);
+		}));
 		statsValueColumn.setOnEditCommit(t -> {
 			if (t.getRowValue() != null) {
 				t.getRowValue().setValue(t.getNewValue());
@@ -692,11 +833,44 @@ public class AnimalController {
 			final TableRow<AnimalAttribute> row = new TableRow<>();
 
 			final ContextMenu contextMenu = new ContextMenu();
+
+			if (type == CharacterType.MAGIC_ANIMAL) {
+				final MenuItem enhanceContextMenuItem = new MenuItem("Zukaufen");
+				contextMenu.getItems().add(enhanceContextMenuItem);
+				enhanceContextMenuItem.setOnAction(_ -> {
+					final AnimalAttribute attribute = row.getItem();
+					new EnergyEnhancementDialog(pane.getScene().getWindow(), attribute, actualAnimal, attribute.getValue() + 1);
+				});
+				contextMenu.setOnShowing(_ -> {
+					final String stat = row.getItem().getName();
+					enhanceContextMenuItem.setVisible("Lebensenergie".equals(stat) || "Astralenergie".equals(stat));
+				});
+			}
+
+			if (type == CharacterType.ANIMAL) {
+				final MenuItem enhanceContextMenuItem = new MenuItem("Erhöhen");
+				contextMenu.getItems().add(enhanceContextMenuItem);
+				enhanceContextMenuItem.setOnAction(_ -> {
+					final AnimalAttribute attribute = row.getItem();
+					new AnimalLoyaltyEnhancementDialog(pane.getScene().getWindow(), attribute, actualAnimal);
+				});
+				contextMenu.setOnShowing(_ -> {
+					final String stat = row.getItem().getName();
+					enhanceContextMenuItem.setVisible("Loyalität".equals(stat) || "Astralenergie".equals(stat));
+				});
+			}
+
 			final MenuItem attributesContextMenuItem = new MenuItem("Bearbeiten");
 			contextMenu.getItems().add(attributesContextMenuItem);
 			attributesContextMenuItem.setOnAction(_ -> {
 				final Attribute attribute = row.getItem();
-				new AnimalAttributeEditor(pane.getScene().getWindow(), attribute, false);
+				final String stat = attribute.getName();
+				if ("Loyalität".equals(stat)) {
+					new AnimalLoyaltyEditor(pane.getScene().getWindow(), actualAnimal, false);
+				} else {
+					new AnimalAttributeEditor(pane.getScene().getWindow(), attribute,
+							type == CharacterType.MAGIC_ANIMAL && ("Lebensenergie".equals(stat) || "Astralenergie".equals(stat)));
+				}
 			});
 
 			row.contextMenuProperty().bind(Bindings.when(row.itemProperty().isNotNull()).then(contextMenu).otherwise((ContextMenu) null));
@@ -708,6 +882,29 @@ public class AnimalController {
 	public void unregisterListeners() {
 		actualAnimal.removeListener(animalListener);
 		actualAnimal.getArr("Inventare").removeListener(inventoriesListener);
+	}
+
+	private void updateAttributes() {
+		final ObservableList<AnimalAttribute> items = attributesTable.getItems();
+		final List<AnimalAttribute> attributes = new ArrayList<>(items);
+		items.clear();
+		for (final AnimalAttribute attribute : attributes) {
+			items.add(new AnimalAttribute(attribute.getName(), attribute.getActual()));
+		}
+	}
+
+	private void updateBiography() {
+		final JSONObject biography = actualAnimal.getObj("Biografie");
+
+		name.setText(biography.getStringOrDefault("Name", "Pferd"));
+		species.setText(biography.getStringOrDefault("Tierart", ""));
+		race.setText(biography.getStringOrDefault("Rasse", ""));
+		training.setText(String.join(", ", biography.getArr("Ausbildung").getStrings()));
+
+		color.setText(biography.getStringOrDefault("Farbe", ""));
+		gender.setValue(biography.getStringOrDefault("Geschlecht", "weiblich"));
+		size.getValueFactory().setValue(biography.getIntOrDefault("Größe", 0));
+		weight.getValueFactory().setValue(biography.getIntOrDefault("Gewicht", 0));
 	}
 
 	private void updateInventories() {
@@ -815,5 +1012,18 @@ public class AnimalController {
 		}
 
 		skillsList.getSelectionModel().select(0);
+	}
+
+	private void updateStats() {
+		if (type == CharacterType.ANIMAL) {
+			final JSONObject baseValues = actualAnimal.getObj("Basiswerte");
+			trainingTaP.getValueFactory().setValue(baseValues.getObjOrDefault("Ausbildung", new JSONObject(null)).getIntOrDefault("TaP*", 0));
+		}
+		final ObservableList<AnimalAttribute> items = statsTable.getItems();
+		final List<AnimalAttribute> stats = new ArrayList<>(items);
+		items.clear();
+		for (final AnimalAttribute stat : stats) {
+			items.add(new AnimalAttribute(stat.getName(), stat.getActual()));
+		}
 	}
 }
