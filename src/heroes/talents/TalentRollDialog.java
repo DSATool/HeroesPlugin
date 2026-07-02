@@ -63,11 +63,33 @@ public class TalentRollDialog {
 	private final String representation;
 	private final Map<JSONObject, HBox> heroBoxes = new HashMap<>();
 
-	@SuppressWarnings("unchecked")
 	public TalentRollDialog(final Window window, final String talentName, final String representation, final JSONObject[] heroes) {
 		this.talentName = talentName;
 		this.representation = representation;
+		init(window, heroes).show();
+	}
 
+	public TalentRollDialog(final Window window, final String talentName, final String representation, final JSONObject[] heroes, final Integer[] results,
+			final int modification, final String specialization) {
+		this.talentName = talentName;
+		this.representation = representation;
+
+		final Stage stage = init(window, heroes);
+
+		this.modification.getValueFactory().setValue(modification);
+		if (specialization != null) {
+			this.specialization.getSelectionModel().select(specialization);
+		}
+
+		stage.showAndWait();
+
+		for (int i = 0; i < heroes.length; ++i) {
+			results[i] = updateInterpretation(heroes[i]);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public Stage init(final Window window, final JSONObject[] heroes) {
 		final FXMLLoader fxmlLoader = new FXMLLoader();
 
 		fxmlLoader.setController(this);
@@ -114,9 +136,7 @@ public class TalentRollDialog {
 		specialization.getItems().add("Keine");
 		final JSONArray specializations = talent._1.getArr("Spezialisierungen");
 		if (specializations != null) {
-			for (int i = 0; i < specializations.size(); ++i) {
-				specialization.getItems().add(specializations.getString(i));
-			}
+			specialization.getItems().addAll(specializations.getStrings());
 		}
 
 		specialization.getSelectionModel().select(0);
@@ -160,10 +180,10 @@ public class TalentRollDialog {
 		attribute2.valueProperty().addListener(updateListener);
 		attribute3.valueProperty().addListener(updateListener);
 
-		stage.show();
+		return stage;
 	}
 
-	private void updateInterpretation(final JSONObject hero) {
+	private Integer updateInterpretation(final JSONObject hero) {
 		final HBox heroBox = heroBoxes.get(hero);
 		final Label interpretationLabel = (Label) heroBox.getChildren().get(4);
 		final int[] roll = new int[3];
@@ -181,7 +201,7 @@ public class TalentRollDialog {
 			roll[i - 1] = currentRoll;
 		}
 		final SelectionModel<String> selection = specialization.getSelectionModel();
-		final Integer interpretation;
+		Integer interpretation;
 		if (representation != null) {
 			final int zfw = HeroUtil.getZfW(hero, talentName, representation, selection.getSelectedIndex() == 0 ? null : selection.getSelectedItem());
 			int mod = -modification.getValue();
@@ -207,9 +227,19 @@ public class TalentRollDialog {
 			interpretationLabel.setText("—");
 			interpretationLabel.setStyle("-fx-text-fill: -fx-color-invalid;");
 		} else if (ones >= 2) {
+			if (ones == 3) {
+				interpretation = Integer.MAX_VALUE;
+			} else {
+				interpretation = Integer.MAX_VALUE - 1;
+			}
 			interpretationLabel.setText("*" + Integer.toString(interpretation) + "*");
 			interpretationLabel.setStyle("-fx-text-fill: -fx-color-valid; -fx-font-weight: bold;");
 		} else if (twenties >= 2) {
+			if (twenties == 3) {
+				interpretation = Integer.MIN_VALUE;
+			} else {
+				interpretation = Integer.MIN_VALUE + 1;
+			}
 			interpretationLabel.setText("Patzer");
 			interpretationLabel.setStyle("-fx-text-fill: -fx-color-invalid; -fx-font-weight: bold;");
 		} else if (interpretation == 0) {
@@ -222,5 +252,6 @@ public class TalentRollDialog {
 			interpretationLabel.setText(Integer.toString(interpretation));
 			interpretationLabel.setStyle("-fx-text-fill: -fx-color-valid;");
 		}
+		return interpretation;
 	}
 }
